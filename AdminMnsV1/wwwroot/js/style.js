@@ -347,6 +347,9 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
     // Cibler tous les inputs type="file"
     const fileInputs = document.querySelectorAll("input[type='file']");

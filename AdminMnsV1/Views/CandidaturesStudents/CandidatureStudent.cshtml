@@ -25,10 +25,12 @@
             </div>
             <div class="p-4 mb-4 border rounded-3 bg-light">
                 <h4 class="mb-3 text-center">Dépôt de document</h4>
-                <div class="input-group">
-                    <input type="file" class="form-control" id="documentUpload">
-                    <button class="btn btn-primary" type="button">Ajouter</button>
-                </div>
+                <form method="post" enctype="multipart/form-data" asp-controller="VotreControleur" asp-action="VotreAction">
+                    <div class="input-group">
+                        <input type="file" class="form-control" id="documentUpload" name="document">
+                        <button class="btn btn-primary" type="submit">Ajouter</button>
+                    </div>
+                </form>
             </div>
 
             <div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
