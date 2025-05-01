@@ -1,0 +1,83 @@
+/* <!-- =====================CARDS=============================== --> */
+
+.cardBox {
+	position: relative;
+	width: 100%;
+	padding: 20px;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 30px;
+}
+
+.cardBox .cards {
+	position: relative;
+	padding: 20px;
+	background-color: var(--bleu-opacité);
+	border-radius: 20px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	cursor: pointer;
+	box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+	overflow: hidden;
+}
+
+.cardBox .cards:nth-child(even) {
+	background-color: var(--orange-opacité);
+}
+
+
+.cardBox .cards .cardNumber {
+	position: relative;
+	font-weight: 400;
+	font-size: 2.5rem;
+}
+
+.cardBox .cards .cardName {
+	position: relative;
+	font-size: 1.5rem;
+
+}
+
+.cards .iconCard {
+	position: relative;
+	display: flex;
+	align-items: center;
+
+}
+
+.cardBox .cards::before {
+	content: "";
+	position: absolute;
+	top: -20px;
+	right: -20px;
+	/* Déplace le rond en haut à droite */
+	width: 60px;
+	height: 60px;
+	background-color: var(--orange);
+	border-radius: 50%;
+	transition: all 0.5s ease-in-out;
+}
+
+.cardBox .cards:hover::before {
+	width: 300%;
+	height: 300%;
+	top: 50%;
+	right: 50%;
+	transform: translate(50%, -50%);
+	border-radius: 0;
+	background-color: var(--orange);
+}
+
+.cardBox .card:nth-child(even)::before {
+	background-color: var(--bleu);
+} 
+
+
+.cardBox .cards:hover {
+	color: white;
+}
+
+.cardBox .cards:hover .iconCard {
+	filter: invert(100%);
+}

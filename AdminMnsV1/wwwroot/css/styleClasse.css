@@ -1,0 +1,24 @@
+/********************** DEBUT PAGE CLASSE ************************/
+
+.tableauClass {
+	width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.table-container {
+	display: none;
+	flex-grow: 1; 
+    width: 100% !important; 
+}
+
+.table-custom{
+	width: 100% !important;
+}
+
+.tableauClass, thead, tbody{
+	width: 100% !important;
+	margin: 20px;
+}
+/********************** FIN PAGE CLASSE ************************/

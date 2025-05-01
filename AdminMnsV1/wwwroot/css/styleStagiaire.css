@@ -1,0 +1,67 @@
+
+/********************** DEBUT PAGE STAGIAIRE + INTERVENANT ************************/
+
+.studentTable, .tableProfesseurs{
+	width: 90%;
+	margin: auto;
+}
+
+.table-custom {
+	background-color: #151A37 !important;
+	color: white !important;
+	
+}
+
+.table-custom th,
+.table-custom td {
+	border-color: #FF6616;
+}
+
+.table-custom thead tr th {
+
+	background-color: #151A37 !important;
+	color: white !important;
+
+}
+
+/* BOUTON */
+
+.btnNewStudent a, .btnNewIntervenant a {
+    color: white;
+}
+
+.btnNewStudent, .btnNewIntervenant {
+    width: 100%;
+    padding: 20px;
+    text-align: right;
+}
+
+.btnNewStudent a img, .btnNewIntervenant a img {
+    filter: invert(100%);
+}
+
+
+.btnNewStudent a:hover img, .btnNewIntervenant a:hover img {
+    filter: invert(0%); /* Noir au hover */
+}
+
+
+.btn-outline-warning {
+    color: white; 
+    background-color: var(--bleu);
+    border-color: var(--orange);
+}
+
+.btn-outline-warning:hover {
+    background-color: white;
+    border-color: var(--orange);
+    color: black !important; /* Texte devient noir */
+}
+
+.btnNewStudent a:hover img, .btnNewIntervenant a:hover img {
+    filter: initial;
+}
+
+
+
+/********************** FIN PAGE STAGIAIRE + INTERVENANT ************************/

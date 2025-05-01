@@ -1,0 +1,89 @@
+/* <!-- =====================MEDIA QUERY=============================== --> */
+
+/* BARRE DE NAVIGATION */
+@media (max-width: 992px) {
+	.navigation {
+		left: -300px;
+	}
+
+	.navigation.active {
+		width: 300px;
+		left: 0;
+	}
+
+	.mainDashboard  {
+		width: 100%;
+		left: 0;
+	}
+
+	.mainDashboard.active {
+		left: 300px;
+	}
+}
+
+@media (max-width: 768px) {
+	.mainDas {
+		position: initial;
+	}
+}
+
+/* <!-- =====================MEDIA QUERY=============================== --> */
+
+
+/* TAILLE PORTABLE */
+@media (max-width: 480px) {
+	.user {
+		min-width: 40px;
+	}
+
+	.navigation {
+		width: 100%;
+		left: -100%;
+		z-index: 1000;
+	}
+
+	.navigation.active {
+		width: 100%;
+		left: 0;
+	}
+
+	.toggle{
+		z-index: 1001;
+	}
+
+	.mainDashboard.active .toggle img{
+		filter: invert(100%);
+	}
+
+	.mainDashboard .active .toggle{
+		color: white;
+		position: fixed;
+		right: 0;
+		left: initial;
+	}
+
+	.topBar {
+		margin: 0px;
+	}
+
+
+	/* FORMULAIRE STUDENT */
+
+	.photoProfil{
+		display: none;
+	}
+
+	.photoProfilInput{
+		display: block !important;
+	}
+
+	.graphClassLateAbs, .graphLateAbs{
+		display: none;
+	}
+
+	
+}
+
+
+
+

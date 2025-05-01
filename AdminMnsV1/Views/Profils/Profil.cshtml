@@ -1,0 +1,116 @@
+﻿@{
+	ViewData["Title"] = "Profil";
+
+}
+
+<!-- =====================EN TETE PROFIL=============================== -->
+
+<header>
+	<div class=" containerHeader border">
+		<img src="~/images/gohan.jpg" alt="photo de profil">
+		<div class="titreContainerHeader">
+			<h2>Bob Alfred</h2>
+			<div class="dropdown">
+				<button class="btn btn-light border-0" type="button" data-bs-toggle="dropdown"
+						aria-expanded="false">
+					<i class="bi bi-three-dots"></i>
+				</button>
+				<ul class="dropdown-menu dropdown-menu-end">
+					<li><a class="dropdown-item" href="#">Modifier le profil</a></li>
+					<li><a class="dropdown-item" href="#">Parametres</a></li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="coordonneProfil  ">
+			<div class="status">
+				<h5>Admin</h5>
+				<div class="positionIcon">
+					<i class="bi bi-shield-lock-fill"></i>
+					<p>Admin (responsable administration) </p>
+				</div>
+			</div>
+
+			<div class="phone">
+				<h5>Téléphone</h5>
+				<div class="positionIcon">
+					<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25"
+						 viewBox="0 0 32 32">
+						<path d="M26.963,7.254c-0.258-1.089-1.128-1.959-2.217-2.217c-5.803-1.376-11.688-1.376-17.492,0 C6.165,5.295,5.295,6.165,5.037,7.254C3.66,13.061,3.66,18.947,5.039,24.751c0.257,1.086,1.124,1.953,2.209,2.21 c2.904,0.689,5.828,1.034,8.752,1.034s5.848-0.345,8.752-1.034c1.085-0.257,1.952-1.124,2.209-2.209 C28.34,18.947,28.34,13.061,26.963,7.254z M9.2,10.75c0.44-1.03,2.25-1.88,3.66-1.73c0.86,0.08,2.18,1.71,2.25,3.09 c0.05,1.13-1.13,2.25-1.13,2.25s0.97,0.75,1.94,1.72c0.94,0.92,1.72,1.94,1.72,1.94s1.12-1.18,2.25-1.13 c1.38,0.07,3.01,1.39,3.09,2.25c0.15,1.41-0.7,3.22-1.73,3.66c-2.04,0.88-6.12-1.27-8.45-3.6C10.47,16.87,8.32,12.79,9.2,10.75z">
+						</path>
+					</svg>
+					<p>+12 56 89 74 594</p>
+				</div>
+			</div>
+
+			<div class="mail">
+				<h5>EMail</h5>
+				<div class="positionIcon">
+					<i class="bi bi-envelope-at-fill"></i>
+					<p>Admin@admin.com</p>
+					<div class="positionIcon">
+					</div>
+				</div>
+			</div>
+</header>
+
+<!-- ===================== CARD DECO =============================== -->
+
+<div class="containersCardDeco">
+	<a href="gestionStudent.html">
+		<div class="card">
+			<div class="wrapper">
+				<img src="~/images/curveDroite.jpg" class="cover-image miroir border" />
+			</div>
+			<h3 class="titleCardsAnime text-center">Stagiaires</h3>
+			<img src="~/images/stagiaire.jpg" class="character" />
+
+		</div>
+	</a>
+
+	<a href="#">
+		<div class="card">
+			<div class="wrapper">
+				<img src="~/images/curveMilieu.jpg" class="cover-image border" />
+			</div>
+			<h3 class="titleCardsAnime text-center">Intervenants</h3>
+			<img src="~/images/intervenants.jpg" class="character" />
+		</div>
+	</a>
+
+	<a href="#">
+		<div class="card">
+			<div class="wrapper">
+				<img src="~/images/curveDroite.jpg" class="cover-image border" />
+			</div>
+			<h3 class="titleCardsAnime text-center">Admins</h3>
+			<img src="~/images/admin.jpg" class="character" />
+		</div>
+	</a>
+</div>
+
+<!-- ===================== BOX INFOS USER =============================== -->
+
+<div class="boxParametre">
+	<div class="box bg-light border">
+		<div class="boxParametreProfil">
+			<h3 class="text-center mb-4">Paramètres profils</h3>
+			<a href="modification.html">
+				<button class="btnEmail btn btn-outline-info w-100">
+					Modifier
+					l’email et le mot de passe
+				</button>
+			</a>
+			<h6 class="text-center mt-4">Réseaux sociaux</h6>
+			<div class="reseauSociaux d-flex justify-content-center">
+				<a href="#">
+					<i class="bi bi-facebook"></i>
+					<a href="#">
+						<i class="bi bi-instagram"></i>
+						<a href="#"><i class="bi bi-linkedin"></i>
+			</div>
+			<p class="text-center mt-4"><a href="">Paramètres de confidentialité</a></p>
+			<a href=""><button class="btnLogout btn btn-outline-info w-100">Déconnexion</button></a>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,35 @@
+/* <!-- =====================FOOTER =============================== --> */
+:root {
+	--bleu: #151A37;
+	--orange: #FF6616;
+}
+
+hr{
+	height:5
+	
+	px;
+	font-style: dotted;
+	width: 60%;
+	margin: 50px auto;
+	background-color: var(--orange);
+	border: none;
+}
+
+.footer{
+	display: flex;
+	font-size: 12px;
+}
+.linkFooter{
+	width: 85%;
+	margin: auto;
+}
+
+.linkFooter ul{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.linkFooter li{
+	margin: 15px;
+}

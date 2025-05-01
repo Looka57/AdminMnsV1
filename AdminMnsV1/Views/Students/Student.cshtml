@@ -1,0 +1,390 @@
+﻿@{
+	ViewData["Title"] = "Student";
+    <!-- TABLEAU STUDENTS -->
+    <div class="studentTable">
+        <h1 class="mt-5">Stagiaires</h1>
+
+        <div class="btnNewStudent">
+            <a href="formulaire.html" class="btn btn-outline-warning ">
+                <img width="20" height="20" src="https://img.icons8.com/ios/50/plus--v1.png" alt="plus icon"
+                     class="me-2" />
+                Nouveau Stagiaire
+            </a>
+        </div>
+
+        <table class="table align-middle table-striped table-hover table-custom bg-secondary table-responsive">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Classe</th>
+                    <th scope="col" class="d-none d-md-table-cell">Ville</th>
+                    <th scope="col" class="d-none d-md-table-cell">Date Inscription</th>
+                    <th scope="col" class="d-none d-md-table-cell">Role</th>
+                    <th scope="col" colspan="2">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Midoriya</td>
+                    <td>Izuku</td>
+                    <td>2-A</td>
+                    <td class="d-none d-md-table-cell">Musutafu</td>
+                    <td class="d-none d-md-table-cell">2018-04-01</td>
+                    <td class="d-none d-md-table-cell">Candidat</td>
+                    <td>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#modalStagiaire">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+                                 alt="visible" />
+                        </a>
+                    </td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>Bakugo</td>
+                    <td>Katsuki</td>
+                    <td>2-A</td>
+                    <td class="d-none d-md-table-cell">Musutafu</td>
+                    <td class="d-none d-md-table-cell">2018-04-01</td>
+                    <td class="d-none d-md-table-cell">Stagiaire</td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+                                 alt="visible" />
+                        </a>
+                    </td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>Todoroki</td>
+                    <td>Shoto</td>
+                    <td>2-A</td>
+                    <td class="d-none d-md-table-cell">Musutafu</td>
+                    <td class="d-none d-md-table-cell">2018-04-01</td>
+                    <td class="d-none d-md-table-cell">Stagiaire</td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+                                 alt="visible" />
+                        </a>
+                    </td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">4</th>
+                    <td>Uraraka</td>
+                    <td>Ochaco</td>
+                    <td>2-A</td>
+                    <td class="d-none d-md-table-cell">Kutsh</td>
+                    <td class="d-none d-md-table-cell">2018-04-01</td>
+                    <td class="d-none d-md-table-cell">Stagiaire</td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+                                 alt="visible" />
+                        </a>
+                    </td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+                        </a>
+                    </td>
+
+                </tr>
+                <tr>
+                    <th scope="row">5</th>
+                    <td>Iida</td>
+                    <td>Tenya</td>
+                    <td>2-A</td>
+                    <td class="d-none d-md-table-cell">Musutafu</td>
+                    <td class="d-none d-md-table-cell">2018-04-01</td>
+                    <td class="d-none d-md-table-cell">Candidat</td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+                                 alt="visible" />
+                        </a>
+                    </td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+                        </a>
+                    </td>
+
+                </tr>
+                <tr>
+                    <th scope="row">6</th>
+                    <td>Tokoyami</td>
+                    <td>Fumikage</td>
+                    <td>2-A</td>
+                    <td class="d-none d-md-table-cell">Musutafu</td>
+                    <td class="d-none d-md-table-cell">2018-04-01</td>
+                    <td class="d-none d-md-table-cell">Stagiaire</td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+                                 alt="visible" />
+                        </a>
+                    </td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+                        </a>
+                    </td>
+
+                </tr>
+                <tr>
+                    <th scope="row">7</th>
+                    <td>Asui</td>
+                    <td>Tsuyu</td>
+                    <td>2-A</td>
+                    <td class="d-none d-md-table-cell">Musutafu</td>
+                    <td class="d-none d-md-table-cell">2018-04-01</td>
+                    <td class="d-none d-md-table-cell">Candidat</td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+                                 alt="visible" />
+                        </a>
+                    </td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+                        </a>
+                    </td>
+
+                </tr>
+                <tr>
+                    <th scope="row">8</th>
+                    <td>Kirishima</td>
+                    <td>Eijiro</td>
+                    <td>2-A</td>
+                    <td class="d-none d-md-table-cell">Osaka</td>
+                    <td class="d-none d-md-table-cell">2018-04-01</td>
+                    <td class="d-none d-md-table-cell">Candidat</td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+                                 alt="visible" />
+                        </a>
+                    </td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+                        </a>
+                    </td>
+
+                </tr>
+                <tr>
+                    <th scope="row">9</th>
+                    <td>Yaoyorozu</td>
+                    <td>Momo</td>
+                    <td>2-A</td>
+                    <td class="d-none d-md-table-cell">Tokyo</td>
+                    <td class="d-none d-md-table-cell">2018-04-01</td>
+                    <td class="d-none d-md-table-cell">Stagiaire</td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+                                 alt="visible" />
+                        </a>
+                    </td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+                        </a>
+                    </td>
+
+                </tr>
+                <tr>
+                    <th scope="row">10</th>
+                    <td>Kaminari</td>
+                    <td>Denki</td>
+                    <td>2-A</td>
+                    <td class="d-none d-md-table-cell">Musutafu</td>
+                    <td class="d-none d-md-table-cell">2018-04-01</td>
+                    <td class="d-none d-md-table-cell">Candidat</td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+                                 alt="visible" />
+                        </a>
+                    </td>
+                    <td>
+                        <a href="">
+                            <img width="20" height="20"
+                                 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+        <!-- PAGINATION -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="modalStagiaire" tabindex="-1" aria-labelledby="modalStagiaireLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <form method="post" action="/Stagiaire/Modifier">
+                    <!-- Adapte l'action à ton contrôleur -->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalStagiaireLabel">Modifier le Stagiaire</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Exemple d'un champ : Nom -->
+                            <div class="mb-3">
+                                <label for="Nom" class="form-label">Nom</label>
+                                <input type="text" class="form-control" id="Nom" name="Nom" value="Midoriya">
+                            </div>
+                            <div class="mb-3">
+                                <label for="Prenom" class="form-label">Prénom</label>
+                                <input type="text" class="form-control" id="Prenom" name="Prenom" value="Izuku">
+                            </div>
+                            <div class="mb-3">
+                                <label for="Sexe" class="form-label">Sexe</label>
+                                <select class="form-select" id="Sexe" name="Sexe">
+                                    <option value="Masculin" selected>Masculin</option>
+                                    <option value="Féminin">Féminin</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="DateNaissance" class="form-label">Date de naissance</label>
+                                <input type="date" class="form-control" id="DateNaissance" name="DateNaissance"
+                                       value="2008-05-14">
+                            </div>
+                            <div class="mb-3">
+                                <label for="Nationalite" class="form-label">Nationalité</label>
+                                <input type="text" class="form-control" id="Nationalite" name="Nationalite"
+                                       value="Japonais">
+                            </div>
+                            <div class="mb-3">
+                                <label for="Adresse" class="form-label">Adresse</label>
+                                <input type="text" class="form-control" id="Adresse" name="Adresse"
+                                       value="15 rue quelque chose">
+                            </div>
+                            <div class="mb-3">
+                                <label for="Ville" class="form-label">Ville</label>
+                                <input type="text" class="form-control" id="Ville" name="Ville"
+                                       value="Musutafu">
+                            </div>
+                            <div class="mb-3">
+                                <label for="Mail" class="form-label">Mail</label>
+                                <input type="email" class="form-control" id="Mail" name="Mail"
+                                       value="Bob@gogole.com">
+                            </div>
+                            <div class="mb-3">
+                                <label for="Telephone" class="form-label">Téléphone</label>
+                                <input type="tel" class="form-control" id="Telephone" name="Telephone"
+                                       value="06.06.060.06">
+                            </div>
+                            <div class="mb-3">
+                                <label for="DateCreation" class="form-label">Date création dossier</label>
+                                <input type="date" class="form-control" id="DateCreation" name="DateCreation"
+                                       value="2018-04-01">
+                            </div>
+                            <div class="mb-3">
+                                <label for="Classe" class="form-label">Classe</label>
+                                <input type="text" class="form-control" id="Classe" name="Classe" value="2-A">
+                            </div>
+                            <div class="mb-3">
+                                <label for="Statut" class="form-label">Statut</label>
+                                <select class="form-select" id="Statut" name="Statut">
+                                    <option value="En cours" selected>En cours</option>
+                                    <option value="Refuser">Refuser</option>
+                                    <option value="Terminé">Terminé</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="Role" class="form-label">Role</label>
+                                <select class="form-select" id="Role" name="Role">
+                                    <option value="Candidat" selected>Candidat</option>
+                                    <option value="Stagiaire">Stagiaire</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="NumSecu" class="form-label">N° Sécurité Sociale</label>
+                                <input type="text" class="form-control" id="NumSecu" name="NumSecu"
+                                       value="1234567890">
+                            </div>
+                            <div class="mb-3">
+                                <label for="NumFranceTravail" class="form-label">N° France Travail</label>
+                                <input type="text" class="form-control" id="NumFranceTravail"
+                                       name="NumFranceTravail" value="B118545">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                            <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">
+                                Annuler
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+}

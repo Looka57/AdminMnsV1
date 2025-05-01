@@ -1,0 +1,29 @@
+.box {
+   
+    border-radius: 25px;
+    padding: 10px;
+    
+}
+
+.boxStagiaire,
+.boxIntervenant,
+.boxAdmin,
+.boxNew {
+    width: 40%;
+    margin: 20px auto;
+    border-radius: 25px;
+    padding: 10px;
+    background-color: #f0f0f0;
+}
+
+
+.boxGestionRoleStudent a, .boxGestionRoleIntervenant a, .boxGestionRoleAdmin a{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.boxGestionRoleStudent button, .boxGestionRoleIntervenant button, .boxGestionRoleAdmin button{
+    margin: 10px;
+}

@@ -1,0 +1,259 @@
+﻿@{
+	ViewData["Title"] = "Candidature";
+    <h1 class="mx-4 mt-5">Dossiers</h1>
+
+
+
+
+    <!--========================= GRAPHIQUE DOSSIER CLASSE ====================-->
+
+    <div class="graphs  ">
+        <div class="graphFileClass m-4 border rounded-4 bg-light ">
+            <div class="title">
+                <h2 class="mt-5 mx-4 text-center">Visualisation des dossiers</h2>
+            </div>
+            <div class="barFile w-75 mx-auto">
+                <canvas id="fileClass" aria-label="chart" role="img"></canvas>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!--========================= BOUTON ====================-->
+
+    <div class="btnNewDossier">
+        <button type="button" class="btn btn-outline-warning">
+            <img width="20" height="20"
+                 src="https://img.icons8.com/ios/50/plus--v1.png" alt="plus--v1" /> Nouveau Dossier
+        </button>
+    </div>
+
+
+    <!-- =====================ACCORDEONS=============================== -->
+    <div class="accordion" id="accordionPanelsStayOpenExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header bob">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+                        aria-controls="panelsStayOpen-collapseOne">
+                    Dossiers en cours
+                </button>
+            </h2>
+            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+                <div class="accordion-body">
+                    <div class="tableProfessors">
+                        <table class="table align-middle table-striped table-hover table-custom bg-secondary table-responsive">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Nom</th>
+                                    <th scope="col">Prénom</th>
+                                    <th scope="col" class="d-none d-sm-table-cell">Classe</th>
+                                    <th scope="col" class="d-none d-md-table-cell">Date de Création</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>Hatake</td>
+                                    <td>Looka</td>
+                                    <td class="d-none d-sm-table-cell">2-A</td>
+                                    <td class="d-none d-md-table-cell">2015-09-01</td>
+                                    <td><button class="btn btn-primary"><a href="dossierStudent.html">Voir</a></button></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">2</th>
+                                    <td>Yamada</td>
+                                    <td>Hizashi</td>
+                                    <td class="d-none d-sm-table-cell">2-A</td>
+                                    <td class="d-none d-md-table-cell">2015-09-01</td>
+                                    <td><button class="btn btn-primary">Voir</button></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">3</th>
+                                    <td>Kan</td>
+                                    <td>Sekijiro</td>
+                                    <td class="d-none d-sm-table-cell">2-B</td>
+                                    <td class="d-none d-md-table-cell">2016-04-10</td>
+                                    <td><button class="btn btn-primary">Voir</button></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">4</th>
+                                    <td>Nemuri</td>
+                                    <td>Kayama</td>
+                                    <td class="d-none d-sm-table-cell">2-C</td>
+                                    <td class="d-none d-md-table-cell">2014-06-15</td>
+                                    <td><button class="btn btn-primary">Voir</button></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">5</th>
+                                    <td>All Might</td>
+                                    <td>Toshinori</td>
+                                    <td class="d-none d-sm-table-cell">Ancien Prof</td>
+                                    <td class="d-none d-md-table-cell">2015-09-01</td>
+                                    <td><button class="btn btn-primary">Voir</button></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">6</th>
+                                    <td>Ectoplasm</td>
+                                    <td>-</td>
+                                    <td class="d-none d-sm-table-cell">2-A</td>
+                                    <td class="d-none d-md-table-cell">2016-01-05</td>
+                                    <td><button class="btn btn-primary">Voir</button></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">7</th>
+                                    <td>Power Loader</td>
+                                    <td>Higari</td>
+                                    <td class="d-none d-sm-table-cell">Support</td>
+                                    <td class="d-none d-md-table-cell">2016-07-21</td>
+                                    <td><button class="btn btn-primary">Voir</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
+                        aria-controls="panelsStayOpen-collapseTwo">
+                    Dossiers validés
+                </button>
+            </h2>
+            <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                    <div class="tableProfessors">
+                        <table class="table align-middle table-striped table-hover table-custom bg-secondary table-responsive">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Nom</th>
+                                    <th scope="col">Prénom</th>
+                                    <th scope="col" class="d-none d-sm-table-cell">Classe</th>
+                                    <th scope="col" class="d-none d-md-table-cell">Ville</th>
+                                    <th scope="col" class="d-none d-lg-table-cell">Date Inscription</th>
+                                    <th scope="col" class="d-none d-md-table-cell">Date de Création</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>Aizawa</td>
+                                    <td>Shota</td>
+                                    <td class="d-none d-sm-table-cell">2-A</td>
+                                    <td class="d-none d-md-table-cell">Musutafu</td>
+                                    <td class="d-none d-lg-table-cell">2015-09-01</td>
+                                    <td class="d-none d-lg-table-cell">Actif</td>
+                                    <td><button class="btn btn-primary">Voir</button></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">2</th>
+                                    <td>Yamada</td>
+                                    <td>Hizashi</td>
+                                    <td class="d-none d-sm-table-cell">2-A</td>
+                                    <td class="d-none d-md-table-cell">Musutafu</td>
+                                    <td class="d-none d-lg-table-cell">2015-09-01</td>
+                                    <td class="d-none d-lg-table-cell">Actif</td>
+                                    <td><button class="btn btn-primary">Voir</button></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">3</th>
+                                    <td>Kan</td>
+                                    <td>Sekijiro</td>
+                                    <td class="d-none d-sm-table-cell">2-B</td>
+                                    <td class="d-none d-md-table-cell">Musutafu</td>
+                                    <td class="d-none d-lg-table-cell">2016-04-10</td>
+                                    <td class="d-none d-lg-table-cell">Actif</td>
+                                    <td><button class="btn btn-primary">Voir</button></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">4</th>
+                                    <td>Nemuri</td>
+                                    <td>Kayama</td>
+                                    <td class="d-none d-sm-table-cell">2-C</td>
+                                    <td class="d-none d-md-table-cell">Tokyo</td>
+                                    <td class="d-none d-lg-table-cell">2014-06-15</td>
+                                    <td class="d-none d-lg-table-cell">Décédée</td>
+                                    <td><button class="btn btn-primary">Voir</button></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">5</th>
+                                    <td>All Might</td>
+                                    <td>Toshinori</td>
+                                    <td class="d-none d-sm-table-cell">Ancien Prof</td>
+                                    <td class="d-none d-md-table-cell">Musutafu</td>
+                                    <td class="d-none d-lg-table-cell">2015-09-01</td>
+                                    <td class="d-none d-lg-table-cell">Retraité</td>
+                                    <td><button class="btn btn-primary">Voir</button></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">6</th>
+                                    <td>Ectoplasm</td>
+                                    <td>-</td>
+                                    <td class="d-none d-sm-table-cell">2-A</td>
+                                    <td class="d-none d-md-table-cell">Musutafu</td>
+                                    <td class="d-none d-lg-table-cell">2016-01-05</td>
+                                    <td class="d-none d-lg-table-cell">Actif</td>
+                                    <td><button class="btn btn-primary">Voir</button></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">7</th>
+                                    <td>Power Loader</td>
+                                    <td>Higari</td>
+                                    <td class="d-none d-sm-table-cell">Support</td>
+                                    <td class="d-none d-md-table-cell">Musutafu</td>
+                                    <td class="d-none d-lg-table-cell">2016-07-21</td>
+                                    <td class="d-none d-lg-table-cell">Atif</td>
+                                    <td><button class="btn btn-primary">Voir</button></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">8</th>
+                                    <td>Snipe</td>
+                                    <td>-</td>
+                                    <td class="d-none d-sm-table-cell">2-A</td>
+                                    <td class="d-none d-md-table-cell">Osaka</td>
+                                    <td class="d-none d-lg-table-cell">2017-03-11</td>
+                                    <td class="d-none d-lg-table-cell">Actif</td>
+                                    <td><button class="btn btn-primary">Voir</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false"
+                        aria-controls="panelsStayOpen-collapseThree">
+                    Dossiers refusés
+                </button>
+            </h2>
+            <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                    <strong>This is the third item's accordion body.</strong> It is hidden by default, until the
+                    collapse plugin adds the appropriate classes that we use to style each element. These
+                    classes
+                    control the overall appearance, as well as the showing and hiding via CSS transitions. You
+                    can
+                    modify any of this with custom CSS or overriding our default variables. It's also worth
+                    noting
+                    that just about any HTML can go within the <code>.accordion-body</code>, though the
+                    transition
+                    does limit overflow.
+                </div>
+            </div>
+        </div>
+    </div>
+}

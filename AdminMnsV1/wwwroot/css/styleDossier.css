@@ -1,0 +1,47 @@
+/********************** DEBUT PAGE DOSSIER ************************/
+
+.btnNewDossier{
+	width: 100%;
+	padding: 20px;
+	text-align: right;
+}
+
+.btnNewDossier button img, .btnNewRetard-abs img{
+	filter: invert(100%);
+}
+.btn-outline-warning {
+	color: white; 
+	background-color: var(--bleu);
+	border-color: var(--orange)
+}
+
+.btn-outline-warning:hover {
+    background-color: white;
+    border-color: var(--orange)	; 
+    color: var(--bleu); 
+}
+
+.btnNewDossier button:hover img, .btnNewRetard-abs button:hover img{
+	filter: initial;
+}
+
+
+/* accodeon */
+.accordion{
+	margin: 20px;
+	--bs-accordion-border-color: #151A37;
+}
+
+.button:hover{
+	--button:hover: background-color: #151A37;
+}
+
+.accordion-button.collapsed:hover {
+    background-color: var(--bleu);
+    color: white; 
+    border-color: var(--orange); 
+}
+
+
+
+/********************** FIN PAGE DOSSIER ************************/

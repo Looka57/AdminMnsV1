@@ -1,0 +1,81 @@
+.containerHeader {
+    width: 90%;
+    height: auto;
+    margin: 40px auto;
+    background: rgb(21, 26, 55);
+    background: linear-gradient(180deg, rgba(21, 26, 55, 1) 36%, rgba(255, 255, 255, 1) 33%);
+    border-radius: 25px;
+
+}
+
+.containersCardDeco{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.titreContainerHeader{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0px 30px 0px 30px;
+}
+
+.containerHeader h2{
+    font-weight: 700;
+}
+
+.titreContainerHeader i{
+    cursor: pointer;
+}
+
+header .containerHeader img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 8px solid #fff;
+    margin: 30px 0px 10px 30px;
+}
+
+.coordonneProfil {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 30px 10px 30px;
+    flex-wrap: wrap;
+}
+
+.positionIcon {
+    display: flex;
+}
+
+
+/* BOX INFOS ET MANIPULATION DONNEES */
+.boxParametre {
+    width: 90%;
+    margin: 30px auto;
+}
+
+.box{
+    padding: 20px;
+    border-radius: 30px;
+}
+
+
+.btnEmail, .btnLogout {
+    color: white; 
+    background-color: var(--bleu);
+    border-color: var(--orange);
+}
+
+.btnEmail:hover, .btnLogout:hover {
+    background-color: white;
+    border-color: var(--orange);
+    color: black !important; 
+}
+
+.reseauSociaux i{
+    font-size: 40px;
+    margin: 5px;
+}
+

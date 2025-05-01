@@ -1,0 +1,31 @@
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+/* ======================GLOBAL FUNCTIONS================ */
+
+:root {
+	--bleu: #151A37;
+	--bleu-opacité: #151a3723;
+	--orange: #FF6616;
+	--orange-opacité: #ff681624;
+	--bs-accordion-border-color: #151A37;
+	--bs-btn-hover-bg: #623e3e;
+	--card-height: 300px;
+	--card-width: calc(var(--card-height) / 1.5);
+}
+
+
+a {
+	text-decoration: none;
+	color: #000000;
+}
+
+li {
+	list-style: none;
+
+
+
+}

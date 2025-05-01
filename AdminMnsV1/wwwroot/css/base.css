@@ -1,0 +1,734 @@
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+/* ======================GLOBAL FUNCTIONS================ */
+
+:root {
+	--bleu: #151A37;
+	--bleu-opacité: #151a3723;
+	--orange: #FF6616;
+	--orange-opacité: #ff681624;
+	--bs-accordion-border-color: #151A37;
+	--bs-btn-hover-bg: #623e3e;
+	
+}
+
+
+a {
+	text-decoration: none;
+	color: #000000;
+}
+
+
+/* DEBUT PAGE CONNEXION */
+.containers {
+
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	flex-wrap: nowrap;
+	min-height: 100vh;
+	width: 100%;
+	background: url(../images/bgFondConnexion.png);
+	background-size: cover;
+	background-position: center;
+
+}
+
+.main {
+	position: relative;
+	right: 40%;
+	width: 350px;
+	height: 500px;
+	background-color: #151A37;
+	overflow: hidden;
+	border-radius: 10px;
+	/* box-shadow: 5px 10px 20px #000; */
+}
+
+#chk {
+	display: none;
+}
+
+.signup {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.formConnexion label {
+	color: #fff;
+	font-size: 2.3em;
+	justify-content: center;
+	display: flex;
+	margin: 60px 60px 30px 60px;
+	font-weight: bold;
+	cursor: pointer;
+	transition: .5s ease-in-out;
+}
+
+.formConnexion input {
+	width: 60%;
+	height: 20px;
+	background: #ffffff;
+	justify-content: center;
+	display: flex;
+	margin: 20px auto;
+	padding: 15px;
+	border: none;
+	outline: none;
+	border-radius: 5px;
+}
+
+.formConnexion a {
+	color: #fff;
+	text-decoration: none;
+}
+
+.formConnexion a:hover {
+	color: #fff;
+	text-decoration: underline;
+}
+
+.btnConnexion,
+.btnInscription {
+	width: 60%;
+	height: 40px;
+	margin: 10px auto;
+	justify-content: center;
+	display: block;
+	color: #ffffff;
+	background: #51535d;
+	font-size: 1em;
+	font-weight: bold;
+	margin-top: 20px;
+	outline: none;
+	border: none;
+	border-radius: 5px;
+	transition: .2s ease-in;
+	cursor: pointer;
+}
+
+button:hover {
+	background: #6d44b8;
+}
+
+.login {
+	height: 460px;
+	background: #FF6616;
+	border-radius: 60% / 10%;
+	transform: translateY(-180px);
+	transition: .8s ease-in-out;
+}
+
+.login label {
+	color: #000000;
+	transform: scale(.6);
+}
+
+#chk:checked~.login {
+	transform: translateY(-500px);
+}
+
+#chk:checked~.login label {
+	transform: scale(1);
+}
+
+#chk:checked~.signup label {
+	transform: scale(.6);
+}
+
+/************************ FIN PAGE CONNEXION *********************/
+
+/********************** DEBUT PAGE TABLEAU ************************/
+
+/* =========================NAVIGATION=============== */
+.containerPrincipal {
+
+	position: relative;
+	width: 100%;
+}
+
+.navigation a {
+	color: white;
+}
+
+.navigation {
+	position: fixed;
+	width: 300px;
+	height: 100%;
+	background-color: var(--bleu);
+	border-left: 10px solid var(--bleu);
+	transition: 0.5s;
+	overflow: hidden;
+}
+
+.navigation.active {
+	width: 100px;
+}
+
+.navigation ul {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+}
+
+.navigation ul li {
+	position: relative;
+	width: 100%;
+	list-style: none;
+	border-top-left-radius: 30px;
+	border-bottom-left-radius: 30px;
+}
+
+.navigation ul li:hover,
+.navigation ul li.hovered {
+	background-color: rgb(252, 252, 252);
+}
+
+.navigation ul li:nth-child(1) {
+	margin-bottom: 40px;
+	pointer-events: none;
+}
+
+.navigation ul li a {
+	position: relative;
+	display: block;
+	width: 100%;
+	display: flex;
+	text-decoration: none;
+}
+
+
+.navigation ul li:hover a,
+.navigation ul li.hovered a {
+	color: var(--bleu);
+}
+
+.navigation ul li a .icon {
+	position: relative;
+	display: block;
+	min-width: 60px;
+	height: 60px;
+	line-height: 50px;
+	text-align: center;
+}
+
+.navigation ul li a .title {
+	position: relative;
+	display: block;
+	padding: 0px 10px;
+	height: 60px;
+	line-height: 60px;
+	text-align: center;
+	white-space: nowrap;
+}
+
+.navigation ul li a .icon,
+.iconHovered {
+	filter: invert(100%);
+}
+
+
+/* ---------------curve------------------------ */
+.navigation ul li:hover a::before,
+.navigation ul li.hovered a::before {
+	content: "";
+	position: absolute;
+	top: -50px;
+	right: 0;
+	width: 50px;
+	height: 50px;
+	background-color: transparent;
+	border-radius: 50%;
+	box-shadow: 35px 35px 0px 10px rgb(255, 255, 255);
+	pointer-events: none;
+	z-index: -1;
+}
+
+
+.navigation ul li:hover a::after,
+.navigation ul li.hovered a::after {
+	content: "";
+	position: absolute;
+	bottom: -50px;
+	/* Ajuste pour ne pas remonter trop */
+	right: 0;
+	width: 50px;
+	height: 50px;
+	background-color: transparent;
+	border-radius: 50%;
+	box-shadow: 35px -30px 0px 10px rgba(255, 255, 255);
+	pointer-events: none;
+	z-index: -1;
+	/* Met l'effet derrière */
+}
+
+
+/* <!-- =====================MAIN=============================== --> */
+
+.mainTableau {
+	position: absolute;
+	width: calc(100% - 300px);
+	left: 300px;
+	min-height: 100vh;
+	transition: .5s;
+	background-color: white;
+}
+
+.mainTableau.active {
+	width: calc(100% - 110px);
+	left: 110px;
+
+}
+
+/* <!-- =====================TOPBAR=============================== --> */
+
+.topBar {
+	width: 100%;
+	height: 60px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0, 10px;
+}
+
+.toggle {
+	position: relative;
+	width: 60px;
+	height: 60px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 2.5rem;
+	cursor: pointer;
+}
+
+.search {
+	position: relative;
+	width: 400px;
+	margin: 0 10px;
+}
+
+.search label input {
+	position: relative;
+	width: 100%;
+	border-radius: 40px;
+	padding: 5px 10px 0px 35px;
+	font-size: 18px;
+	outline: none;
+	border: 1px solid black;
+}
+
+.search label img {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	font-size: 1.2rem;
+}
+
+.user {
+	position: relative;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+.user img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* <!-- =====================CARDS=============================== --> */
+
+.cardBox {
+	position: relative;
+	width: 100%;
+	padding: 20px;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 30px;
+}
+
+.cardBox .card {
+	position: relative;
+	padding: 20px;
+	background-color: var(--bleu-opacité);
+	border-radius: 20px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	cursor: pointer;
+	box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+	overflow: hidden;
+}
+
+.cardBox .card:nth-child(even) {
+	background-color: var(--orange-opacité);
+}
+
+
+
+.cardBox .card .cardNumber {
+	position: relative;
+	font-weight: 400;
+	font-size: 2.5rem;
+}
+
+.cardBox .card .cardName {
+	position: relative;
+	font-size: 1.5rem;
+
+}
+
+.card .iconCard {
+	position: relative;
+	display: flex;
+	align-items: center;
+
+}
+
+.cardBox .card::before {
+	content: "";
+	position: absolute;
+	top: -20px;
+	right: -20px;
+	/* Déplace le rond en haut à droite */
+	width: 60px;
+	height: 60px;
+	background-color: var(--orange);
+	border-radius: 50%;
+	transition: all 0.5s ease-in-out;
+}
+
+.cardBox .card:hover::before {
+	width: 300%;
+	height: 300%;
+	top: 50%;
+	right: 50%;
+	transform: translate(50%, -50%);
+	border-radius: 0;
+	background-color: var(--orange);
+}
+
+.cardBox .card:nth-child(even)::before {
+	background-color: var(--bleu);
+}
+
+
+.cardBox .card:hover {
+	color: white;
+}
+
+.cardBox .card:hover .iconCard {
+	filter: invert(100%);
+}
+
+/* <!-- =====================GRAPHIQUES STAGIAIRE + ABS RETARDS=============================== --> */
+
+.graphs,
+.graphTableDossiers {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+	margin: 50px 20px 50px 20px;
+}
+
+.graphLateAbs {
+	width: 100%;
+	padding: 20px;
+	margin-bottom: 20px;
+}
+
+.chartContainerAbs {
+	width: 100%;
+	height: 100%;
+	margin-bottom: 20px;
+}
+
+.graphStagiaires {
+	width: 100%;
+	position: relative;
+	top: 0;
+	padding: 20px;
+}
+
+.chartContainerStagiaire {
+	width: 100%;
+	height: 300px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* <!-- =====================GRAPHIQUES + TABLEAU DOSSIERS =============================== --> */
+.table-custom {
+	background-color: #151A37 !important;
+	/* Bleu foncé */
+	color: white !important;
+	/* Texte en blanc */
+}
+
+.table-custom th,
+.table-custom td {
+	border-color: #FF6616;
+	/* Bordures en orange */
+}
+
+.table-custom thead tr th {
+
+	background-color: #151A37 !important;
+	/* Bleu foncé */
+	color: white !important;
+
+}
+/************************ FIN PAGE TABLEAU *********************/
+
+
+/********************** DEBUT PAGE STAGIAIRE + INTERVENANT ************************/
+
+.tableStudent, .tableProfesseurs{
+	width: 90%;
+	margin: auto;
+}
+
+/********************** FIN PAGE STAGIAIRE + INTERVENANT ************************/
+
+
+/********************** DEBUT PAGE DOSSIER ************************/
+
+.btnNewDossier{
+	width: 100%;
+	padding: 20px;
+	text-align: right;
+}
+
+.btnNewDossier button img, .btnNewRetard-abs img{
+	filter: invert(100%);
+}
+.btn-outline-warning {
+	color: white; 
+	background-color: var(--bleu);
+	border-color: var(--orange)
+}
+
+.btn-outline-warning:hover {
+    background-color: white;
+    border-color: var(--orange)	; 
+    color: var(--bleu); 
+}
+
+.btnNewDossier button:hover img, .btnNewRetard-abs button:hover img{
+	filter: initial;
+}
+
+
+/* accodeon */
+.accordion{
+	margin: 20px;
+	--bs-accordion-border-color: #151A37;
+}
+
+.button:hover{
+	--button:hover: background-color: #151A37;
+}
+
+.accordion-button.collapsed:hover {
+    background-color: var(--bleu);
+    color: white; 
+    border-color: var(--orange); 
+}
+
+/********************** FIN PAGE DOSSIER ************************/
+
+/********************** DEBUT PAGE CLASSE ************************/
+
+.tableauClass {
+	width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.table-container {
+	display: none;
+	flex-grow: 1; /* Permet au tableau de prendre l'espace disponible */
+    width: 100%; /* Assurez-vous que la largeur est définie ici */
+}
+
+
+.tableauClass{
+	width: 100%;
+	margin: 20px;
+}
+/********************** FIN PAGE CLASSE ************************/
+
+
+/********************** DEBUT PAGE DOSSIER ETUDIANT ************************/
+
+.cardStudent img{
+	width: 100px;
+	height: 100px;
+	} 
+
+	.student-info, .student-info-supp{
+		text-align: center;
+	}
+
+ .student-info-supp button{
+	background-color: var(--orange);
+	border: 1px solid var(--bleu);
+ }
+
+		
+	
+	.student-info-enCours{
+		display: flex;
+		align-items: center;
+		justify-content: space-around;
+	}
+
+	.studentInfos{
+		display: flex;
+		flex-direction: column;
+	}
+
+	.boxNotif{
+		background-color: var(--orange);
+	}
+
+	.progress-bar{
+		background-color: var(--bleu);
+	}
+
+/* INFO DOSSIER */
+
+
+
+
+/********************** FIN PAGE DOSSIER ETUDIANT ************************/
+
+/********************** DEBUT PAGE RETARD ABS ************************/
+
+.separated{
+	margin-top: 20px;
+}
+.enteteOnglet {
+	margin: 20px 0px;
+	display: flex;
+	justify-content: space-between;
+}
+
+.ongletRetard {
+	background-color: var(--bleu-opacité);
+}
+
+#home-tab {
+	background-color: var(--bleu-opacité);
+	font-weight: 600;
+	width: 200px;
+}
+
+#profile-tab {
+	background-color: var(--orange-opacité);
+	font-weight: 600;
+	width: 200px;
+}
+
+
+/* <!-- =====================FOOTER =============================== --> */
+
+
+
+
+
+.footer{
+	height: 80px;
+}
+
+
+
+
+
+
+
+
+
+
+/* <!-- =====================MEDIA QUERY=============================== --> */
+
+@media (max-width: 992px) {
+	.navigation {
+		left: -300px;
+	}
+
+	.navigation.active {
+		width: 300px;
+		left: 0;
+	}
+
+	.mainTableau {
+		width: 100%;
+		left: 0;
+	}
+
+	.mainTableau.active {
+		left: -15px;
+	}
+}
+
+/* TAILLE PORTABLE */
+@media (max-width: 480px) {
+	.user {
+		min-width: 40px;
+	}
+
+	.navigation {
+		width: 100%;
+		left: -100%;
+		z-index: 1000;
+	}
+
+	.navigation.active {
+		width: 100%;
+		left: 0;
+	}
+
+	.toggle{
+		z-index: 1001;
+	}
+
+	.mainTableau.active .toggle img{
+		filter: invert(100%);
+	}
+
+	.mainTableau.active .toggle{
+		color: white;
+		position: fixed;
+		right: 0;
+		left: initial;
+	}
+
+	.topBar {
+		margin: 0px;
+	}
+}
+
+
+
+
+@media (max-width: 768px) {
+	.main {
+		position: initial;
+	}
+}
