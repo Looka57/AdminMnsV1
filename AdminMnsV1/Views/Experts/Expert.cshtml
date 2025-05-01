@@ -1,192 +1,192 @@
 ﻿@{
 	ViewData["Title"] = "Expert";
 
-
-    <!--======================= TABLEAU PROF ======================-->
-
-    <div class="tableProfesseurs">
-        <h1 class="mt-5">Intervenants</h1>
-        <div class="btnNewIntervenant">
-            <a href="formulaireIntervenant.html" class="btn btn-outline-warning ">
-                <img width="20" height="20" src="https://img.icons8.com/ios/50/plus--v1.png" alt="plus icon"
-                     class="me-2" />
-                Nouveau Intervenant
-            </a>
-        </div>
-        <table class="table align-middle table-striped table-hover table-custom bg-secondary table-responsive">
-            <thead>
-                <tr class="">
-                    <th scope="col">#</th>
-                    <th scope="col">Nom</th>
-                    <th scope="col">Prénom</th>
-                    <th scope="col">Matière</th>
-                    <th scope="col" class="d-none d-sm-table-cell">Ville</th>
-                    <th scope="col" class="d-none d-sm-table-cell">Date d'embauche</th>
-                    <th scope="col" class="d-none d-md-table-cell">Statut</th>
-                    <th scope="col" colspan="2">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Aizawa</td>
-                    <td>Shota</td>
-                    <td>Combat</td>
-                    <td class="d-none d-sm-table-cell">Musutafu</td>
-                    <td class="d-none d-sm-table-cell">2015-03-15</td>
-                    <td class="d-none d-md-table-cell">Actif</td>
-                    <td>
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#modalStagiaire">
-                            <img width="20" height="20"
-                                 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-                                 alt="visible" />
-                        </a>
-                    </td>
-                    <td>
-                        <a href="">
-                            <img width="20" height="20"
-                                 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Yamada</td>
-                    <td>Hizashi</td>
-                    <td>Anglais</td>
-                    <td class="d-none d-sm-table-cell">Tokyo</td>
-                    <td class="d-none d-sm-table-cell">2014-06-22</td>
-                    <td class="d-none d-md-table-cell">Actif</td>
-                    <td>
-                        <a href="">
-                            <img width="20" height="20"
-                                 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-                                 alt="visible" />
-                        </a>
-                    </td>
-                    <td>
-                        <a href="">
-                            <img width="20" height="20"
-                                 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td>Nezu</td>
-                    <td>Directeur</td>
-                    <td>Gestion</td>
-                    <td class="d-none d-sm-table-cell">Musutafu</td>
-                    <td class="d-none d-sm-table-cell">2010-01-10</td>
-                    <td class="d-none d-md-table-cell">Actif</td>
-                    <td>
-                        <a href="">
-                            <img width="20" height="20"
-                                 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-                                 alt="visible" />
-                        </a>
-                    </td>
-                    <td>
-                        <a href="">
-                            <img width="20" height="20"
-                                 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-                        </a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!-- PAGINATION -->
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-
-
-    <!-- Modal -->
-    <div class="modal fade" id="modalStagiaire" tabindex="-1" aria-labelledby="modalStagiaireLabel"
-         aria-hidden="true">
-        <div class="modal-dialog">
-            <form method="post" action="/Stagiaire/Modifier">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalStagiaireLabel">Modifier l'intervenant</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="Nom" class="form-label">Nom</label>
-                            <input type="text" class="form-control" id="Nom" name="Nom" value="Aizawa">
-                        </div>
-                        <div class="mb-3">
-                            <label for="Prenom" class="form-label">Prénom</label>
-                            <input type="text" class="form-control" id="Prenom" name="Prenom" value="Shota">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="DateNaissance" class="form-label">Date de naissance</label>
-                            <input type="date" class="form-control" id="DateNaissance" name="DateNaissance"
-                                   value="2008-05-14">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="Adresse" class="form-label">Adresse</label>
-                            <input type="text" class="form-control" id="Adresse" name="Adresse"
-                                   value="15 rue quelque chose">
-                        </div>
-                        <div class="mb-3">
-                            <label for="Ville" class="form-label">Ville</label>
-                            <input type="text" class="form-control" id="Ville" name="Ville" value="Musutafu">
-                        </div>
-                        <div class="mb-3">
-                            <label for="Mail" class="form-label">Mail</label>
-                            <input type="email" class="form-control" id="Mail" name="Mail"
-                                   value="Bob@gogole.com">
-                        </div>
-                        <div class="mb-3">
-                            <label for="Telephone" class="form-label">Téléphone</label>
-                            <input type="tel" class="form-control" id="Telephone" name="Telephone"
-                                   value="06.06.060.06">
-                        </div>
-
-
-                        <div class="mb-3">
-                            <label for="Spécialité" class="form-label">Spécialité</label>
-                            <select class="form-select" id="Spécialité" name="Spécialité">
-                                <option value="Candidat" selected>CDA</option>
-                                <option value="Stagiaire">C#</option>
-                                <option value="Stagiaire">Java</option>
-                                <option value="Stagiaire">Dev</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="NumSecu" class="form-label">N° Sécurité Sociale</label>
-                            <input type="text" class="form-control" id="NumSecu" name="NumSecu"
-                                   value="1234567890">
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Enregistrer</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
 }
+<!--======================= TABLEAU PROF ======================-->
+
+<div class="tableProfesseurs">
+	<h1 class="mt-5">Intervenants</h1>
+	<div class="btnNewIntervenant">
+		<a href="@Url.Action("FormulaireExpert","Formulaires")" class="btn btn-outline-warning ">
+			<img width="20" height="20" src="https://img.icons8.com/ios/50/plus--v1.png" alt="plus icon"
+				 class="me-2" />
+			Nouveau Intervenant
+		</a>
+	</div>
+	<table class="table align-middle table-striped table-hover table-custom bg-secondary table-responsive">
+		<thead>
+			<tr class="">
+				<th scope="col">#</th>
+				<th scope="col">Nom</th>
+				<th scope="col">Prénom</th>
+				<th scope="col">Matière</th>
+				<th scope="col" class="d-none d-sm-table-cell">Ville</th>
+				<th scope="col" class="d-none d-sm-table-cell">Date d'embauche</th>
+				<th scope="col" class="d-none d-md-table-cell">Statut</th>
+				<th scope="col" colspan="2">Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th scope="row">1</th>
+				<td>Aizawa</td>
+				<td>Shota</td>
+				<td>Combat</td>
+				<td class="d-none d-sm-table-cell">Musutafu</td>
+				<td class="d-none d-sm-table-cell">2015-03-15</td>
+				<td class="d-none d-md-table-cell">Actif</td>
+				<td>
+					<a href="#" data-bs-toggle="modal" data-bs-target="#modalStagiaire">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+							 alt="visible" />
+					</a>
+				</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">2</th>
+				<td>Yamada</td>
+				<td>Hizashi</td>
+				<td>Anglais</td>
+				<td class="d-none d-sm-table-cell">Tokyo</td>
+				<td class="d-none d-sm-table-cell">2014-06-22</td>
+				<td class="d-none d-md-table-cell">Actif</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+							 alt="visible" />
+					</a>
+				</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">3</th>
+				<td>Nezu</td>
+				<td>Directeur</td>
+				<td>Gestion</td>
+				<td class="d-none d-sm-table-cell">Musutafu</td>
+				<td class="d-none d-sm-table-cell">2010-01-10</td>
+				<td class="d-none d-md-table-cell">Actif</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+							 alt="visible" />
+					</a>
+				</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+					</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<!-- PAGINATION -->
+	<nav aria-label="Page navigation example">
+		<ul class="pagination">
+			<li class="page-item">
+				<a class="page-link" href="#" aria-label="Previous">
+					<span aria-hidden="true">&laquo;</span>
+				</a>
+			</li>
+			<li class="page-item"><a class="page-link" href="#">1</a></li>
+			<li class="page-item"><a class="page-link" href="#">2</a></li>
+			<li class="page-item"><a class="page-link" href="#">3</a></li>
+			<li class="page-item">
+				<a class="page-link" href="#" aria-label="Next">
+					<span aria-hidden="true">&raquo;</span>
+				</a>
+			</li>
+		</ul>
+	</nav>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalStagiaire" tabindex="-1" aria-labelledby="modalStagiaireLabel"
+	 aria-hidden="true">
+	<div class="modal-dialog">
+		<form method="post" action="/Stagiaire/Modifier">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalStagiaireLabel">Modifier l'intervenant</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<label for="Nom" class="form-label">Nom</label>
+						<input type="text" class="form-control" id="Nom" name="Nom" value="Aizawa">
+					</div>
+					<div class="mb-3">
+						<label for="Prenom" class="form-label">Prénom</label>
+						<input type="text" class="form-control" id="Prenom" name="Prenom" value="Shota">
+					</div>
+
+					<div class="mb-3">
+						<label for="DateNaissance" class="form-label">Date de naissance</label>
+						<input type="date" class="form-control" id="DateNaissance" name="DateNaissance"
+							   value="2008-05-14">
+					</div>
+
+					<div class="mb-3">
+						<label for="Adresse" class="form-label">Adresse</label>
+						<input type="text" class="form-control" id="Adresse" name="Adresse"
+							   value="15 rue quelque chose">
+					</div>
+					<div class="mb-3">
+						<label for="Ville" class="form-label">Ville</label>
+						<input type="text" class="form-control" id="Ville" name="Ville" value="Musutafu">
+					</div>
+					<div class="mb-3">
+						<label for="Mail" class="form-label">Mail</label>
+						<input type="email" class="form-control" id="Mail" name="Mail"
+							   value="Bob@gogole.com">
+					</div>
+					<div class="mb-3">
+						<label for="Telephone" class="form-label">Téléphone</label>
+						<input type="tel" class="form-control" id="Telephone" name="Telephone"
+							   value="06.06.060.06">
+					</div>
+
+
+					<div class="mb-3">
+						<label for="Spécialité" class="form-label">Spécialité</label>
+						<select class="form-select" id="Spécialité" name="Spécialité">
+							<option value="Candidat" selected>CDA</option>
+							<option value="Stagiaire">C#</option>
+							<option value="Stagiaire">Java</option>
+							<option value="Stagiaire">Dev</option>
+						</select>
+					</div>
+					<div class="mb-3">
+						<label for="NumSecu" class="form-label">N° Sécurité Sociale</label>
+						<input type="text" class="form-control" id="NumSecu" name="NumSecu"
+							   value="1234567890">
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">Enregistrer</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
