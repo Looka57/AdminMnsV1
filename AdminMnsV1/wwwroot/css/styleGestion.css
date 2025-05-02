@@ -24,6 +24,10 @@
     align-items: center;
 }
 
-.boxGestionRoleStudent button, .boxGestionRoleIntervenant button, .boxGestionRoleAdmin button{
+.boxGestionRoleStudent button, .boxGestionRoleIntervenant button, .boxGestionRoleAdmin button, .boxGestionRoleCandidat button {
     margin: 10px;
+    background-color: var(--bleu);
+    color: white;
 }
+
+

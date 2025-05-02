@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "GestionStudent";
+
+}
+
+
+<h1 class="text-center m-5">Gérer les profils Stagiaires</h1>
+<a class="mx-5 " href="profil.html">⬅ Retour a la page profil</a>
+
+<div class="row m-0">
+    <!-- Candidats -->
+    <div class="col-lg-6 col-md-6 col-12">
+        <div class="bg-light border p-3 box">
+            <h5 class="text-center m-2">Candidats</h5>
+            <div class="boxGestionRoleCandidat mx-auto">
+                <a href="@Url.Action("Gestion","Gestions")"><button class="btn btn-outline-info w-75 mb-2 mx-auto">Gestion des rôles</button></a>
+                <a href="@Url.Action("CreateCandidature","CreateCandidatures")"><button class="btn btn-outline-info w-75 mb-2">Creation d'un dossier</button></a>
+                <a href="@Url.Action("Formulaire","Formulaires")"><button class="btn btn-outline-info w-75">Ajout d'un nouveau candidat</button></a>
+                <a href="@Url.Action("Formulaire","Formulaires")"><button class="btn btn-outline-info w-75">Modifier un candidat</button></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stagiaires -->
+    <div class="col-lg-6 col-md-6 col-12">
+        <div class="bg-light border p-3 box">
+            <h5 class="text-center m-2">Stagiaires</h5>
+            <div class="boxGestionRoleStudent mx-auto">
+                <a href="@Url.Action("Gestion","Gestions")"><button class="btn btn-outline-info w-75 mb-2 mx-auto">Gestion des rôles</button></a>
+                <a href="@Url.Action("CreateCandidature","CreateCandidatures")"><button class="btn btn-outline-info w-75 mb-2">Creation d'un dossier</button></a>
+                <a href="@Url.Action("Formulaire","Formulaires")"><button class="btn btn-outline-info w-75">Ajout d'un nouveau stagiaire</button></a>
+                <a href="@Url.Action("Formulaire","Formulaires")"><button class="btn btn-outline-info w-75">Modifier un stagiaire</button></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+
+    </div>
