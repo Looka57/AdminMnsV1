@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "Modification";
+
+}
+
+
+<!-- =====================FORMULAIRE=============================== -->
+<!-- =====================  MODIFICATION DE L'EMAIL=============================== -->
+<div class="container containerModifyEmail ">
+    <div class="enteteForm"></div>
+    <div class="formulaireModifyEmail">
+        <form method="post" action="#">
+            <h2 class="text-center mb-5">Modification de l'email</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="mailActuel" class="form-label">Email Actuel</label>
+                        <input type="email" class="form-control" id="mailActuel"
+                               aria-describedby="emailHelp">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="mailNew" class="form-label">Nouveau Email</label>
+                        <input type="email" class="form-control" id="mailNew" aria-describedby="emailHelp">
+                    </div>
+                </div>
+            </div>
+            <div class="btnModifyEmail">
+                <button type="button" class="btn btn-outline-warning">Confirmer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- =====================  MODIFICATION DU MOT DE PASSE=============================== -->
+<div class="container containerModifyPassword mt-3">
+    <div class="enteteForm"></div>
+    <div class="formulaireModifyPassword">
+        <form method="post" action="#">
+            <h2 class="mb-5 text-center">Modification du mot de passe</h2>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="mailActuel" class="form-label">Mot de Passe Actuel</label>
+                        <input type="email" class="form-control" id="mailActuel"
+                               aria-describedby="emailHelp" placeholder="Taper votre mot de passe actuel">
+                    </div>
+                    <div class="mb-3">
+                        <label for="mailActuel" class="form-label">Nouveau Mot de Passe</label>
+                        <input type="email" class="form-control" id="mailActuel"
+                               aria-describedby="emailHelp">
+                    </div>
+                    <div class="mb-3">
+                        <label for="mailNew" class="form-label">
+                            Confirmation du nouveau Mot de Passe
+                        </label>
+                        <input type="email" class="form-control" id="mailNew" aria-describedby="emailHelp">
+                    </div>
+                </div>
+            </div>
+
+            <div class="btnLoadStagiaire">
+                <button type="button" class="btn btn-outline-warning">Confirmer</button>
+            </div>
+        </form>
+    </div>
+</div>
+     
+
+
+
+@{
+}

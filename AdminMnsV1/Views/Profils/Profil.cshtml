@@ -7,7 +7,7 @@
 
 <header>
 	<div class=" containerHeader border">
-		<img src="~/images/gohan.jpg" alt="photo de profil">
+		<img src="@Url.Content("~/images/gohan.jpg")" alt="photo de profil">
 		<div class="titreContainerHeader">
 			<h2>Bob Alfred</h2>
 			<div class="dropdown">
@@ -97,20 +97,19 @@
 	<div class="box bg-light border">
 		<div class="boxParametreProfil">
 			<h3 class="text-center mb-4">Paramètres profils</h3>
-			<a href="modification.html">
+			<a href="@Url.Action("Modification","Modifications")">
 				<button class="btnEmail btn btn-outline-info w-100">
 					Modifier
 					l’email et le mot de passe
 				</button>
 			</a>
 			<h6 class="text-center mt-4">Réseaux sociaux</h6>
-			<div class="reseauSociaux d-flex justify-content-center">
-				<a href="#">
-					<i class="bi bi-facebook"></i>
-					<a href="#">
-						<i class="bi bi-instagram"></i>
-						<a href="#"><i class="bi bi-linkedin"></i>
+			<div class="reseauSociaux d-flex justify-content-center gap-3">
+				<a href="#"><i class="bi bi-facebook"></i></a>
+				<a href="#"><i class="bi bi-instagram"></i></a>
+				<a href="#"><i class="bi bi-linkedin"></i></a>
 			</div>
+
 			<p class="text-center mt-4"><a href="">Paramètres de confidentialité</a></p>
 			<a href=""><button class="btnLogout btn btn-outline-info w-100">Déconnexion</button></a>
 		</div>
