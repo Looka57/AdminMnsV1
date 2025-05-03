@@ -1,6 +1,6 @@
 ﻿// 7. Graphique des dossiers par classes
 const fileCanvas = document.querySelector('#fileClass');
-if (fileCanvas && typeof Chart !== 'undefined') {
+
     const labels = ['cda', 'dev', 'dev2', 'Réseau', 'java', 'C#', 'ran1', 'ran4'];
 
     const fileChart = new Chart(fileCanvas, {
@@ -36,4 +36,3 @@ if (fileCanvas && typeof Chart !== 'undefined') {
             },
         },
     });
-}

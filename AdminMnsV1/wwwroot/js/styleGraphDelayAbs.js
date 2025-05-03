@@ -1,7 +1,7 @@
 ﻿
 // 4. Graphique des absences et retards
 const barCanvas = document.querySelector('#absencesChart');
-if (barCanvas && typeof Chart !== 'undefined') {
+
     const barChart = new Chart(barCanvas, {
         type: 'bar',
         data: {
@@ -34,4 +34,3 @@ if (barCanvas && typeof Chart !== 'undefined') {
             },
         },
     });
-}

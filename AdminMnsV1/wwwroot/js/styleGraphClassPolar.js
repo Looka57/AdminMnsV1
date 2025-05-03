@@ -2,7 +2,6 @@
 const polarCanvas = document.querySelector('#polarChart');
 const polarCanvasLate = document.querySelector('#polarChartLate');
 
-if (polarCanvas && typeof Chart !== 'undefined') {
     const polarChart = new Chart(polarCanvas, {
         type: 'polarArea',
         data: {
@@ -33,9 +32,8 @@ if (polarCanvas && typeof Chart !== 'undefined') {
             },
         },
     });
-}
 
-if (polarCanvasLate && typeof Chart !== 'undefined') {
+
     const polarChartLateInstance = new Chart(polarCanvasLate, {
         type: 'polarArea',
         data: {
@@ -66,4 +64,4 @@ if (polarCanvasLate && typeof Chart !== 'undefined') {
             },
         },
     });
-}
+
