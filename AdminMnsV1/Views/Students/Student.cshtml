@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<AdminMnsV1.Models.Student>
+
+@{
 	ViewData["Title"] = "Student";
 }
 
@@ -27,236 +29,34 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr>
-				<th scope="row">1</th>
-				<td>Midoriya</td>
-				<td>Izuku</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Musutafu</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Candidat</td>
-				<td>
-					<a href="#" data-bs-toggle="modal" data-bs-target="#modalStagiaire">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row">2</th>
-				<td>Bakugo</td>
-				<td>Katsuki</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Musutafu</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Stagiaire</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row">3</th>
-				<td>Todoroki</td>
-				<td>Shoto</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Musutafu</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Stagiaire</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row">4</th>
-				<td>Uraraka</td>
-				<td>Ochaco</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Kutsh</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Stagiaire</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
 
-			</tr>
-			<tr>
-				<th scope="row">5</th>
-				<td>Iida</td>
-				<td>Tenya</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Musutafu</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Candidat</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
-
-			</tr>
-			<tr>
-				<th scope="row">6</th>
-				<td>Tokoyami</td>
-				<td>Fumikage</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Musutafu</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Stagiaire</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
-
-			</tr>
-			<tr>
-				<th scope="row">7</th>
-				<td>Asui</td>
-				<td>Tsuyu</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Musutafu</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Candidat</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
-
-			</tr>
-			<tr>
-				<th scope="row">8</th>
-				<td>Kirishima</td>
-				<td>Eijiro</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Osaka</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Candidat</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
-
-			</tr>
-			<tr>
-				<th scope="row">9</th>
-				<td>Yaoyorozu</td>
-				<td>Momo</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Tokyo</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Stagiaire</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
-
-			</tr>
-			<tr>
-				<th scope="row">10</th>
-				<td>Kaminari</td>
-				<td>Denki</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Musutafu</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Candidat</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
-			</tr>
-		</tbody>
+			@foreach (var item in Model)
+			{
+				<tr>
+					<th scope="row">@item.UserId</th>
+					<td>@item.LastName</td>
+					<td>@item.FirstName</td>
+					<td>ville</td>
+					<td>@item.City</td>
+					<td>@item.CreationDate</td>
+					<td>@item.Role</td>
+					<td>
+						<a href="#" data-bs-toggle="modal" data-bs-target="#modalStagiaire">
+							<img width="20" height="20"
+								 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+								 alt="visible" />
+						</a>
+					</td>
+					<td>
+						<a href="">
+							<img width="20" height="20"
+								 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+						</a>
+					</td>
+				</tr>
+			}
+			</tbody>
 	</table>
-
-
 
 
 	<!-- PAGINATION -->
@@ -285,7 +85,7 @@
 		 aria-hidden="true">
 		<div class="modal-dialog">
 			<form method="post" action="/Stagiaire/Modifier">
-				<!-- Adapte l'action à ton contrôleur -->
+				
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title" id="modalStagiaireLabel">Modifier le Stagiaire</h5>
@@ -293,7 +93,7 @@
 								aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-						<!-- Exemple d'un champ : Nom -->
+						
 						<div class="mb-3">
 							<label for="Nom" class="form-label">Nom</label>
 							<input type="text" class="form-control" id="Nom" name="Nom" value="Midoriya">
