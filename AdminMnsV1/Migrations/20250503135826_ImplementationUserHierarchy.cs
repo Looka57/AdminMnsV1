@@ -1,5 +1,4 @@
-﻿
-using System.Net
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -28,26 +27,18 @@ namespace AdminMnsV1.Migrations
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-<<<<<<< HEAD
 
-                    //Le Discriminator est une colonne spéciale qu'Entity Framework Core utilise dans le cadre de la stratégie d'héritage Table Per Hierarchy (TPH).
-                    //Discriminator est une colonne dans votre table de base(dans notre cas, la table Users) qui indique le type.NET(la classe C#) auquel correspond chaque enregistrement de cette table.
+                    // Discriminator est une colonne spéciale utilisée pour l'héritage dans EF Core (Table Per Hierarchy).
                     Discriminator = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: false),
 
-                    //Table Admin
+                    // Table Admin
                     Service = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Administrator_Role = table.Column<string>(type: "nvarchar(max)", nullable: true),
 
-                    //Table Expert
+                    // Table Expert
                     Speciality = table.Column<string>(type: "nvarchar(max)", nullable: true),
 
-                    //Table Student
-=======
-                    Discriminator = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: false),
-                    Service = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Administrator_Role = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Speciality = table.Column<string>(type: "nvarchar(max)", nullable: true),
->>>>>>> BDD
+                    // Table Student
                     Nationality = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SocialSecurityNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FranceTravailNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
