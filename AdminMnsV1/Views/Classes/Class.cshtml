@@ -1,233 +1,305 @@
-﻿@{
+﻿@model IEnumerable<AdminMnsV1.Models.CardModel>
+@{
 	ViewData["Title"] = "Class";
-
-
-	<!-- =====================CARDS CLASS=============================== -->
-	// Cette ligne déclare et initialise une variable nommée cards comme une nouvelle liste d'objets de type CardModel.
-	// La notation <CardModel> spécifie que cette liste ne peut contenir que des instances de la classe CardModel.
-	var cards = new List<CardModel>
-		{
-		new AdminMnsV1.Models.CardModel { Url = "classe.html", Number = "30", Title = "CDA", IconUrl = "https://img.icons8.com/external-tal-revivo-bold-tal-revivo/48/external-cda-is-a-file-extension-for-a-cd-audio-shortcut-file-format-audio-bold-tal-revivo.png", AltText = "external-cda-is-a-file-extension-for-a-cd-audio-shortcut-file-format-audio-bold-tal-revivo" },
-		new AdminMnsV1.Models.CardModel { Url = "dossier.html", Number = "13", Title = "C#", IconUrl = "https://img.icons8.com/ios-filled/50/c-sharp-logo.png", AltText = "c-sharp-logo" },
-		new AdminMnsV1.Models.CardModel { Url = "stagiaire.html", Number = "17", Title = "Java", IconUrl = "https://img.icons8.com/ios-filled/50/java-coffee-cup-logo--v1.png", AltText = "java-coffee-cup-logo--v1" },
-		new AdminMnsV1.Models.CardModel { Url = "#", Number = "15", Title = "DevWeb 1", IconUrl = "https://img.icons8.com/ios-filled/50/web.png", AltText = "web" },
-		new AdminMnsV1.Models.CardModel { Url = "#", Number = "15", Title = "DevWeb 2", IconUrl = "https://img.icons8.com/ios-filled/50/web.png", AltText = "web" },
-		new AdminMnsV1.Models.CardModel { Url = "#", Number = "25", Title = "Réseau", IconUrl = "https://img.icons8.com/ios-filled/50/thin-client.png", AltText = "thin-client" },
-		new AdminMnsV1.Models.CardModel { Url = "#", Number = "15", Title = "RAN 1", IconUrl = "https://img.icons8.com/ios/50/laptop-coding.png", AltText = "laptop-coding" },
-		new AdminMnsV1.Models.CardModel { Url = "#", Number = "25", Title = "RAN 2", IconUrl = "https://img.icons8.com/ios/50/laptop-coding.png", AltText = "laptop-coding" },
-		new AdminMnsV1.Models.CardModel { Url = "#", Number = "15", Title = "RAN 3", IconUrl = "https://img.icons8.com/ios/50/laptop-coding.png", AltText = "laptop-coding" },
-		new AdminMnsV1.Models.CardModel { Url = "#", Number = "25", Title = "RAN 4", IconUrl = "https://img.icons8.com/ios/50/laptop-coding.png", AltText = "laptop-coding" }
-	};
-	// Pour chaque ensemble de données de carte, une nouvelle instance de la classe CardModel est créée à l'aide du mot-clé new.
 }
 
-
-<h1 class="mx-4 mt-5">Bonjour Bob !</h1>
-
-
 <div class="cardBox">
-	@foreach (var card in cards)
-	// Elle itère à travers chaque élément de la collection cards
-	//Pour chaque élément de la liste, l'élément actuel est accessible via la variable card.
+	@for (var i = 0; i < Model.Count(); i++)
 	{
+		var card = Model.ElementAt(i);
+		<div class="cards" onclick="openTab(@i)" border-0">
+			<div>
+				<div class="cardNumber">@card.Number</div>
+				<div class="cardName">@card.Title</div>
+			</div>
+			<div class="iconCard">
+				<img width="60" height="60" src="@card.IconUrl" alt="@card.AltText" />
+			</div>
+		</div>
+	}
+</div>
 
-		@Html.Partial("Components/_Card", card)
-		// C'est le chemin d'accès à une vue partielle nommée _Card, située dans le dossier Components
-		//Ceci est une méthode d'assistance HTML en Razor.
-		// card: C'est le modèle qui est passé à la vue partielle _Card pour chaque itération de la boucle.
-		//  Dans chaque itération, l'objet CardModel courant (card) de la liste cards est transmis à la vue partielle _Card.
+<div class="tabsContentOnglet">
+	@for (var i = 0; i < Model.Count(); i++)
+	{
+		var card = Model.ElementAt(i);
+		<div class="tabContent" id="tabContent-@i">
+			<h2>Contenu de la classe @card.Title</h2>
+			<div class="tableauClass">
+				<table class="table-container table align-middle table-striped table-hover table-custom"
+					   id="tableContainer-@i">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Nom</th>
+							<th scope="col">Prénom</th>
+							<th scope="col" class="d-none d-sm-table-cell">Classe</th>
+							<th scope="col" class="d-none d-sm-table-cell">Ville</th>
+							<th scope="col" class="d-none d-sm-table-cell">Date Inscription</th>
+							<th scope="col">Statuts</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">1</th>
+							<td>Nom Eleve 1</td>
+							<td>Prénom Eleve 1</td>
+							<td class="d-none d-sm-table-cell">@card.Title</td>
+							<td class="d-none d-sm-table-cell">Ville Eleve 1</td>
+							<td class="d-none d-sm-table-cell">2024-01-15</td>
+							<td>Actif</td>
+						</tr>
+						<tr>
+							<th scope="row">2</th>
+							<td>Nom Eleve 2</td>
+							<td>Prénom Eleve 2</td>
+							<td class="d-none d-sm-table-cell">@card.Title</td>
+							<td class="d-none d-sm-table-cell">Ville Eleve 2</td>
+							<td class="d-none d-sm-table-cell">2024-02-20</td>
+							<td>Inactif</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	}
 </div>
 
 
-  <!-- TABLEAU APPARITION JS -->
-            <div class="tableauClass">
-                <table class="table-container table align-middle table-striped table-hover table-custom"
-                    id="tableContainer" style="display: none;">
-                    <colgroup>
-                        <col style="width: 5%;">   <!-- # -->
-                        <col style="width: 10%;">  <!-- Nom -->
-                        <col style="width: 10%;">  <!-- Prénom -->
-                        <col style="width: 10%;">  <!-- Classe -->
-                        <col style="width: 10%;">  <!-- Ville -->
-                        <col style="width: 15%;">  <!-- Date Inscription -->
-                        <col style="width: 10%;">  <!-- Statuts -->
-                        <col style="width: 3%;">  <!-- Action 1 -->
-                        <col style="width: 3%;">  <!-- Action 2 -->
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Nom</th>
-                            <th scope="col">Prénom</th>
-                            <th scope="col" class="d-none d-sm-table-cell">Classe</th>
-                            <th scope="col" class="d-none d-sm-table-cell">Ville</th>
-                            <th scope="col" class="d-none d-sm-table-cell">Date Inscription</th>
-                            <th scope="col">Statuts</th>
-                           
-                        </tr>
-                        
-                    </thead>
-                    <tbody>
-                        <!-- Classe 2-A -->
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>Midoriya</td>
-                            <td>Izuku</td>
-                            <td class="d-none d-sm-table-cell">2-A</td>
-                            <td class="d-none d-sm-table-cell">Musutafu</td>
-                            <td class="d-none d-sm-table-cell">2018-04-01</td>
-                            <td>V</td>
-                          
-                        </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Bakugo</td>
-                            <td>Katsuki</td>
-                            <td class="d-none d-sm-table-cell">2-A</td>
-                            <td class="d-none d-sm-table-cell">Musutafu</td>
-                            <td class="d-none d-sm-table-cell">2018-04-01</td>
-                            <td>Actif</td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-                                        alt="visible" />
-                                </a></td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-                                </a></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td>Todoroki</td>
-                            <td>Shoto</td>
-                            <td class="d-none d-sm-table-cell">2-A</td>
-                            <td class="d-none d-sm-table-cell">Musutafu</td>
-                            <td class="d-none d-sm-table-cell">2018-04-01</td>
-                            <td>Actif</td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-                                        alt="visible" />
-                                </a></td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-                                </a></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">4</th>
-                            <td>Uraraka</td>
-                            <td>Ochaco</td>
-                            <td class="d-none d-sm-table-cell">2-A</td>
-                            <td class="d-none d-sm-table-cell">Kusuo</td>
-                            <td class="d-none d-sm-table-cell">2018-04-01</td>
-                            <td>Actif</td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-                                        alt="visible" />
-                                </a></td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-                                </a></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">5</th>
-                            <td>Iida</td>
-                            <td>Tenya</td>
-                            <td class="d-none d-sm-table-cell">2-A</td>
-                            <td class="d-none d-sm-table-cell">Tokyo</td>
-                            <td class="d-none d-sm-table-cell">2018-04-01</td>
-                            <td>Actif</td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-                                        alt="visible" />
-                                </a></td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-                                </a></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">6</th>
-                            <td>Tokoyami</td>
-                            <td>Fumikage</td>
-                            <td class="d-none d-sm-table-cell">2-A</td>
-                            <td class="d-none d-sm-table-cell">Musutafu</td>
-                            <td class="d-none d-sm-table-cell">2018-04-01</td>
-                            <td>Actif</td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-                                        alt="visible" />
-                                </a></td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-                                </a></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">7</th>
-                            <td>Asui</td>
-                            <td>Tsuyu</td>
-                            <td class="d-none d-sm-table-cell">2-A</td>
-                            <td class="d-none d-sm-table-cell">Kyoto</td>
-                            <td class="d-none d-sm-table-cell">2018-04-01</td>
-                            <td>Actif</td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-                                        alt="visible" />
-                                </a></td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-                                </a></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">8</th>
-                            <td>Kirishima</td>
-                            <td>Eijiro</td>
-                            <td class="d-none d-sm-table-cell">2-A</td>
-                            <td class="d-none d-sm-table-cell">Osaka</td>
-                            <td class="d-none d-sm-table-cell">2018-04-01</td>
-                            <td>Actif</td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-                                        alt="visible" />
-                                </a></td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-                                </a></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">9</th>
-                            <td>Yaoyorozu</td>
-                            <td>Momo</td>
-                            <td class="d-none d-sm-table-cell">2-A</td>
-                            <td class="d-none d-sm-table-cell">Tokyo</td>
-                            <td class="d-none d-sm-table-cell">2018-04-01</td>
-                            <td>Actif</td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-                                        alt="visible" />
-                                </a></td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-                                </a></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">10</th>
-                            <td>Kaminari</td>
-                            <td>Denki</td>
-                            <td class="d-none d-sm-table-cell">2-A</td>
-                            <td class="d-none d-sm-table-cell">Yokohama</td>
-                            <td class="d-none d-sm-table-cell">2018-04-01</td>
-                            <td>Actif</td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-                                        alt="visible" />
-                                </a></td>
-                            <td><a href=""><img width="20" height="20"
-                                        src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-                                </a></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-     
+
+
+<!-- TABLEAU APPARITION JS -->
+<div class="tableauClass">
+	<table class="table-container table align-middle table-striped table-hover table-custom"
+		   id="tableContainer" style="display: none;">
+	
+		<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">Nom</th>
+				<th scope="col">Prénom</th>
+				<th scope="col" class="d-none d-sm-table-cell">Classe</th>
+				<th scope="col" class="d-none d-sm-table-cell">Ville</th>
+				<th scope="col" class="d-none d-sm-table-cell">Date Inscription</th>
+				<th scope="col">Statuts</th>
+
+			</tr>
+
+		</thead>
+		<tbody>
+			<!-- Classe 2-A -->
+			<tr>
+				<th scope="row">1</th>
+				<td>Midoriya</td>
+				<td>Izuku</td>
+				<td class="d-none d-sm-table-cell">2-A</td>
+				<td class="d-none d-sm-table-cell">Musutafu</td>
+				<td class="d-none d-sm-table-cell">2018-04-01</td>
+				<td>V</td>
+
+			</tr>
+			<tr>
+				<th scope="row">2</th>
+				<td>Bakugo</td>
+				<td>Katsuki</td>
+				<td class="d-none d-sm-table-cell">2-A</td>
+				<td class="d-none d-sm-table-cell">Musutafu</td>
+				<td class="d-none d-sm-table-cell">2018-04-01</td>
+				<td>Actif</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+							 alt="visible" />
+					</a>
+				</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">3</th>
+				<td>Todoroki</td>
+				<td>Shoto</td>
+				<td class="d-none d-sm-table-cell">2-A</td>
+				<td class="d-none d-sm-table-cell">Musutafu</td>
+				<td class="d-none d-sm-table-cell">2018-04-01</td>
+				<td>Actif</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+							 alt="visible" />
+					</a>
+				</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">4</th>
+				<td>Uraraka</td>
+				<td>Ochaco</td>
+				<td class="d-none d-sm-table-cell">2-A</td>
+				<td class="d-none d-sm-table-cell">Kusuo</td>
+				<td class="d-none d-sm-table-cell">2018-04-01</td>
+				<td>Actif</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+							 alt="visible" />
+					</a>
+				</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">5</th>
+				<td>Iida</td>
+				<td>Tenya</td>
+				<td class="d-none d-sm-table-cell">2-A</td>
+				<td class="d-none d-sm-table-cell">Tokyo</td>
+				<td class="d-none d-sm-table-cell">2018-04-01</td>
+				<td>Actif</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+							 alt="visible" />
+					</a>
+				</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">6</th>
+				<td>Tokoyami</td>
+				<td>Fumikage</td>
+				<td class="d-none d-sm-table-cell">2-A</td>
+				<td class="d-none d-sm-table-cell">Musutafu</td>
+				<td class="d-none d-sm-table-cell">2018-04-01</td>
+				<td>Actif</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+							 alt="visible" />
+					</a>
+				</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">7</th>
+				<td>Asui</td>
+				<td>Tsuyu</td>
+				<td class="d-none d-sm-table-cell">2-A</td>
+				<td class="d-none d-sm-table-cell">Kyoto</td>
+				<td class="d-none d-sm-table-cell">2018-04-01</td>
+				<td>Actif</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+							 alt="visible" />
+					</a>
+				</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">8</th>
+				<td>Kirishima</td>
+				<td>Eijiro</td>
+				<td class="d-none d-sm-table-cell">2-A</td>
+				<td class="d-none d-sm-table-cell">Osaka</td>
+				<td class="d-none d-sm-table-cell">2018-04-01</td>
+				<td>Actif</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+							 alt="visible" />
+					</a>
+				</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">9</th>
+				<td>Yaoyorozu</td>
+				<td>Momo</td>
+				<td class="d-none d-sm-table-cell">2-A</td>
+				<td class="d-none d-sm-table-cell">Tokyo</td>
+				<td class="d-none d-sm-table-cell">2018-04-01</td>
+				<td>Actif</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+							 alt="visible" />
+					</a>
+				</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">10</th>
+				<td>Kaminari</td>
+				<td>Denki</td>
+				<td class="d-none d-sm-table-cell">2-A</td>
+				<td class="d-none d-sm-table-cell">Yokohama</td>
+				<td class="d-none d-sm-table-cell">2018-04-01</td>
+				<td>Actif</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+							 alt="visible" />
+					</a>
+				</td>
+				<td>
+					<a href="">
+						<img width="20" height="20"
+							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+					</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
 <!-- =======================FOOTER================ -->
 @Html.Partial("~/Views/Shared/Components/_Footer.cshtml")
 

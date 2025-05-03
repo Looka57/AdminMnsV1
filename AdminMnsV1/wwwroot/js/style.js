@@ -1,3 +1,13 @@
+
+
+
+
+
+
+
+
+
+
 // 1. Gestion du hover sur la liste de navigation et du responsive
 document.addEventListener('DOMContentLoaded', function () {
     let list = document.querySelectorAll('.navigation li');
@@ -30,13 +40,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // 3. Compteur de chiffres sur les cartes
-    if (typeof $ !== 'undefined' && $.fn.counterUp) {
-        $('.cardNumber').counterUp({
-            delay: 10,
-            time: 1200,
-        });
-    }
+
+
+
+
+
 
     // 4. Graphique des absences et retards
     const barCanvas = document.querySelector('#absencesChart');
@@ -281,9 +289,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-
-
-
+    
 
 
 
