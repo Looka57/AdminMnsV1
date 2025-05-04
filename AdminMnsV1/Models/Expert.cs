@@ -2,6 +2,6 @@
 {
     public class Expert : User
     {
-        public string Speciality { get; set; }
+        public string? Speciality { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AdminMnsV1.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AdminMnsV1.Controllers
 {
@@ -13,5 +14,11 @@ namespace AdminMnsV1.Controllers
         {
             return View("~/Views/Experts/FormulaireExpert.cshtml");
         }
+
+        public IActionResult AfficherFormulaireAjoutStagiaire()
+        {
+            return View("~/Views/Students/Formulaire.cshtml", new StudentCreateViewModel());
+        }
+
     }
 }

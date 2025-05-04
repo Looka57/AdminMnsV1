@@ -45,7 +45,45 @@ namespace AdminMnsV1.Controllers
             // Passe la liste des StudentEditViewModel à la vue nommée "Student"
             return View(studentViewModels);
         }
-        
+
+
+        //*************CREATION DUN NOUVEAU STAGIAIRE**********
+        [HttpPost]
+        public IActionResult Create(StudentCreateViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var newStudent = new Student
+                {
+                    LastName = model.LastName,
+                    FirstName = model.FirstName,
+                    Sexe = model.Sexe,
+                    BirthDate = model.BirthDate,
+                    Nationality = model.Nationality,
+                    Address = model.Address,
+                    City = model.City,
+                    Email = model.Email,
+                    Phone = model.Phone,
+                    CreationDate = DateTime.Now,
+                    Role = model.Role,
+                    SocialSecurityNumber = model.SocialSecurityNumber,
+                    FranceTravailNumber = model.FranceTravailNumber
+                };
+
+                _context.Users.Add(newStudent);
+                _context.SaveChanges();
+
+                TempData["SuccesMessage"] = "Le nouveau stagiaire a été créé avec succès.";
+                return RedirectToAction("Student");
+            }
+            else
+            {
+                return View("~/Views/Students/Formulaire.cshtml", model);
+            }
+        }
+
+
+
 
 
         [HttpPost]
@@ -69,23 +107,32 @@ namespace AdminMnsV1.Controllers
                     student.Role = model.Role;
                     student.SocialSecurityNumber = model.SocialSecurityNumber;
                     student.FranceTravailNumber = model.FranceTravailNumber;
-                }
 
-                // Enregistrer les changements dans la base de données
-                _context.SaveChanges();
-                // Rediriger l'utilisateur vers la liste des stagiaires
-                return RedirectToAction("Student");
+
+                    // Enregistrer les changements dans la base de données
+                    _context.SaveChanges();
+
+                    //Ajouter un message de succes a la bibliotheque TempData
+                    TempData["SuccesMessage"] = "Les informations de l'étudiant ont été mises à jour avec succès.";
+
+                    // Rediriger l'utilisateur vers la liste des stagiaires
+                    return RedirectToAction("Student");
+                }
+                else
+                {
+                    // ... gestion si l'étudiant n'est pas trouvé ...
+                    return NotFound();
+                }
             }
+
             else
             {
-                System.Diagnostics.Debug.WriteLine("--- Etat complet de ModelState (après suppression de Discriminator) ---");
-                foreach (var keyValuePair in ModelState)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Clé: {keyValuePair.Key}, Etat: {keyValuePair.Value.ValidationState}, Erreurs: {string.Join(", ", keyValuePair.Value.Errors.Select(e => e.ErrorMessage))}");
-                }
-                System.Diagnostics.Debug.WriteLine("------------------------------------------------------------------");
-                return BadRequest(ModelState);
+
+                //Ajouter un message de succes a la bibliotheque TempData
+                TempData["ErreurMessage"] = "Une erreur est survenue. Les informations de l'étudiant n'ont pas été mises à jour.";
+
+                return RedirectToAction("Student"); // Ou votre logique de gestion des erreurs
             }
         }
-        }
     }
+}
