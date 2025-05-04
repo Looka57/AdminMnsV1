@@ -31,7 +31,7 @@ namespace AdminMnsV1.Models
 
         [Required] //autre systeme obligatoire pour l'insertion + communication
         [MaxLength(250)]
-        public string? PasswordHash { get; set; }
+        public string PasswordHash { get; set; } = string.Empty; // Non-nullable avec une valeur par défaut
 
         [MaxLength(150)]
         public string Address { get; set; }
@@ -47,6 +47,9 @@ namespace AdminMnsV1.Models
 
         // Propriété de discrimination pour EF Core
         public string Discriminator { get; set; }
+
+        //public bool IsDeleted { get; set; }
+
     }
 }
 

@@ -15,9 +15,9 @@ namespace AdminMnsV1.Controllers
             return View("~/Views/Experts/FormulaireExpert.cshtml");
         }
 
-        public IActionResult AfficherFormulaireAjoutStagiaire()
+        public IActionResult FormulaireAddStudent()
         {
-            return View("~/Views/Students/Formulaire.cshtml", new StudentCreateViewModel());
+            return View("Formulaire", new StudentCreateViewModel()); // Renvoie la vue Formulaire.cshtml avec le ViewModel
         }
 
     }

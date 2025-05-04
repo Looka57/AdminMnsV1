@@ -25,11 +25,15 @@
 	<h1 class="mt-5">Stagiaires</h1>
 
 	<div class="btnNewStudent">
-		<a asp-controller="Formulaires" asp-action="AfficherFormulaireAjoutStagiaire" class="btn btn-success">Nouveau Stagiaire</a>
-			<img width="20" height="20" src="https://img.icons8.com/ios/50/plus--v1.png" alt="plus icon" class="me-2" />
+		<a href="@Url.Action("Formulaire","Formulaires")" class="btn btn-outline-warning">
 			Nouveau Stagiaire
 		</a>
 	</div>
+
+
+
+
+
 
 	<table class="table align-middle table-striped table-hover table-custom bg-secondary table-responsive">
 		<thead>
