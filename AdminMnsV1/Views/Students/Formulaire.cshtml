@@ -107,6 +107,13 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Mot de passe</label>
+                        <input asp-for="Password" class="form-control" type="password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
                         <label asp-for="Phone" class="form-label">Téléphone</label>
                         <input asp-for="Phone" class="form-control" />
                         <span asp-validation-for="Phone" class="text-danger"></span>
@@ -122,13 +129,6 @@
                         <span asp-validation-for="Address" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="cp" class="form-label">Code Postale</label>
-                        <input type="text" class="form-control" id="cp" name="CodePostale">
-                    </div>
-                </div>
-
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label asp-for="City" class="form-label">Ville</label>

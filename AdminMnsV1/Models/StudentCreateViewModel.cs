@@ -24,6 +24,10 @@ namespace AdminMnsV1.Models
         [Display(Name = "Email")]
         public string Email { get; set; }
 
+        [Required(ErrorMessage = "Le mot de passe est requis.")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+
         [MaxLength(150, ErrorMessage = "L'adresse ne peut pas dépasser 150 caractères.")]
         [Display(Name = "Adresse")]
         public string Address { get; set; }

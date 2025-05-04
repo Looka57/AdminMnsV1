@@ -63,6 +63,7 @@ namespace AdminMnsV1.Controllers
                     Address = model.Address,
                     City = model.City,
                     Email = model.Email,
+                    PasswordHash = model.Password,// Assignation directe du mot de passe (TEMPORAIRE)
                     Phone = model.Phone,
                     CreationDate = DateTime.Now,
                     Role = model.Role,

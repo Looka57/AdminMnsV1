@@ -31,7 +31,7 @@ namespace AdminMnsV1.Models
 
         [Required] //autre systeme obligatoire pour l'insertion + communication
         [MaxLength(250)]
-        public string PasswordHash { get; set; }
+        public string? PasswordHash { get; set; }
 
         [MaxLength(150)]
         public string Address { get; set; }
