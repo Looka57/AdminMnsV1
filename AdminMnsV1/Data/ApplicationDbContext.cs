@@ -29,6 +29,16 @@ namespace AdminMnsV1.Data
                 .HasValue<Administrator>("Administrator");
             //Définit les valeurs que prendra la colonne "Discriminator" pour chaque type concret dans la hiérarchie.
 
+                // Indique explicitement que la propriété Discriminator n'est pas requise au niveau du modèle
+                modelBuilder.Entity<User>()
+                    .Property(u => u.Discriminator)
+                    .IsRequired(false);
+
+            //    // Indique explicitement que la propriété PasswordHash n'est pas requise au niveau du modèle
+            //    modelBuilder.Entity<User>()
+            //        .Property(u => u.PasswordHash)
+            //        .IsRequired(false);
+            //}
         }
     }
 }

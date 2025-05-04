@@ -1,4 +1,4 @@
-﻿@model IEnumerable<AdminMnsV1.Models.Student>
+﻿@model IEnumerable<AdminMnsV1.Models.StudentEditViewModel>
 
 @{
 	ViewData["Title"] = "Student";
@@ -56,81 +56,70 @@
 				</tr>
 
 				<!-- Modal -->
-				<div class="modal fade" id="modalStagiaire_@item.UserId" tabindex="-1" aria-labelledby="modalStagiaireLabel_@item.UserId"
-					 aria-hidden="true">
-					<div class="modal-dialog">
-						<form method="post" action="#">
+                <div class="modal fade" id="modalStagiaire_@item.UserId" tabindex="-1" aria-labelledby="modalStagiaireLabel_@item.UserId"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <form method="post" action="/Students/Modify">
 
-							   <div class="modal-content">
+                            <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="modalStagiaireLabel_@item.UserId">Modifier @item.FirstName @item.LastName</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
+                                    <input type="hidden" name="UserId" value="@item.UserId" /> 
+
                                     <div class="mb-3">
-                                        <label for="Nom" class="form-label">Nom</label>
-                                        <input type="text" class="form-control" id="Nom" name="Nom" value="@item.LastName">
+                                        <label for="LastName" class="form-label">Nom</label>
+                                        <input type="text" class="form-control" id="LastName" name="LastName" value="@item.LastName">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="Prenom" class="form-label">Prénom</label>
-                                        <input type="text" class="form-control" id="Prenom" name="Prenom" value="@item.FirstName">
+                                        <label for="FirstName" class="form-label">Prénom</label>
+                                        <input type="text" class="form-control" id="FirstName" name="FirstName" value="@item.FirstName">
                                     </div>
                                     <div class="mb-3">
                                         <label for="Sexe" class="form-label">Sexe</label>
                                         <select class="form-select" id="Sexe" name="Sexe">
                                             <option value="Male" selected="@(item.Sexe == "Male" ? "selected" : null)">Masculin</option>
                                             <option value="Female" selected="@(item.Sexe == "Female" ? "selected" : null)">Féminin</option>
-
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="DateNaissance" class="form-label">Date de naissance</label>
-                                        <input type="date" class="form-control" id="DateNaissance" name="DateNaissance"
+                                        <label for="BirthDate" class="form-label">Date de naissance</label>
+                                        <input type="date" class="form-control" id="BirthDate" name="BirthDate"
                                                value="@item.BirthDate.ToString("yyyy-MM-dd")">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="Nationalite" class="form-label">Nationalité</label>
-                                        <input type="text" class="form-control" id="Nationalite" name="Nationalite"
+                                        <label for="Nationality" class="form-label">Nationalité</label>
+                                        <input type="text" class="form-control" id="Nationality" name="Nationality"
                                                value="@item.Nationality">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="Adresse" class="form-label">Adresse</label>
-                                        <input type="text" class="form-control" id="Adresse" name="Adresse"
+                                        <label for="Address" class="form-label">Adresse</label>
+                                        <input type="text" class="form-control" id="Address" name="Address"
                                                value="@item.Address">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="Ville" class="form-label">Ville</label>
-                                        <input type="text" class="form-control" id="Ville" name="Ville"
+                                        <label for="City" class="form-label">Ville</label>
+                                        <input type="text" class="form-control" id="City" name="City"
                                                value="@item.City">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="Mail" class="form-label">Mail</label>
-                                        <input type="email" class="form-control" id="Mail" name="Mail"
+                                        <label for="Email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="Email" name="Email"
                                                value="@item.Email">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="Telephone" class="form-label">Téléphone</label>
-                                        <input type="tel" class="form-control" id="Telephone" name="Telephone"
+                                        <label for="Phone" class="form-label">Téléphone</label>
+                                        <input type="tel" class="form-control" id="Phone" name="Phone"
                                                value="@item.Phone">
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="DateCreation" class="form-label">Date création dossier</label>
-                                        <input type="date" class="form-control" id="DateCreation" name="DateCreation"
+                                @*    <div class="mb-3">
+                                        <label for="CreationDate" class="form-label">Date création dossier</label>
+                                        <input type="date" class="form-control" id="CreationDate" name="CreationDate"
                                                value="@item.CreationDate.ToString("yyyy-MM-dd")">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="Classe" class="form-label">Classe</label>
-                                        <input type="text" class="form-control" id="Classe" name="Classe" value="2-A">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="Statut" class="form-label">Statut</label>
-                                        <select class="form-select" id="Statut" name="Statut">
-                                            <option value="En cours" selected>En cours</option>
-                                            <option value="Refuser">Refuser</option>
-                                            <option value="Terminé">Terminé</option>
-                                        </select>
-                                    </div>
+                                    </div> *@
                                     <div class="mb-3">
                                         <label for="Role" class="form-label">Role</label>
                                         <select class="form-select" id="Role" name="Role">
@@ -138,18 +127,15 @@
                                             <option value="Stagiaire" selected="@(item.Role == "Stagiaire" ? "selected" : null)">Stagiaire</option>
                                         </select>
                                     </div>
-
-
-
                                     <div class="mb-3">
-                                        <label for="NumSecu" class="form-label">N° Sécurité Sociale</label>
-                                        <input type="text" class="form-control" id="NumSecu" name="NumSecu"
+                                        <label for="SocialSecurityNumber" class="form-label">N° Sécurité Sociale</label>
+                                        <input type="text" class="form-control" id="SocialSecurityNumber" name="SocialSecurityNumber"
                                                value="@item.SocialSecurityNumber">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="NumFranceTravail" class="form-label">N° France Travail</label>
-                                        <input type="text" class="form-control" id="NumFranceTravail"
-                                               name="NumFranceTravail" value="@item.FranceTravailNumber">
+                                        <label for="FranceTravailNumber" class="form-label">N° France Travail</label>
+                                        <input type="text" class="form-control" id="FranceTravailNumber"
+                                               name="FranceTravailNumber" value="@item.FranceTravailNumber">
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -160,10 +146,9 @@
                                     </button>
                                 </div>
                             </div>
-						</form>
-					</div>
-				</div>
-
+                        </form>
+                    </div>
+                </div>
 
 			}
 			</tbody>

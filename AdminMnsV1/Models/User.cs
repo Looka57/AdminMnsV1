@@ -25,9 +25,11 @@ namespace AdminMnsV1.Models
 
         [Required]
         [MaxLength(250)]
+
+        [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
+        [Required] //autre systeme obligatoire pour l'insertion + communication
         [MaxLength(250)]
         public string PasswordHash { get; set; }
 
@@ -39,6 +41,7 @@ namespace AdminMnsV1.Models
 
         public DateTime CreationDate { get; set; }
         [MaxLength(50)]
+
         public string Phone { get; set; }
         public DateTime BirthDate { get; set; }
 
