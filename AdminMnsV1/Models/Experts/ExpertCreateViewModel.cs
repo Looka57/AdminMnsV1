@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace AdminMnsV1.Models
+namespace AdminMnsV1.Models.Students
 {
-    public class StudentCreateViewModel
+    public class ExpertCreateViewModel
     {
         [Required(ErrorMessage = "Le nom est requis.")]
         [MaxLength(50, ErrorMessage = "Le nom ne peut pas dépasser 50 caractères.")]
@@ -36,25 +36,25 @@ namespace AdminMnsV1.Models
         [Display(Name = "Ville")]
         public string City { get; set; }
 
+
+        [MaxLength(50, ErrorMessage = "Selectionner une specialité.")]
+        [Display(Name = "Speciality")]
+        public string Speciality { get; set; }
+
+
         [Display(Name = "Date de naissance")]
         [DataType(DataType.Date)]
         public DateTime BirthDate { get; set; }
+
+        [Display(Name = "Lieu de naissance")]
+        public String BirthPlace { get; set; }
+
 
         [MaxLength(50, ErrorMessage = "Le numéro de téléphone ne peut pas dépasser 50 caractères.")]
         [Display(Name = "Téléphone")]
         public string Phone { get; set; }
 
-        [Display(Name = "Nationalité")]
-        public string Nationality { get; set; }
-
-        [Display(Name = "N° Sécurité Sociale")]
-        public string SocialSecurityNumber { get; set; }
-
-        [Display(Name = "N° France Travail")]
-        public string FranceTravailNumber { get; set; }
-
-        [Display(Name = "Rôle")]
-        public string Role { get; set; } = "Candidat"; // Valeur par défaut
+     
 
         // Vous pourriez choisir de ne pas inclure CreationDate ici, car elle sera définie lors de la création en base de données.
     }

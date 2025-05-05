@@ -1,4 +1,4 @@
-﻿namespace AdminMnsV1.Models
+﻿namespace AdminMnsV1.Models.Experts
 {
     public class Expert : User
     {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using AdminMnsV1.Models;
 using AdminMnsV1.Data;
+using AdminMnsV1.Models.Students;
 
 namespace AdminMnsV1.Controllers
 {
@@ -15,12 +15,16 @@ namespace AdminMnsV1.Controllers
             _context = context;
         }
 
+
+        //*************RECUPERE LES STAGIAIRES **********
         public IActionResult Student()
         {
             // Récupère tous les utilisateurs qui sont de type Student
             var students = _context.Users
                 .OfType<Student>()
+                .Where(s=> !s.IsDeleted)
                 .ToList();
+
 
             // Crée une liste de StudentEditViewModel à partir de la liste des Students
             var studentViewModels = students.Select(s => new StudentEditViewModel
@@ -42,7 +46,7 @@ namespace AdminMnsV1.Controllers
                 // N'incluez pas PasswordHash ou Discriminator ici
             }).ToList();
 
-            // Passe la liste des StudentEditViewModel à la vue nommée "Student"
+            // Passe la liste des StudentEditViewModel à la vue nommée "Student"z
             return View(studentViewModels);
         }
 
@@ -83,10 +87,7 @@ namespace AdminMnsV1.Controllers
             }
         }
 
-
-
-
-
+        //*************MODIFIE UN STAGIAIRE**********
         [HttpPost]
         public IActionResult Modify(StudentEditViewModel model)
         {
@@ -108,7 +109,6 @@ namespace AdminMnsV1.Controllers
                     student.Role = model.Role;
                     student.SocialSecurityNumber = model.SocialSecurityNumber;
                     student.FranceTravailNumber = model.FranceTravailNumber;
-
 
                     // Enregistrer les changements dans la base de données
                     _context.SaveChanges();
@@ -134,6 +134,26 @@ namespace AdminMnsV1.Controllers
 
                 return RedirectToAction("Student"); // Ou votre logique de gestion des erreurs
             }
+        }
+
+        //*************SUPPRIME UN STAGIAIRE**********
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var student = await _context.Students.FindAsync(id);
+
+            if (student == null)
+            {
+                return NotFound();
+            }
+
+            student.IsDeleted = true;
+            _context.Update(student);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccesMessage"] = $"Le stagiaire {student.FirstName} {student.LastName} a été supprimé."; // Message de succès
+            return RedirectToAction(nameof(Student)); // Rediriger vers l'action qui liste les stagiaires
         }
     }
 }

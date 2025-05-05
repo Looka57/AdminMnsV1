@@ -1,4 +1,5 @@
-﻿@model AdminMnsV1.Models.StudentCreateViewModel
+﻿@using AdminMnsV1.Models.Students
+@model StudentCreateViewModel
 
 @{
     ViewData["Title"] = "Ajout d'un nouveau stagiaire";
@@ -60,7 +61,7 @@
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="mb-3">
+                    <div class="mb-6">
                         <label asp-for="Sexe" class="form-label">Sexe</label>
                         <select asp-for="Sexe" class="form-select">
                             <option value="">Sélectionner</option>

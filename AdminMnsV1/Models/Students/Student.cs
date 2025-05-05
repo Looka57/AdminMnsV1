@@ -1,4 +1,4 @@
-﻿namespace AdminMnsV1.Models
+﻿namespace AdminMnsV1.Models.Students
 {
    public class Student : User
     {

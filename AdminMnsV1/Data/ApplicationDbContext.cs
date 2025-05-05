@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using AdminMnsV1.Models;
 using System.Security.Claims;
+using AdminMnsV1.Models.Students;
+using AdminMnsV1.Models.Experts;
 
 namespace AdminMnsV1.Data
 {
@@ -24,15 +26,15 @@ namespace AdminMnsV1.Data
             modelBuilder.Entity<User>()
                 .HasDiscriminator<string>("Discriminator") //Indique à EF Core que nous utilisons une colonne nommée "Discriminator" pour distinguer les types dans la hiérarchie User.
                 .HasValue<User>("User")
-                .HasValue<Expert>("Expert_")
+                .HasValue<Expert>("Expert")
                 .HasValue<Student>("Student")
                 .HasValue<Administrator>("Administrator");
             //Définit les valeurs que prendra la colonne "Discriminator" pour chaque type concret dans la hiérarchie.
 
-                // Indique explicitement que la propriété Discriminator n'est pas requise au niveau du modèle
-                modelBuilder.Entity<User>()
-                    .Property(u => u.Discriminator)
-                    .IsRequired(false);
+            // Indique explicitement que la propriété Discriminator n'est pas requise au niveau du modèle
+            modelBuilder.Entity<User>()
+                .Property(u => u.Discriminator)
+                .IsRequired(false);
 
             //    // Indique explicitement que la propriété PasswordHash n'est pas requise au niveau du modèle
             //    modelBuilder.Entity<User>()

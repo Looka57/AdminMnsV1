@@ -1,120 +1,130 @@
-﻿@{
-	ViewData["Title"] = "FormulaireExpert";
+﻿@using AdminMnsV1.Models.Experts
+@using AdminMnsV1.Models.Students
+@model ExpertCreateViewModel
 
+
+@{
+    ViewData["Title"] = "FormulaireExpert";
 }
 
-<h1 class="m-5">Ajout d'un nouveau Intervenant</h1>
-<a href="@Url.Action("Expert","Experts")" class="mx-5">⬅ Retour a la page intervenant</a>
+<h1 class="m-5">Ajout d'un nouvel Intervenant</h1>
+<a href="@Url.Action("Expert", "Experts")" class="mx-5">⬅ Retour à la page intervenant</a>
 
+<div class="container containerStudentDetails">
+    <form asp-action="Create" asp-controller="Experts" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
 
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label asp-for="LastName" class="form-label">Nom</label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+            </div>
 
-
-<!-- =====================FORMULAIRE INTERVENANT=============================== -->
-<div class="container containerStudentDetails ">
-    <div class="enteteForm"></div>
-    <div class="photoProfilInput text-center m-3">
-        <h6>Photo *</h6>
-        <input type="file" id="photoProfil" name="photoProfil">
-    </div>
-    <div class="formulaireStudent">
-        <div class="row mx-auto">
-            <div class="photoProfil ">
-                <div class="photoEmpty">
-                    <h6>Photo *</h6>
-                    <a href="#">
-                        <div class="cadre p-3"><input type="image">...</div>
-                    </a>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label asp-for="FirstName" class="form-label">Prénom</label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
                 </div>
             </div>
         </div>
 
-        <form method="post" action="#">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3 ">
-                        <label for="name" class="form-label">Nom</label>
-                        <input type="text" class="form-control" id="name" aria-describedby="name">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="firstName" class="form-label">Prénom</label>
-                        <input type="text" class="form-control" id="firstName" aria-describedby="firstName">
-                    </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label asp-for="BirthDate" class="form-label">Date de naissance</label>
+                    <input asp-for="BirthDate" type="date" class="form-control" />
+                    <span asp-validation-for="BirthDate" class="text-danger"></span>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="mb-3 ">
-                        <label for="Date de naissance" class="form-label">Date de naissance</label>
-                        <input type="date" class="form-control" id="Date de naissance"
-                               aria-describedby="Date de naissance">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="Lieu de naissance" class="form-label">Lieu de naissance</label>
-                        <input type="text" class="form-control" id="Lieu de naissance"
-                               aria-describedby="Lieu de naissance">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="Specialite" class="form-label">Spécialité</label>
-                        <select name="Specialite" id="Specialite" class="form-select ">
-                            <option value="">Choisir une spécialité</option>
-                            <option value="Informatique">Base de donnée</option>
-                            <option value="Mathématiques">C#</option>
-                            <option value="Mathématiques">Java</option>
-                            <option value="Mathématiques">etc</option>
-                        </select>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="mail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="mail" aria-describedby="emailHelp">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="Téléphone" class="form-label">Téléphone</label>
-                        <input type="text" class="form-control" id="Téléphone">
-                    </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label asp-for="BirthPlace" class="form-label">Lieu de naissance</label>
+                    <input asp-for="BirthPlace" class="form-control" />
+                    <span asp-validation-for="BirthPlace" class="text-danger"></span>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="Adresse" class="form-label">Adresse</label>
-                        <input type="text" class="form-control" id="Adresse" aria-describedby="Adresse">
-                    </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label asp-for="Sexe" class="form-label">Sexe</label>
+                    <select asp-for="Sexe" class="form-select">
+                        <option value="">Sélectionner</option>
+                        <option value="Male">Masculin</option>
+                        <option value="Female">Féminin</option>
+                    </select>
+                    <span asp-validation-for="Sexe" class="text-danger"></span>
                 </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="cp" class="form-label">Code Postale</label>
-                        <input type="text" class="form-control" id="cp">
-                    </div>
-                </div>
+            </div>
 
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="ville" class="form-label">Ville</label>
-                        <input type="text" class="form-control" id="ville">
-                    </div>
+
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label asp-for="Speciality" class="form-label">Spécialité</label>
+                    <select asp-for="Speciality" class="form-select">
+                        <option value="">Choisir une spécialité</option>
+                        <option value="Base de données">Base de données</option>
+                        <option value="C#">C#</option>
+                        <option value="Java">Java</option>
+                        <option value="etc">etc</option>
+                    </select>
+                    <span asp-validation-for="Speciality" class="text-danger"></span>
                 </div>
             </div>
-            <div class="btnLoadStagiaire">
-                <button type="button" class="btn btn-outline-warning">Valider</button>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">Email</label>
+                    <input asp-for="Email" class="form-control" type="email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
             </div>
-        </form>
-    </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label">Mot de passe</label>
+                    <input asp-for="Password" class="form-control" type="password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label asp-for="Phone" class="form-label">Téléphone</label>
+                    <input asp-for="Phone" class="form-control" />
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label asp-for="Address" class="form-label">Adresse</label>
+                    <input asp-for="Address" class="form-control" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label asp-for="City" class="form-label">Ville</label>
+                    <input asp-for="City" class="form-control" />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="btnLoadStagiaire text-center mt-4">
+            <button type="submit" class="btn btn-outline-warning">Valider</button>
+        </div>
+    </form>
 </div>
-        </div>
-    </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

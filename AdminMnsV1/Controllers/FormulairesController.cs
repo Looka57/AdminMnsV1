@@ -1,4 +1,5 @@
 ﻿using AdminMnsV1.Models;
+using AdminMnsV1.Models.Students;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdminMnsV1.Controllers
@@ -15,10 +16,16 @@ namespace AdminMnsV1.Controllers
             return View("~/Views/Experts/FormulaireExpert.cshtml");
         }
 
+        //AJOUT UN NOUVEAU STAGIAIRE
         public IActionResult FormulaireAddStudent()
         {
-            return View("Formulaire", new StudentCreateViewModel()); // Renvoie la vue Formulaire.cshtml avec le ViewModel
+            return View("Formulaire", new ExpertCreateViewModel()); // Renvoie la vue Formulaire.cshtml avec le ViewModel
         }
 
+        //SUPPRIME UN STAGIAIRE
+        public IActionResult FormulaireDeletedStudent()
+        {
+            return View("Formulaire", new ExpertCreateViewModel()); // Renvoie la vue Formulaire.cshtml avec le ViewModel
+        }
     }
 }
