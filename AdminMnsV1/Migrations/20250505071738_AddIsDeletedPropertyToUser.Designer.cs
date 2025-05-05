@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdminMnsV1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250504143642_SyncModelChanges")]
-    partial class SyncModelChanges
+    [Migration("20250505071738_AddIsDeletedPropertyToUser")]
+    partial class AddIsDeletedPropertyToUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,6 +89,9 @@ namespace AdminMnsV1.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -156,10 +159,10 @@ namespace AdminMnsV1.Migrations
                     b.Property<string>("FranceTravailNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Nationality")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Photo")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Role")

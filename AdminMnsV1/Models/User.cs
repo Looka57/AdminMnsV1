@@ -45,10 +45,11 @@ namespace AdminMnsV1.Models
         public string Phone { get; set; }
         public DateTime BirthDate { get; set; }
 
+        public bool IsDeleted { get; set; } = false; // Propriété pour gérer la suppression logique
+
         // Propriété de discrimination pour EF Core
         public string Discriminator { get; set; }
 
-        //public bool IsDeleted { get; set; }
 
     }
 }
