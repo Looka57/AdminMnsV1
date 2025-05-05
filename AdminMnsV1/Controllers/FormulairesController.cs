@@ -19,13 +19,13 @@ namespace AdminMnsV1.Controllers
         //AJOUT UN NOUVEAU STAGIAIRE
         public IActionResult FormulaireAddStudent()
         {
-            return View("Formulaire", new ExpertCreateViewModel()); // Renvoie la vue Formulaire.cshtml avec le ViewModel
+            return View("Formulaire", new StudentCreateViewModel()); // Renvoie la vue Formulaire.cshtml avec le ViewModel
         }
 
         //SUPPRIME UN STAGIAIRE
         public IActionResult FormulaireDeletedStudent()
         {
-            return View("Formulaire", new ExpertCreateViewModel()); // Renvoie la vue Formulaire.cshtml avec le ViewModel
+            return View("Formulaire", new StudentCreateViewModel()); // Renvoie la vue Formulaire.cshtml avec le ViewModel
         }
     }
 }

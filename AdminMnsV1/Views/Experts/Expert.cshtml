@@ -45,7 +45,6 @@
 				<th scope="col">Spécialité</th>
 				<th scope="col" class="d-none d-sm-table-cell">Ville</th>
 				<th scope="col" class="d-none d-sm-table-cell">Date d'inscription</th>
-				<th scope="col" class="d-none d-md-table-cell">Service</th>
 				<th scope="col" colspan="2">Action</th>
 			</tr>
 		</thead>
@@ -54,13 +53,14 @@
 			{
 				<tr>
 					<th scope="row">@item.UserId</th>
-					<td>@Html.DisplayFor(modelItem => item.LastName)</td>
-					<td>@Html.DisplayFor(modelItem => item.FirstName)</td>
-					<td>@Html.DisplayFor(modelItem => item.Speciality)</td>
-					<td class="d-none d-sm-table-cell">@Html.DisplayFor(modelItem => item.City)</td>
-					<td class="d-none d-sm-table-cell">@item.CreationDate.ToString("yyyy-MM-dd")</td>
+					<td>@item.LastName</td>
+					<td>@item.FirstName</td>
+					<td>@item.Speciality</td>
+					<td class="d-none d-sm-table-cell">@item.City</td>
+					<td class="d-none d-sm-table-cell">@item.CreationDate</td>
+
 					<td>
-						<a href="@Url.Action("EditExpert", "Experts", new { id = item.UserId })" data-bs-toggle="modal" data-bs-target="#modalExpert_@item.UserId">
+						<a href="#" data-bs-toggle="modal" data-bs-target="#modalExpert_@item.UserId">
 							<img width="20" height="20"
 								 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
 								 alt="visible" />
@@ -76,10 +76,14 @@
 					</td>
 				</tr>
 
+
+
 				<div class="modal fade" id="modalExpert_@item.UserId" tabindex="-1" aria-labelledby="modalExpertLabel_@item.UserId"
 					 aria-hidden="true">
+
+
 					<div class="modal-dialog">
-						<form method="post" action="@Url.Action("ModifyExpert", "Experts")">
+						<form method="post" action="@Url.Action("Modify", "Experts")">
 							<input type="hidden" name="UserId" value="@item.UserId" />
 							<div class="modal-content">
 								<div class="modal-header">
@@ -96,12 +100,20 @@
 										<label for="FirstName_@item.UserId" class="form-label">Prénom</label>
 										<input type="text" class="form-control" id="FirstName_@item.UserId" name="FirstName" value="@item.FirstName">
 									</div>
+									<div class="mb-3">
+										<label for="Sexe" class="form-label">Sexe</label>
+										<select class="form-select" id="Sexe" name="Sexe">
+											<option value="Male" selected="@(item.Sexe == "Male" ? "selected" : null)">Masculin</option>
+											<option value="Female" selected="@(item.Sexe == "Female" ? "selected" : null)">Féminin</option>
+										</select>
+									</div>
 
 									<div class="mb-3">
 										<label for="BirthDate_@item.UserId" class="form-label">Date de naissance</label>
 										<input type="date" class="form-control" id="BirthDate_@item.UserId" name="BirthDate"
 											   value="@item.BirthDate.ToString("yyyy-MM-dd")">
 									</div>
+								
 
 									<div class="mb-3">
 										<label for="Address_@item.UserId" class="form-label">Adresse</label>

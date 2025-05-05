@@ -82,6 +82,61 @@ namespace AdminMnsV1.Controllers
                 return View("~/Views/Experts/FormulaireExpert.cshtml", model);
             }
         }
+
+
+        //*************MODIFIE UN INTERVENANT**********
+        [HttpPost]
+
+        public IActionResult Modify(ExpertEditViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var expert = _context.Users.OfType<Expert>().FirstOrDefault(e => e.UserId == model.UserId);
+                if (expert != null)
+                {
+                    expert.LastName = model.LastName;
+                    expert.FirstName = model.FirstName;
+                    expert.Sexe = model.Sexe;
+                    expert.BirthDate = model.BirthDate;
+                    expert.Address = model.Address;
+                    expert.City = model.City;
+                    expert.Email = model.Email;
+                    expert.Phone = model.Phone;
+                    expert.Speciality = model.Speciality;
+                    expert.CreationDate = model.CreationDate;
+
+                   
+                    _context.Update(expert); //modification des changements
+                    _context.SaveChanges(); // Enregistrer les changements dans la base de données
+
+                    //Ajouter un message de succes a la bibliotheque TempData
+                    TempData["SuccesMessage"] = "Les informations de l'intervenant ont été mises à jour avec succès.";
+
+                    // Rediriger l'utilisateur vers la liste des stagiaires
+                    return RedirectToAction("Expert");
+                }
+                else
+                {
+                    // ... gestion si l'étudiant n'est pas trouvé ...
+                    return NotFound();
+                }
+            }
+
+            else
+            {
+
+                //Ajouter un message de succes a la bibliotheque TempData
+                TempData["ErreurMessage"] = "Une erreur est survenue. Les informations de l'intervenant n'ont pas été mises à jour.";
+
+                return RedirectToAction("Expert");
+            }
+        }
+
+
+
+
+
+
     }
 
 
