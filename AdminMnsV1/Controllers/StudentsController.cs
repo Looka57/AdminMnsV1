@@ -23,8 +23,6 @@ namespace AdminMnsV1.Controllers
             _context = context;
         }
 
-
-
         //*************RECUPERE LES STAGIAIRES **********
         public IActionResult Student()
         {
@@ -52,7 +50,6 @@ namespace AdminMnsV1.Controllers
 
             return View(studentViewModels);
         }
-
 
 
         [HttpPost]

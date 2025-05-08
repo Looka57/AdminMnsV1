@@ -4,7 +4,7 @@ namespace AdminMnsV1.Models.Experts
 {
     public class ExpertEditViewModel
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
         [MaxLength(50, ErrorMessage = "Le nom ne peut pas dépasser 50 caractères.")]
         public string LastName { get; set; }
