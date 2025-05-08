@@ -1,167 +1,182 @@
-﻿@using AdminMnsV1.Models.Students
-@model StudentCreateViewModel
+﻿@using AdminMnsV1.Models.Students @* Importe l'espace de noms des modèles Student *@
+
+@model StudentCreateViewModel //Déclare que le modèle utilisé par cette vue est une instance de la classe StudentCreateViewModel. Cela permet d'accéder aux propriétés de ce modèle dans la vue.
 
 @{
-    ViewData["Title"] = "Ajout d'un nouveau stagiaire";
+	ViewData["Title"] = "Ajout d'un nouveau stagiaire"; //Définit le titre de la page qui apparaîtra dans l'onglet du navigateur.
 }
 
 <h1 class="m-5">Ajout d'un nouveau stagiaire</h1>
-<a href="@Url.Action("Student","Students")"class="mx-5">⬅ Retour à la page stagiaire</a>
+<a href="@Url.Action("Student","Students")" class="mx-5">⬅ Retour à la page stagiaire</a> @* génère l'URL de l'action Student dans le contrôleur Students. *@
+
 
 <div class="container containerStudentDetails ">
-    <div class="enteteForm"></div>
-    <div class="photoProfilInput text-center m-3">
-        <h6>Photo *</h6>
-        <input type="file" id="photoProfil" name="photoProfil">
-    </div>
-    <div class="formulaireStudent">
-        <div class="row mx-auto">
-            <div class="photoProfil ">
-                <div class="photoEmpty">
-                    <h6>Photo *</h6>
-                    <a href="#">
-                        <div class="cadre p-3"><input type="image">...</div>
-                    </a>
-                </div>
-            </div>
-        </div>
+	<div class="enteteForm"></div>
+	<div class="photoProfilInput text-center m-3">
+		<h6>Photo *</h6>
+		<input type="file" id="photoProfil" name="photoProfil">
+	</div>
+	<div class="formulaireStudent">
+		<div class="row mx-auto">
+			<div class="photoProfil ">
+				<div class="photoEmpty">
+					<h6>Photo *</h6>
+					<a href="#">
+						<div class="cadre p-3"><input type="image">...</div>
+					</a>
+				</div>
+			</div>
+		</div>
 
-        <form method="post" asp-controller="Students" asp-action="Create">
-            <div asp-validation-summary="All" class="text-danger"></div>
+		<form method="post" asp-controller="Students" asp-action="Create">
+			@* //Crée un formulaire HTML qui enverra les données via la méthode HTTP POST vers l'action Create du contrôleur Students *@
+			<div asp-validation-summary="All" class="text-danger"></div> @* Affiche un résumé de toutes les erreurs de validation au niveau du modèle		
+																		Si le ModelState dans le contrôleur contient des erreurs, elles seront affichées ici en rouge..*@
+			<div class="row">
+				<div class="col-md-6">
+					<div class="mb-3 ">
+						@*Crée une étiquette HTML pour le champ *@
+						<label asp-for="LastName" class="form-label">Nom</label>@*L'attribut asp-for lie cette étiquette à la propriété LastName du StudentCreateViewModel.*@
+						<input asp-for="LastName" class="form-control" />@*L'attribut asp-for lie ce champ à la propriété LastName du modèle. 
+																		Cela permet la liaison des données lors de la soumission du formulaire et active la validation côté client basée sur les attributs du modèle.*@
+						<span asp-validation-for="LastName" class="text-danger"></span>@*Affiche les messages de validation spécifiques à la propriété *@
+						@*Ces messages sont affichés si la validation côté serveur (dans l'action Create du contrôleur) échoue. *@
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="mb-3">
+						<label asp-for="FirstName" class="form-label">Prénom</label>
+						<input asp-for="FirstName" class="form-control" />
+						<span asp-validation-for="FirstName" class="text-danger"></span>
+					</div>
+				</div>
+			</div>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3 ">
-                        <label asp-for="LastName" class="form-label">Nom</label>
-                        <input asp-for="LastName" class="form-control" />
-                        <span asp-validation-for="LastName" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="FirstName" class="form-label">Prénom</label>
-                        <input asp-for="FirstName" class="form-control" />
-                        <span asp-validation-for="FirstName" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
+			<div class="row">
+				<div class="col-md-3">
+					<div class="mb-3 ">
+						<label asp-for="BirthDate" class="form-label">Date de naissance</label>
+						<input asp-for="BirthDate" class="form-control" type="date" />
+						<span asp-validation-for="BirthDate" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="mb-3">
+						<label for="Lieu de naissance" class="form-label">Lieu de naissance</label>
+						<input type="text" class="form-control" id="Lieu de naissance" name="LieuDeNaissance" aria-describedby="Lieu de naissance">
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="mb-6">
+						<label asp-for="Sexe" class="form-label">Sexe</label>
+						<select asp-for="Sexe" class="form-select">
+							<option value="">Sélectionner</option>
+							<option value="Male">Masculin</option>
+							<option value="Female">Féminin</option>
+							<option value="Autre">Autre</option>
+						</select>
+						<span asp-validation-for="Sexe" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="mb-3">
+						<label asp-for="Nationality" class="form-label">Nationalité</label>
+						<input asp-for="Nationality" class="form-control" />
+						<span asp-validation-for="Nationality" class="text-danger"></span>
+					</div>
+				</div>
+			</div>
 
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="mb-3 ">
-                        <label asp-for="BirthDate" class="form-label">Date de naissance</label>
-                        <input asp-for="BirthDate" class="form-control" type="date" />
-                        <span asp-validation-for="BirthDate" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="Lieu de naissance" class="form-label">Lieu de naissance</label>
-                        <input type="text" class="form-control" id="Lieu de naissance" name="LieuDeNaissance" aria-describedby="Lieu de naissance">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="mb-6">
-                        <label asp-for="Sexe" class="form-label">Sexe</label>
-                        <select asp-for="Sexe" class="form-select">
-                            <option value="">Sélectionner</option>
-                            <option value="Male">Masculin</option>
-                            <option value="Female">Féminin</option>
-                            <option value="Autre">Autre</option>
-                        </select>
-                        <span asp-validation-for="Sexe" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label asp-for="Nationality" class="form-label">Nationalité</label>
-                        <input asp-for="Nationality" class="form-control" />
-                        <span asp-validation-for="Nationality" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="mb-3">
+						<label asp-for="Status" class="form-label">Status</label>
+						<select asp-for="Status" class="form-select ">
+							<option value="">Choisir un role</option>
+							<option value="Candidat">Candidat</option>
+							<option value="Stagiaire">Stagiaire</option>
+						</select>
+						<span asp-validation-for="Status" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="mb-3">
+						<label for="Classe" class="form-label">Classe</label>
+						<input type="text" class="form-control" id="Classe" name="Classe">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="mb-3">
+						<label asp-for="Email" class="form-label">Email</label>
+						<input asp-for="Email" class="form-control" type="email" />
+						<span asp-validation-for="Email" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="mb-3">
+						<label asp-for="Password" class="form-label">Mot de passe</label>
+						<input asp-for="Password" class="form-control" type="password" />
+						<span asp-validation-for="Password" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="mb-3">
+						<label asp-for="Phone" class="form-label">Téléphone</label>
+						<input asp-for="Phone" class="form-control" />
+						<span asp-validation-for="Phone" class="text-danger"></span>
+					</div>
+				</div>
+			</div>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="Role" class="form-label">Role</label>
-                        <select asp-for="Role" class="form-select ">
-                            <option value="">Choisir un role</option>
-                            <option value="Candidat">Candidat</option>
-                            <option value="Stagiaire">Stagiaire</option>
-                        </select>
-                        <span asp-validation-for="Role" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="Classe" class="form-label">Classe</label>
-                        <input type="text" class="form-control" id="Classe" name="Classe">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label">Email</label>
-                        <input asp-for="Email" class="form-control" type="email" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="Password" class="form-label">Mot de passe</label>
-                        <input asp-for="Password" class="form-control" type="password" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="Phone" class="form-label">Téléphone</label>
-                        <input asp-for="Phone" class="form-control" />
-                        <span asp-validation-for="Phone" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="mb-3">
+						<label asp-for="Address" class="form-label">Adresse</label>
+						<input asp-for="Address" class="form-control" />
+						<span asp-validation-for="Address" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="mb-3">
+						<label asp-for="City" class="form-label">Ville</label>
+						<input asp-for="City" class="form-control" />
+						<span asp-validation-for="City" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="mb-3">
+						<label asp-for="SocialSecurityNumber" class="form-label">N° Sécurité Sociale</label>
+						<input asp-for="SocialSecurityNumber" class="form-control" />
+						<span asp-validation-for="SocialSecurityNumber" class="text-danger"></span>
+					</div>
+				</div>
+			</div>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="Address" class="form-label">Adresse</label>
-                        <input asp-for="Address" class="form-control" />
-                        <span asp-validation-for="Address" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="City" class="form-label">Ville</label>
-                        <input asp-for="City" class="form-control" />
-                        <span asp-validation-for="City" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="SocialSecurityNumber" class="form-label">N° Sécurité Sociale</label>
-                        <input asp-for="SocialSecurityNumber" class="form-control" />
-                        <span asp-validation-for="SocialSecurityNumber" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="FranceTravailNumber" class="form-label">N° France Travail</label>
-                        <input asp-for="FranceTravailNumber" class="form-control" />
-                        <span asp-validation-for="FranceTravailNumber" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="btnLoadStagiaire">
-                <button type="submit" class="btn btn-outline-warning">Valider</button>
-            </div>
-        </form>
-    </div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="mb-3">
+						<label asp-for="FranceTravailNumber" class="form-label">N° France Travail</label>
+						<input asp-for="FranceTravailNumber" class="form-control" />
+						<span asp-validation-for="FranceTravailNumber" class="text-danger"></span>
+					</div>
+				</div>
+			</div>
+			<div class="btnLoadStagiaire">
+				<button type="submit" class="btn btn-outline-warning">Valider</button>
+				@* Crée un bouton de soumission pour le formulaire. Lorsque l'utilisateur clique sur ce bouton, les données du formulaire sont envoyées à l'action Create du contrôleur Students. *@
+			</div>
+		</form>
+	</div>
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+	<partial name="_ValidationScriptsPartial" />
+@* Cette section injecte un script partiel qui active la validation côté client.
+			Cela signifie que le navigateur effectuera des vérifications de validation basées sur les attributs du modèle avant même que le formulaire ne soit soumis au serveur,
+			améliorant ainsi l'expérience utilisateur en fournissant un feedback immédiat sur les erreurs de saisie.*@
 }
+
+
+@* 	En résumé, Formulaire.cshtml est la vue qui affiche le formulaire de création d'un nouvel étudiant. 
+	Elle utilise le StudentCreateViewModel pour définir les champs du formulaire et leurs attributs de validation. 
+	Les Tag Helpers ASP.NET Core simplifient la création de formulaires liés au modèle et la gestion de la validation. *@

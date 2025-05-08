@@ -1,12 +1,15 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.ConstrainedExecution;
 
 namespace AdminMnsV1.Models.Students
 {
+
+    //CREATION D'UN NOUVEL STAGIAIRE
     public class StudentCreateViewModel
     {
-        [Required(ErrorMessage = "Le nom est requis.")]
-        [MaxLength(50, ErrorMessage = "Le nom ne peut pas dépasser 50 caractères.")]
+        [Required(ErrorMessage = "Le nom est requis.")] //Ceci est un attribut de validation. Il indique que la propriété LastName est obligatoire et affiche le message d'erreur spécifié si l'utilisateur ne fournit pas de valeur.
+        [MaxLength(50, ErrorMessage = "Le nom ne peut pas dépasser 50 caractères.")] // Ceci est un autre attribut de validation. Il limite la longueur maximale de la chaîne LastName à 50 caractères et affiche le message d'erreur si cette limite est dépassée.
         [Display(Name = "Nom")]
         public string LastName { get; set; }
 
@@ -26,7 +29,7 @@ namespace AdminMnsV1.Models.Students
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Le mot de passe est requis.")]
-        [DataType(DataType.Password)]
+        [DataType(DataType.Password)] //Cet attribut indique que le champ Password doit être traité comme un champ de mot de passe en masquant la saisie.
         public string Password { get; set; }
 
         [MaxLength(150, ErrorMessage = "L'adresse ne peut pas dépasser 150 caractères.")]
@@ -38,7 +41,7 @@ namespace AdminMnsV1.Models.Students
         public string City { get; set; }
 
         [Display(Name = "Date de naissance")]
-        [DataType(DataType.Date)]
+        [DataType(DataType.Date)] //Cet attribut indique que le champ BirthDate doit être traité comme un champ de date.
         public DateTime BirthDate { get; set; }
 
         [MaxLength(50, ErrorMessage = "Le numéro de téléphone ne peut pas dépasser 50 caractères.")]
@@ -54,9 +57,11 @@ namespace AdminMnsV1.Models.Students
         [Display(Name = "N° France Travail")]
         public string FranceTravailNumber { get; set; }
 
-        [Display(Name = "Rôle")]
-        public string Role { get; set; } = "Candidat"; // Valeur par défaut
-
-        // Vous pourriez choisir de ne pas inclure CreationDate ici, car elle sera définie lors de la création en base de données.
+        [Display(Name = "Status")]
+        public string Status { get; set; } = "Candidat"; // Valeur par défaut
     }
 }
+
+
+
+//C'est un modèle de données spécialement conçu pour recueillir les informations nécessaires à la création d'un nouvel étudiant via un formulaire. Il inclut des attributs de validation pour s'assurer que les données saisies par l'utilisateur sont valides avant d'être enregistrées.

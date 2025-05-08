@@ -1,11 +1,18 @@
 ﻿@using AdminMnsV1.Models.Students
 @model IEnumerable<StudentEditViewModel>
+@*Indique que la vue reçoit une collection (une liste) d'objets StudentEditViewModel du contrôleur. 
+Chaque objet dans cette collection représente un étudiant à afficher dans le tableau.*@
 
 @{
-	ViewData["Title"] = "Student";
+	ViewData["Title"] = "Liste des Etudiants"; /* Définit le titre de la page */
 }
 
 @* LEs messages de succes et d'erreur des modifications' *@
+
+@*  Ces blocs Razor vérifient si des messages de succès ou d'erreur ont été stockés dans TempData. 
+ TempData est un dictionnaire qui permet de passer des données entre les actions de contrôleur successives.
+ Si un message existe, il est affiché dans une div d'alerte Bootstrap.*@
+
 @if (TempData["SuccesMessage"] != null)
 {
 	<div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -24,16 +31,14 @@
 <!-- TABLEAU STUDENTS -->
 <div class="studentTable">
 	<h1 class="mt-5">Stagiaires</h1>
-
+	@* Affiche un bouton qui redirige l'utilisateur vers l'action Formulaire du contrôleur Formulaires, où le formulaire de création d'un nouvel étudiant est affiché. *@
 	<div class="btnNewStudent">
 		<a href="@Url.Action("Formulaire","Formulaires")" class="btn btn-outline-warning">
 			Nouveau Stagiaire
 		</a>
 	</div>
 
-
-
-
+	@* **********TABLEAU ETUDIANTS*************** *@
 	<table class="table align-middle table-striped table-hover table-custom bg-secondary table-responsive">
 		<thead>
 			<tr>
@@ -49,16 +54,17 @@
 		</thead>
 		<tbody>
 
-			@foreach (var item in Model)
+			@foreach (var item in Model)@* Cette boucle foreach itère sur chaque objet StudentEditViewModel dans la collection Model (la liste des étudiants passée par le contrôleur). *@
+
 			{
 				<tr>
 					<th scope="row">@item.UserId</th>
 					<td>@item.LastName</td>
 					<td>@item.FirstName</td>
 					<td>Classe</td>
-					<td>@item.City</td>
-					<td>@item.CreationDate</td>
-					<td>@item.Role</td>
+					<td class="d-none d-sm-table-cell">@item.City</td>
+					<td class="d-none d-sm-table-cell">@item.CreationDate</td>
+					<td class="d-none d-sm-table-cell">@item.Role</td>
 					<td>
 						<a href="#" data-bs-toggle="modal" data-bs-target="#modalStagiaire_@item.UserId">
 							<img width="20" height="20"

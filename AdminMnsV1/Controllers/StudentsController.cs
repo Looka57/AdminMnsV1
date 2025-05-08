@@ -1,63 +1,66 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using AdminMnsV1.Data;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using AdminMnsV1.Models;
 using AdminMnsV1.Models.Students;
+using System.Threading.Tasks;
+using AdminMnsV1.Data;
+using System.Linq;
+using AdminMnsV1.Models;
 
 namespace AdminMnsV1.Controllers
 {
     public class StudentsController : Controller
     {
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationDbContext _context;
 
-        public StudentsController(ApplicationDbContext context)
+        public StudentsController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext context)
         {
+            _userManager = userManager;
+            _roleManager = roleManager;
             _context = context;
         }
+
 
 
         //*************RECUPERE LES STAGIAIRES **********
         public IActionResult Student()
         {
-            // Récupère tous les utilisateurs qui sont de type Student
-            var students = _context.Users
-                .OfType<Student>()
-                .Where(s=> !s.IsDeleted)
+            var users = _context.Users
+                .Where(u => (u.Status == "Stagiaire" || u.Status == "Candidat") && !u.IsDeleted)
                 .ToList();
 
-
-            // Crée une liste de StudentEditViewModel à partir de la liste des Students
-            var studentViewModels = students.Select(s => new StudentEditViewModel
+            var studentViewModels = users.Select(u => new StudentEditViewModel
             {
-                UserId = s.UserId,
-                LastName = s.LastName,
-                FirstName = s.FirstName,
-                Sexe = s.Sexe,
-                BirthDate = s.BirthDate,
-                Nationality = s.Nationality,
-                Address = s.Address,
-                City = s.City,
-                Email = s.Email,
-                Phone = s.Phone,
-                CreationDate = s.CreationDate,
-                Role = s.Role,
-                SocialSecurityNumber = s.SocialSecurityNumber,
-                FranceTravailNumber = s.FranceTravailNumber
-                // N'incluez pas PasswordHash ou Discriminator ici
+                UserId = u.Id,
+                LastName = u.LastName,
+                FirstName = u.FirstName,
+                Sexe = u.Sexe,
+                BirthDate = u.BirthDate,
+                Nationality = u.Nationality,
+                Address = u.Address,
+                City = u.City,
+                Email = u.Email,
+                Phone = u.Phone,
+                CreationDate = u.CreationDate,
+                Role = u.Status, // Ici, tu utilises le Status de User comme Role dans le ViewModel
+                SocialSecurityNumber = u.SocialSecurityNumber,
+                FranceTravailNumber = u.FranceTravailNumber
             }).ToList();
 
-            // Passe la liste des StudentEditViewModel à la vue nommée "Student"z
             return View(studentViewModels);
         }
 
 
-        //*************CREATION DUN NOUVEAU STAGIAIRE**********
+
         [HttpPost]
-        public IActionResult Create(StudentCreateViewModel model)
+        public async Task<IActionResult> Create(StudentCreateViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var newStudent = new Student
+                var newUser = new User // Utilise User car Student hérite de User pour Identity
                 {
                     LastName = model.LastName,
                     FirstName = model.FirstName,
@@ -67,19 +70,29 @@ namespace AdminMnsV1.Controllers
                     Address = model.Address,
                     City = model.City,
                     Email = model.Email,
-                    PasswordHash = model.Password,// Assignation directe du mot de passe (TEMPORAIRE)
-                    Phone = model.Phone,
-                    CreationDate = DateTime.Now,
-                    Role = model.Role,
+                    UserName = model.Email, // Important pour Identity
+                    Status = model.Status,
                     SocialSecurityNumber = model.SocialSecurityNumber,
                     FranceTravailNumber = model.FranceTravailNumber
                 };
 
-                _context.Users.Add(newStudent);
-                _context.SaveChanges();
+                var result = await _userManager.CreateAsync(newUser, model.Password);
+                if (result.Succeeded)
+                {
+                    // Assigne le rôle Identity "Student" à l'utilisateur
+                    await _userManager.AddToRoleAsync(newUser, "Student");
 
-                TempData["SuccesMessage"] = "Le nouveau stagiaire a été créé avec succès.";
-                return RedirectToAction("Student");
+                    TempData["SuccesMessage"] = "Le nouveau stagiaire a été créé avec succès.";
+                    return RedirectToAction("Student");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View("~/Views/Students/Formulaire.cshtml", model);
+                }
             }
             else
             {
@@ -89,71 +102,88 @@ namespace AdminMnsV1.Controllers
 
         //*************MODIFIE UN STAGIAIRE**********
         [HttpPost]
-        public IActionResult Modify(StudentEditViewModel model)
+        public async Task<IActionResult> Modify(StudentEditViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var student = _context.Students.Find(model.UserId);
-                if (student != null)
+                var user = await _userManager.FindByIdAsync(model.UserId);
+                if (user != null)
                 {
-                    student.LastName = model.LastName;
-                    student.FirstName = model.FirstName;
-                    student.Sexe = model.Sexe;
-                    student.BirthDate = model.BirthDate;
-                    student.Nationality = model.Nationality;
-                    student.Address = model.Address;
-                    student.City = model.City;
-                    student.Email = model.Email;
-                    student.Phone = model.Phone;
-                    student.CreationDate = model.CreationDate;
-                    student.Role = model.Role;
-                    student.SocialSecurityNumber = model.SocialSecurityNumber;
-                    student.FranceTravailNumber = model.FranceTravailNumber;
+                    user.LastName = model.LastName;
+                    user.FirstName = model.FirstName;
+                    user.Sexe = model.Sexe;
+                    user.BirthDate = model.BirthDate;
+                    user.Nationality = model.Nationality;
+                    user.Address = model.Address;
+                    user.City = model.City;
+                    user.Email = model.Email;
+                    user.PhoneNumber = model.Phone; // Utilise PhoneNumber pour correspondre à User
+                    user.CreationDate = model.CreationDate;
+                    user.Status = model.Role; // Assigne la valeur du rôle du ViewModel au statut
 
-                    // Enregistrer les changements dans la base de données
-                    _context.SaveChanges();
+                    var updateResult = await _userManager.UpdateAsync(user);
 
-                    //Ajouter un message de succes a la bibliotheque TempData
-                    TempData["SuccesMessage"] = "Les informations de l'étudiant ont été mises à jour avec succès.";
+                    if (updateResult.Succeeded)
+                    {
+                        // Gérer la modification du rôle Identity si nécessaire
+                        // Récupérer les rôles actuels de l'utilisateur
+                        var existingRoles = await _userManager.GetRolesAsync(user);
+                        if (!existingRoles.Contains("Student"))
+                        {
+                            // Supprimer les rôles existants (si tu veux un seul rôle)
+                            await _userManager.RemoveFromRolesAsync(user, existingRoles);
+                            // Ajouter l'utilisateur au rôle "Student"
+                            await _userManager.AddToRoleAsync(user, "Student");
+                        }
+                        else if (model.Role != "Stagiaire" && model.Role != "Candidat")
+                        {
+                            // Si le rôle dans le ViewModel a changé et n'est plus "Stagiaire" ou "Candidat"
+                            // Tu peux ajouter une logique ici pour gérer d'autres rôles Identity si nécessaire
+                        }
 
-                    // Rediriger l'utilisateur vers la liste des stagiaires
-                    return RedirectToAction("Student");
+                        _context.SaveChanges(); // Sauvegarde les autres propriétés via le contexte EF
+
+                        TempData["SuccesMessage"] = "Les informations de l'étudiant ont été mises à jour avec succès.";
+                        return RedirectToAction("Student");
+                    }
+                    else
+                    {
+                        foreach (var error in updateResult.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                        return View("~/Views/Students/Modifier.cshtml", model); // Assure-toi que le chemin est correct
+                    }
                 }
                 else
                 {
-                    // ... gestion si l'étudiant n'est pas trouvé ...
                     return NotFound();
                 }
             }
-
             else
             {
-
-                //Ajouter un message de succes a la bibliotheque TempData
                 TempData["ErreurMessage"] = "Une erreur est survenue. Les informations de l'étudiant n'ont pas été mises à jour.";
-
-                return RedirectToAction("Student"); // Ou votre logique de gestion des erreurs
+                return RedirectToAction("Student");
             }
-        }
 
-        //*************SUPPRIME UN STAGIAIRE**********
+        }
+        ////*************SUPPRIME UN STAGIAIRE**********
 
         [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id) // L'ID d'un utilisateur dans AspNetUsers est un string
         {
-            var student = await _context.Students.FindAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
 
-            if (student == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            student.IsDeleted = true;
-            _context.Update(student);
-            await _context.SaveChangesAsync();
+            user.IsDeleted = true;
+            await _userManager.UpdateAsync(user); // Utilise UserManager pour mettre à jour l'utilisateur
 
-            TempData["SuccesMessage"] = $"Le stagiaire {student.FirstName} {student.LastName} a été supprimé."; // Message de succès
-            return RedirectToAction(nameof(Student)); // Rediriger vers l'action qui liste les stagiaires
+            TempData["SuccesMessage"] = $"L'utilisateur {user.FirstName} {user.LastName} a été marqué comme supprimé.";
+            return RedirectToAction(nameof(Student));
         }
     }
 }

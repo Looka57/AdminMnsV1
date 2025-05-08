@@ -2,9 +2,12 @@
 
 namespace AdminMnsV1.Models.Students
 {
+
+
+    //MODIFICATION ET AFFICHAGE  D'UN  STAGIAIRE
     public class StudentEditViewModel
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; } //Cette propriété stocke l'identifiant unique de l'étudiant. Essentielle pour identifier l'étudiant à modifier.
 
         [Required(ErrorMessage = "Le nom est requis.")]
         [MaxLength(50, ErrorMessage = "Le nom ne peut pas dépasser 50 caractères.")]
@@ -27,8 +30,9 @@ namespace AdminMnsV1.Models.Students
         [MaxLength(50, ErrorMessage = "La ville ne peut pas dépasser 50 caractères.")]
         public string City { get; set; }
 
+
         public DateTime CreationDate { get; set; }
-    
+
 
         public DateTime BirthDate { get; set; }
 
@@ -42,7 +46,12 @@ namespace AdminMnsV1.Models.Students
         public string FranceTravailNumber { get; set; }
 
         public string Role { get; set; }
+
+
+
         // Pas de propriété pour PasswordHash ni Discriminator ici !
         // Ni pour Photo si vous avez décidé de la supprimer.
+
+        // C' est un modèle de données conçu pour afficher les informations d'un étudiant existant dans un formulaire de modification et pour recueillir les mises à jour de ces informations. Il contient l'identifiant de l'étudiant pour la mise à jour et des attributs de validation pour les champs modifiables.
     }
 }

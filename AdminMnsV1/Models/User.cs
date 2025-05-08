@@ -5,52 +5,52 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Net;
 namespace AdminMnsV1.Models
 {
-    public class User
+    public class User : IdentityUser
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int UserId { get; set; }
+        // Propriétés de base pour tous les utilisateurs
+        // Ces propriétés sont communes à tous les types d'utilisateurs (Expert, Student, etc.)
+        // Elles sont définies ici pour éviter la duplication de code dans les classes dérivées.
 
-
-        [Required]
-        [MaxLength(50)]
-        public string LastName { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string FirstName { get; set; }
-
-        [MaxLength(50)]
-        public string Sexe { get; set; }
-
-        [Required]
-        [MaxLength(250)]
-
-        [EmailAddress]
-        public string Email { get; set; }
-
-        [Required] //autre systeme obligatoire pour l'insertion + communication
-        [MaxLength(250)]
-        public string PasswordHash { get; set; } = string.Empty; // Non-nullable avec une valeur par défaut
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Sexe { get; set; }
 
         [MaxLength(150)]
-        public string Address { get; set; }
+        public string? Address { get; set; }
 
         [MaxLength(50)]
-        public string City { get; set; }
+        public string? City { get; set; }
 
         public DateTime CreationDate { get; set; }
         [MaxLength(50)]
 
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
         public DateTime BirthDate { get; set; }
+
+        public string? Status { get; set; } // "Candidat" ou "Stagiaire"
 
         public bool IsDeleted { get; set; } = false; // Propriété pour gérer la suppression logique
 
-        // Propriété de discrimination pour EF Core
-        public string Discriminator { get; set; }
 
 
+        //STUDENT
+        public string? Nationality { get; set; }
+        public string? SocialSecurityNumber { get; set; }
+        public string? FranceTravailNumber { get; set; }
+        public string? Photo { get; set; }
+
+
+        //public string? Role { get; set; } // Peut contenir "Candidat" ou "Stagiaire"
+
+        //Le ? après string signifie que cette propriété peut accepter la valeur null
+
+        //EXPERTS 
+        public string? Speciality { get; set; }
+
+        //ADMIN 
+        public string? Service { get; set; } 
     }
+
+
 }
 

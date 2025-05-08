@@ -35,7 +35,6 @@
 
 
 	<!-- TABLEAU INTERVENANTS -->
-
 	<table class="table align-middle table-striped table-hover table-custom bg-secondary table-responsive">
 		<thead>
 			<tr class="">
@@ -81,7 +80,6 @@
 				<div class="modal fade" id="modalExpert_@item.UserId" tabindex="-1" aria-labelledby="modalExpertLabel_@item.UserId"
 					 aria-hidden="true">
 
-
 					<div class="modal-dialog">
 						<form method="post" action="@Url.Action("Modify", "Experts")">
 							<input type="hidden" name="UserId" value="@item.UserId" />
@@ -113,7 +111,6 @@
 										<input type="date" class="form-control" id="BirthDate_@item.UserId" name="BirthDate"
 											   value="@item.BirthDate.ToString("yyyy-MM-dd")">
 									</div>
-								
 
 									<div class="mb-3">
 										<label for="Address_@item.UserId" class="form-label">Adresse</label>
@@ -136,7 +133,7 @@
 									</div>
 
 									<div class="mb-3">
-										<label for="Speciality_@item.UserId" class="form-label">Spécialité</label>
+										<label for="Speciality_@item.UserId" class="form-label">Spécialités</label>
 										<input type="text" class="form-control" id="Speciality_@item.UserId" name="Speciality" value="@item.Speciality">
 									</div>
 								</div>

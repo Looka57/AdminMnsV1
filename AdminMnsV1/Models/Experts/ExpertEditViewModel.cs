@@ -33,7 +33,7 @@ namespace AdminMnsV1.Models.Experts
         [MaxLength(50, ErrorMessage = "La ville ne peut pas dépasser 50 caractères.")]
         public string City { get; set; }
 
-
+        [Required(ErrorMessage = "La spécialité est obligatoire.")] 
         [MaxLength(50, ErrorMessage = "Choisir une spécialité.")]
         [Display(Name = "Speciality")]
         public string Speciality { get; set; }
