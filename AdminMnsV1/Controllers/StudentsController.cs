@@ -66,6 +66,8 @@ namespace AdminMnsV1.Controllers
                     Nationality = model.Nationality,
                     Address = model.Address,
                     City = model.City,
+                    Phone = model.Phone,
+                    CreationDate = DateTime.Now,
                     Email = model.Email,
                     UserName = model.Email, // Important pour Identity
                     Status = model.Status,
@@ -106,6 +108,9 @@ namespace AdminMnsV1.Controllers
                 var user = await _userManager.FindByIdAsync(model.UserId);
                 if (user != null)
                 {
+                    // Conserve la date de création originale
+                    var originalCreationDate = user.CreationDate;
+
                     user.LastName = model.LastName;
                     user.FirstName = model.FirstName;
                     user.Sexe = model.Sexe;
@@ -114,9 +119,12 @@ namespace AdminMnsV1.Controllers
                     user.Address = model.Address;
                     user.City = model.City;
                     user.Email = model.Email;
-                    user.PhoneNumber = model.Phone; // Utilise PhoneNumber pour correspondre à User
+                    user.Phone = model.Phone; 
                     user.CreationDate = model.CreationDate;
                     user.Status = model.Role; // Assigne la valeur du rôle du ViewModel au statut
+
+                    // Réassigne la date de création originale
+                    user.CreationDate = originalCreationDate;
 
                     var updateResult = await _userManager.UpdateAsync(user);
 

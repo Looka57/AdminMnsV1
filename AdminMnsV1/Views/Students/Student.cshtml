@@ -143,9 +143,8 @@ Chaque objet dans cette collection représente un étudiant à afficher dans le 
 											   value="@item.Phone">
 									</div>
 									<div class="mb-3">
-										<label for="CreationDate" class="form-label">Date création dossier</label>
-										<input type="date" class="form-control" id="CreationDate" name="CreationDate"
-											   value="@item.CreationDate.ToString("yyyy-MM-dd")">
+										<label class="form-label">Date création dossier</label>
+										<div>@item.CreationDate.ToString("dd/MM/yyyy HH:mm")</div>
 									</div>
 									<div class="mb-3">
 										<label for="Role" class="form-label">Role</label>

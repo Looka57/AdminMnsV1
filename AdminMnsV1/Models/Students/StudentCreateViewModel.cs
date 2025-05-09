@@ -38,6 +38,8 @@ namespace AdminMnsV1.Models.Students
 
         [MaxLength(50, ErrorMessage = "La ville ne peut pas dépasser 50 caractères.")]
         [Display(Name = "Ville")]
+
+        //public /*DateTime*/ CreationDate { get; set; }
         public string City { get; set; }
 
         [Display(Name = "Date de naissance")]

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.ConstrainedExecution;
 
 namespace AdminMnsV1.Models.Students
 {
+
+    //CREATION D'UN NOUVEL INTERVENANT
     public class ExpertCreateViewModel
     {
         [Required(ErrorMessage = "Le nom est requis.")]

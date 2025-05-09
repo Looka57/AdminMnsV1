@@ -4,13 +4,14 @@
 
 
 @{
-    ViewData["Title"] = "FormulaireExpert";
+    ViewData["Title"] = "Ajout d'un intervenant";
 }
 
 <h1 class="m-5">Ajout d'un nouvel Intervenant</h1>
 <a href="@Url.Action("Expert", "Experts")" class="mx-5">⬅ Retour à la page intervenant</a>
 
 <div class="container containerStudentDetails">
+    <div class="enteteForm"></div>
     <form asp-action="Create" asp-controller="Experts" method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
 
@@ -18,7 +19,7 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <label asp-for="LastName" class="form-label">Nom</label>
-                    <input asp-for="LastName" class="form-control" />
+                    <input asp-for="LastName" class="form-control"  />
                     <span asp-validation-for="LastName" class="text-danger"></span>
                 </div>
             </div>

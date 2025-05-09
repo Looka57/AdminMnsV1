@@ -22,10 +22,6 @@ namespace AdminMnsV1.Models.Experts
         [MaxLength(250, ErrorMessage = "L'e-mail ne peut pas dépasser 250 caractères.")]
         public string Email { get; set; }
 
-
-        //public string Password { get; set; }
-
-
         [MaxLength(150, ErrorMessage = "L'adresse ne peut pas dépasser 150 caractères.")]
         public string Address { get; set; }
 

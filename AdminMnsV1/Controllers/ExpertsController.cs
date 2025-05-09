@@ -47,13 +47,15 @@ namespace AdminMnsV1.Controllers
             return View(expertsViewModel);
         }
 
+
+
         //*************CREATION DUN NOUVEAU INTERVENANT**********
-        [HttpPost]
+       [HttpPost]
         public async Task<IActionResult> Create(ExpertCreateViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var newExpert = new User // Utilise User car Expert hérite de User pour Identity
+                var newUser = new User // Utilise User car Expert hérite de User pour Identity
                 {
                     LastName = model.LastName,
                     FirstName = model.FirstName,
@@ -67,15 +69,16 @@ namespace AdminMnsV1.Controllers
                     CreationDate = DateTime.Now,
                     Status = "Expert", // Définit le statut comme Expert
                     Speciality = model.Speciality // Propriété spécifique à Expert
+                  
                 };
 
-                var result = await _userManager.CreateAsync(newExpert, model.Password);
+                var result = await _userManager.CreateAsync(newUser, model.Password);
                 if (result.Succeeded)
                 {
                     // Assigne le rôle Identity "Expert" à l'utilisateur
-                    await _userManager.AddToRoleAsync(newExpert, "Expert");
+                    await _userManager.AddToRoleAsync(newUser, "Expert");
 
-                    TempData["SuccesMessage"] = "Le nouvel intervenant a été créé avec succès.";
+                    TempData["SuccesMessage"] = "Le nouveau Intervenant a été créé avec succès.";
                     return RedirectToAction("Expert");
                 }
                 else
@@ -92,7 +95,6 @@ namespace AdminMnsV1.Controllers
                 return View("~/Views/Experts/FormulaireExpert.cshtml", model);
             }
         }
-
         //*************MODIFIE UN INTERVENANT**********
         [HttpPost]
         public async Task<IActionResult> Modify(ExpertEditViewModel model)
