@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.ConstrainedExecution;
+using Microsoft.AspNetCore.Http;
 
 namespace AdminMnsV1.Models.Students
 {
@@ -9,7 +10,9 @@ namespace AdminMnsV1.Models.Students
     public class StudentCreateViewModel
     {
         [Required(ErrorMessage = "Le nom est requis.")] //Ceci est un attribut de validation. Il indique que la propriété LastName est obligatoire et affiche le message d'erreur spécifié si l'utilisateur ne fournit pas de valeur.
+
         [MaxLength(50, ErrorMessage = "Le nom ne peut pas dépasser 50 caractères.")] // Ceci est un autre attribut de validation. Il limite la longueur maximale de la chaîne LastName à 50 caractères et affiche le message d'erreur si cette limite est dépassée.
+
         [Display(Name = "Nom")]
         public string LastName { get; set; }
 
@@ -61,6 +64,10 @@ namespace AdminMnsV1.Models.Students
 
         [Display(Name = "Status")]
         public string Status { get; set; } = "Candidat"; // Valeur par défaut
+
+        [Display(Name = "Photo de profil")]
+        public IFormFile? photoFile { get; set; }
+        //IFormFile est une interface dans ASP.NET Core qui représente un fichier envoyé via un formulaire.Le ? indique que la photo est facultative.
     }
 }
 

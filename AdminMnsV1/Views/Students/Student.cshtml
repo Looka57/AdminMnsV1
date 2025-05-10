@@ -28,7 +28,12 @@ Chaque objet dans cette collection représente un étudiant à afficher dans le 
 		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 	</div>
 }
-<!-- TABLEAU STUDENTS -->
+
+@* TempData : permet de passer des messages temporairement entre deux actions.
+Si des messages existent, ils sont affichés dans des alertes Bootstrap. *@
+
+
+
 <div class="studentTable">
 	<h1 class="mt-5">Stagiaires</h1>
 	@* Affiche un bouton qui redirige l'utilisateur vers l'action Formulaire du contrôleur Formulaires, où le formulaire de création d'un nouvel étudiant est affiché. *@
@@ -38,11 +43,12 @@ Chaque objet dans cette collection représente un étudiant à afficher dans le 
 		</a>
 	</div>
 
+
 	@* **********TABLEAU ETUDIANTS*************** *@
 	<table class="table align-middle table-striped table-hover table-custom bg-secondary table-responsive">
 		<thead>
 			<tr>
-				<th scope="col">#</th>
+				<th scope="col">Photo</th>
 				<th scope="col">Nom</th>
 				<th scope="col">Prénom</th>
 				<th scope="col">Classe</th>
@@ -54,11 +60,22 @@ Chaque objet dans cette collection représente un étudiant à afficher dans le 
 		</thead>
 		<tbody>
 
-			@foreach (var item in Model)@* Cette boucle foreach itère sur chaque objet StudentEditViewModel dans la collection Model (la liste des étudiants passée par le contrôleur). *@
+			@foreach (var item in Model)@* Cette boucle foreach itère sur chaque objet StudentEditViewModel dans la collection Model 
+										(la liste des étudiants passée par le contrôleur).
+										Pour chaque étudiant(item), une ligne est créée avec ses informations *@
 
 			{
 				<tr>
-					<th scope="row">@item.UserId</th>
+					<th scope="row">
+						@if (!string.IsNullOrEmpty(item.Photo))
+						{
+							<img src="~/images/profiles/@item.Photo" alt="@item.FirstName @item.LastName" width="50" height="50" style="border-radius: 50%;">
+						}
+						else
+						{
+							<span>Pas de photo</span> @* <img src="~/images/profiles/default.png" alt="Pas de photo" width="50" height="50" style="border-radius: 50%;"> *@
+						}
+					</th>
 					<td>@item.LastName</td>
 					<td>@item.FirstName</td>
 					<td>Classe</td>
@@ -73,6 +90,8 @@ Chaque objet dans cette collection représente un étudiant à afficher dans le 
 						</a>
 					</td>
 					<td>
+						@* Formulaire qui appelle l'action Delete du contrôleur Students avec l’ID de l'étudiant.
+						Avec une confirmation JS (onclick="return confirm(...)").*@
 						<form method="post" action="@Url.Action("Delete", "Students", new { id = item.UserId })" style="display:inline;">
 							<button type="submit" class="btn btn-link text-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce stagiaire ?')">
 								<img width="20" height="20"
@@ -82,21 +101,25 @@ Chaque objet dans cette collection représente un étudiant à afficher dans le 
 					</td>
 				</tr>
 
-				<!-- Modal -->
+				@* **********MODAL*************** *@
+
+				@* Une modale Bootstrap personnalisée par étudiant(id unique). *@
 				<div class="modal fade" id="modalStagiaire_@item.UserId" tabindex="-1" aria-labelledby="modalStagiaireLabel_@item.UserId"
 					 aria-hidden="true">
 					<div class="modal-dialog">
+						@* Elle contient un formulaire POST qui envoie les nouvelles données à /Students/Modify.
+						Chaque champ est prérempli avec les données de l'étudiant : *@
 						<form method="post" action="/Students/Modify">
-
 							<div class="modal-content">
 								<div class="modal-header">
 									<h5 class="modal-title" id="modalStagiaireLabel_@item.UserId">Modifier @item.FirstName @item.LastName</h5>
 									<button type="button" class="btn-close" data-bs-dismiss="modal"
 											aria-label="Close"></button>
 								</div>
+								@* Chaque item est un étudiant, et s'il possède une propriété (LastName, sexe, FirstName...)
+								il va l'afficher dans la cellule' *@
 								<div class="modal-body">
 									<input type="hidden" name="UserId" value="@item.UserId" />
-
 									<div class="mb-3">
 										<label for="LastName" class="form-label">Nom</label>
 										<input type="text" class="form-control" id="LastName" name="LastName" value="@item.LastName">

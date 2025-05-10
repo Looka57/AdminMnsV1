@@ -30,9 +30,7 @@ namespace AdminMnsV1.Models.Students
         [MaxLength(50, ErrorMessage = "La ville ne peut pas dépasser 50 caractères.")]
         public string City { get; set; }
 
-
         public DateTime CreationDate { get; set; }
-
 
         public DateTime BirthDate { get; set; }
 
@@ -47,11 +45,15 @@ namespace AdminMnsV1.Models.Students
 
         public string Role { get; set; }
 
+        public string? Photo { get; set; }
 
 
-        // Pas de propriété pour PasswordHash ni Discriminator ici !
-        // Ni pour Photo si vous avez décidé de la supprimer.
+        //C' est un modèle de données conçu pour afficher les informations d'un étudiant existant dans un formulaire de modification et pour recueillir les mises à jour de ces informations.Il contient l'identifiant de l'étudiant pour la mise à jour et des attributs de validation pour les champs modifiables.
+        // Le StudentEditViewModel est une classe C# utilisée comme modèle de vue dans ASP.NET MVC. Elle permet de transporter des données entre le contrôleur et la vue de manière ciblée (ici, pour les étudiants).
 
-        // C' est un modèle de données conçu pour afficher les informations d'un étudiant existant dans un formulaire de modification et pour recueillir les mises à jour de ces informations. Il contient l'identifiant de l'étudiant pour la mise à jour et des attributs de validation pour les champs modifiables.
+        // 🎯 Pourquoi utiliser un ViewModel au lieu de l'entité User directement ?
+        // -- Tu évites d’exposer des champs sensibles.
+        // -- Tu contrôles précisément les validations.
+        // -- Tu simplifies l’affichage dans la vue (formulaires ciblés).
     }
 }

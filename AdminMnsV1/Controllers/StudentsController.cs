@@ -7,6 +7,13 @@ using System.Threading.Tasks;
 using AdminMnsV1.Data;
 using System.Linq;
 using AdminMnsV1.Models;
+using System;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.IdentityModel.Tokens;
+using System.IO;
+using System.Runtime.ConstrainedExecution;
 
 namespace AdminMnsV1.Controllers
 {
@@ -15,12 +22,15 @@ namespace AdminMnsV1.Controllers
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _environment; //Injecte le service qui fournit des informations sur l'environnement web de     l'application, y compris le chemin racine du contenu web (wwwroot).
 
-        public StudentsController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext context)
+
+        public StudentsController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext context, IWebHostEnvironment environment)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _context = context;
+            _environment = environment;
         }
 
         //*************RECUPERE LES STAGIAIRES **********
@@ -45,7 +55,8 @@ namespace AdminMnsV1.Controllers
                 CreationDate = u.CreationDate,
                 Role = u.Status, // Ici, tu utilises le Status de User comme Role dans le ViewModel
                 SocialSecurityNumber = u.SocialSecurityNumber,
-                FranceTravailNumber = u.FranceTravailNumber
+                FranceTravailNumber = u.FranceTravailNumber,
+                Photo = u.Photo
             }).ToList();
 
             return View(studentViewModels);
@@ -57,6 +68,26 @@ namespace AdminMnsV1.Controllers
         {
             if (ModelState.IsValid)
             {
+                string? uniqueFileName = null;
+                //Vérification du fichier
+                if (model.photoFile != null && model.photoFile.Length > 0) //Vérifie si model.PhotoProfil n'est pas null et si sa longueur est supérieure à zéro (un fichier a été sélectionné)
+                {
+                    string uploadFolder = Path.Combine(_environment.WebRootPath, "images", "Profiles"); // Crée un dossier pour les photos
+                    uniqueFileName = Guid.NewGuid().ToString() + "_" + model.photoFile.FileName; //Création du nom de fichier unique 
+                    string filePath = Path.Combine(uploadFolder, uniqueFileName);
+                    //Combine le chemin racine web(wwwroot), un dossier "images/profiles" et le nom de fichier unique pour obtenir le chemin complet où le fichier sera enregistré sur le serveur.
+
+
+                    Directory.CreateDirectory(uploadFolder);   // Verification que le dossier existe
+
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create)) //Sauvegarde du fichier: 
+                                                                                       //FileStream pour créer un fichier au chemin spécifié  
+                    {
+                        await model.photoFile.CopyToAsync(fileStream); //copier le contenu du fichier téléchargé vers ce fichier sur le serveur*/.
+                    }
+                }
+
                 var newUser = new User // Utilise User car Student hérite de User pour Identity
                 {
                     LastName = model.LastName,
@@ -72,8 +103,11 @@ namespace AdminMnsV1.Controllers
                     UserName = model.Email, // Important pour Identity
                     Status = model.Status,
                     SocialSecurityNumber = model.SocialSecurityNumber,
-                    FranceTravailNumber = model.FranceTravailNumber
+                    FranceTravailNumber = model.FranceTravailNumber,
+                    Photo = uniqueFileName // Sauvegarde le nom du fichier (ou null si aucun fichier n'a été téléchargé)
+                    //Le nom de fichier unique (uniqueFileName) est stocké dans la propriété Photo de l'objet newUser
                 };
+
 
                 var result = await _userManager.CreateAsync(newUser, model.Password);
                 if (result.Succeeded)
@@ -119,7 +153,7 @@ namespace AdminMnsV1.Controllers
                     user.Address = model.Address;
                     user.City = model.City;
                     user.Email = model.Email;
-                    user.Phone = model.Phone; 
+                    user.Phone = model.Phone;
                     user.CreationDate = model.CreationDate;
                     user.Status = model.Role; // Assigne la valeur du rôle du ViewModel au statut
 
