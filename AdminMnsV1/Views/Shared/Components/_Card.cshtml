@@ -1,18 +1,1 @@
-﻿@model AdminMnsV1.Models.CardModel 
-@* Cette ligne est une directive Razor. Elle spécifie le type de modèle que cette vue partielle ou cette vue utilisera. 
-En l'occurrence, elle indique que le modèle attendu est une instance de la classe CardModel qui se trouve dans l'espace de noms AdminMnsV1.Models. 
-Cela signifie que dans le reste du code, vous pourrez accéder aux propriétés de cet objet CardModel via la variable Model.
- *@
-
-<a href="@Model.Url" class="card-link">
-    @* La syntaxe @Model.Url utilise Razor pour accéder à la propriété Url de l'objet CardModel qui a été passé à la vue. La valeur de cette propriété sera l'URL vers laquelle le lien pointera. *@
-    <div class="cards border-0">
-        <div>
-            <div class="cardNumber">@Model.Number</div>  @*  À l'intérieur, @Model.Number utilise Razor pour afficher la valeur de la propriété Number de l'objet CardModel. Cela affichera probablement le numéro de la carte *@
-            <div class="cardName">@Model.Title</div>   @*  @Model.Title affiche la valeur de la propriété Title du CardModel, qui sera probablement le nom ou le titre de la carte. *@
-        </div>
-        <div class="iconCard">
-            <img width="60" height="60" src="@Model.IconUrl" alt="@Model.AltText" />   @*  @Model.IconUrl utilise Razor pour récupérer la valeur de la propriété IconUrl du CardModel, qui devrait être l'adresse de l'image de l'icône. *@
-        </div>
-    </div>
-</a>
+﻿
