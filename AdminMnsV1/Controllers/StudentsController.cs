@@ -70,10 +70,10 @@ namespace AdminMnsV1.Controllers
             {
                 string? uniqueFileName = null;
                 //Vérification du fichier
-                if (model.photoFile != null && model.photoFile.Length > 0) //Vérifie si model.PhotoProfil n'est pas null et si sa longueur est supérieure à zéro (un fichier a été sélectionné)
+                if (model.PhotoFile != null && model.PhotoFile.Length > 0) //Vérifie si model.PhotoProfil n'est pas null et si sa longueur est supérieure à zéro (un fichier a été sélectionné)
                 {
                     string uploadFolder = Path.Combine(_environment.WebRootPath, "images", "Profiles"); // Crée un dossier pour les photos
-                    uniqueFileName = Guid.NewGuid().ToString() + "_" + model.photoFile.FileName; //Création du nom de fichier unique 
+                    uniqueFileName = Guid.NewGuid().ToString() + "_" + model.PhotoFile.FileName; //Création du nom de fichier unique 
                     string filePath = Path.Combine(uploadFolder, uniqueFileName);
                     //Combine le chemin racine web(wwwroot), un dossier "images/profiles" et le nom de fichier unique pour obtenir le chemin complet où le fichier sera enregistré sur le serveur.
 
@@ -81,11 +81,9 @@ namespace AdminMnsV1.Controllers
                     Directory.CreateDirectory(uploadFolder);   // Verification que le dossier existe
 
 
-                    using (var fileStream = new FileStream(filePath, FileMode.Create)) //Sauvegarde du fichier: 
-                                                                                       //FileStream pour créer un fichier au chemin spécifié  
-                    {
-                        await model.photoFile.CopyToAsync(fileStream); //copier le contenu du fichier téléchargé vers ce fichier sur le serveur*/.
-                    }
+                    using var fileStream = new FileStream(filePath, FileMode.Create); //Sauvegarde du fichier: 
+                                                                                      //FileStream pour créer un fichier au chemin spécifié  
+                    await model.PhotoFile.CopyToAsync(fileStream); //copier le contenu du fichier téléchargé vers ce fichier sur le serveur*/.
                 }
 
                 var newUser = new User // Utilise User car Student hérite de User pour Identity

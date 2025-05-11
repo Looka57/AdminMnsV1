@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using AdminMnsV1.Models;
 
-namespace AdminMnsV1.Models
+namespace AdminMnsV1.Models.Class
 {
     public class Class
     {

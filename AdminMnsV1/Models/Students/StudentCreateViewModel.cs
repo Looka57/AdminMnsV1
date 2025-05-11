@@ -66,7 +66,7 @@ namespace AdminMnsV1.Models.Students
         public string Status { get; set; } = "Candidat"; // Valeur par défaut
 
         [Display(Name = "Photo de profil")]
-        public IFormFile? photoFile { get; set; }
+        public IFormFile? PhotoFile { get; set; }
         //IFormFile est une interface dans ASP.NET Core qui représente un fichier envoyé via un formulaire.Le ? indique que la photo est facultative.
     }
 }
