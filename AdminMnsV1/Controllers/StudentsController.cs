@@ -67,7 +67,6 @@ namespace AdminMnsV1.Controllers
 
 
         //*************CRRER UN STAGIAIRES **********
-
         [HttpPost]
         public async Task<IActionResult> Create(StudentCreateViewModel model)
         {
@@ -75,21 +74,17 @@ namespace AdminMnsV1.Controllers
             {
                 string? uniqueFileName = null;
                 //Vérification du fichier
-                if (model.PhotoFile != null && model.PhotoFile.Length > 0) //Vérifie si model.PhotoProfil n'est pas null et si sa longueur est supérieure à zéro
+                if (model.PhotoFile != null && model.PhotoFile.Length > 0)
                 {
-                    string uploadFolder = Path.Combine(_environment.WebRootPath, "images", "Profiles"); // Crée un dossier pour les photos
-                    uniqueFileName = Guid.NewGuid().ToString() + "_" + model.PhotoFile.FileName; //Création du nom de fichier unique 
+                    string uploadFolder = Path.Combine(_environment.WebRootPath, "images", "Profiles");
+                    uniqueFileName = Guid.NewGuid().ToString() + "_" + model.PhotoFile.FileName;
                     string filePath = Path.Combine(uploadFolder, uniqueFileName);
-                    //Combine le chemin racine web(wwwroot), un dossier "images/profiles" et le nom de fichier unique pour obtenir le chemin complet où le fichier sera enregistré sur le serveur.
-
-                    Directory.CreateDirectory(uploadFolder);   // Verification que le dossier existe
-
-                    using var fileStream = new FileStream(filePath, FileMode.Create); //Sauvegarde du fichier: 
-                                                                                      //FileStream pour créer un fichier au chemin spécifié  
-                    await model.PhotoFile.CopyToAsync(fileStream); //copier le contenu du fichier téléchargé vers ce fichier sur le serveur*/.
+                    Directory.CreateDirectory(uploadFolder);
+                    using var fileStream = new FileStream(filePath, FileMode.Create);
+                    await model.PhotoFile.CopyToAsync(fileStream);
                 }
 
-                var newUser = new Student // Utilise User car Student hérite de User pour Identity (discriminator)
+                var newUser = new Student // Utilise Student car Student hérite de User pour Identity (discriminator)
                 {
                     LastName = model.LastName,
                     FirstName = model.FirstName,
@@ -102,20 +97,18 @@ namespace AdminMnsV1.Controllers
                     CreationDate = DateTime.Now,
                     Email = model.Email,
                     UserName = model.Email, // Important pour Identity
-                    Status = model.Status, // Stagiaire ou Candidat
+                    Status = "Candidat", // Stagiaire ou Candidat
                     SocialSecurityNumber = model.SocialSecurityNumber,
                     FranceTravailNumber = model.FranceTravailNumber,
-                    Photo = uniqueFileName // Sauvegarde le nom du fichier (ou null si aucun fichier n'a été téléchargé)
-                    //Le nom de fichier unique (uniqueFileName) est stocké dans la propriété Photo de l'objet newUser
+                    Photo = uniqueFileName
                 };
 
+                Console.WriteLine($"Valeur de model.Status : {model.Status}"); // Ajoute ceci AVANT la création de newUser
 
                 var result = await _userManager.CreateAsync(newUser, model.Password);
                 if (result.Succeeded)
                 {
-                    // Assigne le rôle Identity "Student" à l'utilisateur
-                    await _userManager.AddToRoleAsync(newUser, "Student");
-
+                    Console.WriteLine($"Utilisateur créé avec succès, Statut = {newUser.Status}"); // Ajoute ceci APRES la création réussie
                     TempData["SuccesMessage"] = "Le nouveau stagiaire a été créé avec succès.";
                     return RedirectToAction("Student");
                 }
@@ -125,6 +118,7 @@ namespace AdminMnsV1.Controllers
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
+                    Console.WriteLine($"Erreur lors de la création de l'utilisateur."); // Ajoute ceci en cas d'erreur
                     return View("~/Views/Students/Formulaire.cshtml", model);
                 }
             }
@@ -133,6 +127,7 @@ namespace AdminMnsV1.Controllers
                 return View("~/Views/Students/Formulaire.cshtml", model);
             }
         }
+
 
         //*************MODIFIE UN STAGIAIRE**********
         [HttpPost]

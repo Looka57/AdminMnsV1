@@ -23,6 +23,7 @@ namespace AdminMnsV1.Models
         public bool IsDeleted { get; set; } = false; // Propriété pour gérer la suppression logique
 
 
+
         //STUDENT
         public string? Nationality { get; set; }
         public string? SocialSecurityNumber { get; set; }

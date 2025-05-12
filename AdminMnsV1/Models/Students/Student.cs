@@ -8,7 +8,7 @@ namespace AdminMnsV1.Models.Students
         public string? Nationality { get; set; }
         public string? SocialSecurityNumber { get; set; }
         public string? FranceTravailNumber { get; set; }
-        public string? Status { get; set; } // Peut contenir "Candidat" ou "Stagiaire"
+        //public string? Status { get; set; } // Peut contenir "Candidat" ou "Stagiaire"
         public string? Photo { get; set; }
         //Le ? après string signifie que cette propriété peut accepter la valeur null
 

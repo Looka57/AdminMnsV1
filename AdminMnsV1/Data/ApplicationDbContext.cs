@@ -36,10 +36,6 @@ namespace AdminMnsV1.Data
                .Property(u => u.Phone)
                .IsRequired(false);
 
-            modelBuilder.Entity<User>()
-               .Property(u => u.Status)
-               .IsRequired(false);
-
 
             // Configuration de la clé primaire composite pour Attend
             modelBuilder.Entity<Attend>()
