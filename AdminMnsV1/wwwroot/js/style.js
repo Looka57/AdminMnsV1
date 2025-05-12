@@ -21,40 +21,40 @@
 
 
 
-document.addEventListener("DOMContentLoaded", function () {
-    // Cibler tous les inputs type="file"
-    const fileInputs = document.querySelectorAll("input[type='file']");
+//document.addEventListener("DOMContentLoaded", function () {
+//    // Cibler tous les inputs type="file"
+//    const fileInputs = document.querySelectorAll("input[type='file']");
 
-    fileInputs.forEach((input) => {
-        input.addEventListener("change", function () {
-            const file = input.files[0];
+//    fileInputs.forEach((input) => {
+//        input.addEventListener("change", function () {
+//            const file = input.files[0];
 
-            if (file) {
-                // ✅ Exemple de validation simple : fichier < 5 Mo
-                const isValid = file.size <= 5 * 1024 * 1024;
+//            if (file) {
+//                // ✅ Exemple de validation simple : fichier < 5 Mo
+//                const isValid = file.size <= 5 * 1024 * 1024;
 
-                if (isValid) {
-                    // 🔒 Griser l'input
-                    input.disabled = true;
-                    input.style.opacity = "0.6";
+//                if (isValid) {
+//                    // 🔒 Griser l'input
+//                    input.disabled = true;
+//                    input.style.opacity = "0.6";
 
-                    // 🟢 Passer le bouton à "Valider"
-                    const row = input.closest("tr");
-                    const btn = row.querySelector("button");
+//                    // 🟢 Passer le bouton à "Valider"
+//                    const row = input.closest("tr");
+//                    const btn = row.querySelector("button");
 
-                    if (btn) {
-                        btn.textContent = "Valider";
-                        btn.classList.remove("btn-warning");
-                        btn.classList.add("btn-success");
-                    }
-                } else {
-                    alert("Fichier trop volumineux !");
-                    input.value = ""; // réinitialiser
-                }
-            }
-        });
-    });
-});
+//                    if (btn) {
+//                        btn.textContent = "Valider";
+//                        btn.classList.remove("btn-warning");
+//                        btn.classList.add("btn-success");
+//                    }
+//                } else {
+//                    alert("Fichier trop volumineux !");
+//                    input.value = ""; // réinitialiser
+//                }
+//            }
+//        });
+//    });
+//});
 
 
 

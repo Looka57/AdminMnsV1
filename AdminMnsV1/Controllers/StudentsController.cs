@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.IdentityModel.Tokens;
 using System.IO;
 using System.Runtime.ConstrainedExecution;
+using Microsoft.EntityFrameworkCore;
 
 namespace AdminMnsV1.Controllers
 {
@@ -34,8 +35,10 @@ namespace AdminMnsV1.Controllers
         }
 
         //*************RECUPERE LES STAGIAIRES **********
+
         public IActionResult Student()
         {
+            //tableau de tout les students
             var users = _context.Users
                 .Where(u => (u.Status == "Stagiaire" || u.Status == "Candidat") && !u.IsDeleted)
                 .ToList();
@@ -63,6 +66,8 @@ namespace AdminMnsV1.Controllers
         }
 
 
+        //*************CRRER UN STAGIAIRES **********
+
         [HttpPost]
         public async Task<IActionResult> Create(StudentCreateViewModel model)
         {
@@ -70,16 +75,14 @@ namespace AdminMnsV1.Controllers
             {
                 string? uniqueFileName = null;
                 //Vérification du fichier
-                if (model.PhotoFile != null && model.PhotoFile.Length > 0) //Vérifie si model.PhotoProfil n'est pas null et si sa longueur est supérieure à zéro (un fichier a été sélectionné)
+                if (model.PhotoFile != null && model.PhotoFile.Length > 0) //Vérifie si model.PhotoProfil n'est pas null et si sa longueur est supérieure à zéro
                 {
                     string uploadFolder = Path.Combine(_environment.WebRootPath, "images", "Profiles"); // Crée un dossier pour les photos
                     uniqueFileName = Guid.NewGuid().ToString() + "_" + model.PhotoFile.FileName; //Création du nom de fichier unique 
                     string filePath = Path.Combine(uploadFolder, uniqueFileName);
                     //Combine le chemin racine web(wwwroot), un dossier "images/profiles" et le nom de fichier unique pour obtenir le chemin complet où le fichier sera enregistré sur le serveur.
 
-
                     Directory.CreateDirectory(uploadFolder);   // Verification que le dossier existe
-
 
                     using var fileStream = new FileStream(filePath, FileMode.Create); //Sauvegarde du fichier: 
                                                                                       //FileStream pour créer un fichier au chemin spécifié  
@@ -174,8 +177,7 @@ namespace AdminMnsV1.Controllers
                         }
                         else if (model.Role != "Stagiaire" && model.Role != "Candidat")
                         {
-                            // Si le rôle dans le ViewModel a changé et n'est plus "Stagiaire" ou "Candidat"
-                            // Tu peux ajouter une logique ici pour gérer d'autres rôles Identity si nécessaire
+                        
                         }
 
                         _context.SaveChanges(); // Sauvegarde les autres propriétés via le contexte EF
@@ -189,7 +191,7 @@ namespace AdminMnsV1.Controllers
                         {
                             ModelState.AddModelError(string.Empty, error.Description);
                         }
-                        return View("~/Views/Students/Modifier.cshtml", model); // Assure-toi que le chemin est correct
+                        return View("~/Views/Students/Modifier.cshtml", model);
                     }
                 }
                 else

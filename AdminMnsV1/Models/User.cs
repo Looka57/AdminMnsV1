@@ -14,23 +14,13 @@ namespace AdminMnsV1.Models
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Sexe { get; set; }
-
-        [MaxLength(150)]
         public string? Address { get; set; }
-
-        [MaxLength(50)]
         public string? City { get; set; }
-
         public DateTime CreationDate { get; set; }
-        [MaxLength(50)]
-
         public string? Phone { get; set; }
         public DateTime BirthDate { get; set; }
-
         public string? Status { get; set; } // "Candidat" ou "Stagiaire"
-
         public bool IsDeleted { get; set; } = false; // Propriété pour gérer la suppression logique
-
 
 
         //STUDENT
@@ -38,9 +28,6 @@ namespace AdminMnsV1.Models
         public string? SocialSecurityNumber { get; set; }
         public string? FranceTravailNumber { get; set; }
         public string? Photo { get; set; }
-
-
-        //public string? Role { get; set; } // Peut contenir "Candidat" ou "Stagiaire"
 
         //Le ? après string signifie que cette propriété peut accepter la valeur null
 
