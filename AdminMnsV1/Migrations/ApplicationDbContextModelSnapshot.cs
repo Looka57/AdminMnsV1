@@ -22,6 +22,47 @@ namespace AdminMnsV1.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AdminMnsV1.Models.Attend", b =>
+                {
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ClasseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("StudentId", "ClasseId");
+
+                    b.HasIndex("ClasseId");
+
+                    b.ToTable("Attends");
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.Classes.Class", b =>
+                {
+                    b.Property<int>("ClasseId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClasseId"));
+
+                    b.Property<int>("AcademicYear")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("NameClass")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("ClasseId");
+
+                    b.ToTable("Classs");
+                });
+
             modelBuilder.Entity("AdminMnsV1.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -31,15 +72,13 @@ namespace AdminMnsV1.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("City")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -47,6 +86,11 @@ namespace AdminMnsV1.Migrations
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -88,8 +132,7 @@ namespace AdminMnsV1.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
@@ -136,6 +179,10 @@ namespace AdminMnsV1.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasDiscriminator().HasValue("User");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -271,6 +318,32 @@ namespace AdminMnsV1.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("AdminMnsV1.Models.Students.Student", b =>
+                {
+                    b.HasBaseType("AdminMnsV1.Models.User");
+
+                    b.HasDiscriminator().HasValue("Student");
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.Attend", b =>
+                {
+                    b.HasOne("AdminMnsV1.Models.Classes.Class", "Class")
+                        .WithMany("Attends")
+                        .HasForeignKey("ClasseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AdminMnsV1.Models.Students.Student", "Student")
+                        .WithMany("Attends")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -320,6 +393,16 @@ namespace AdminMnsV1.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.Classes.Class", b =>
+                {
+                    b.Navigation("Attends");
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.Students.Student", b =>
+                {
+                    b.Navigation("Attends");
                 });
 #pragma warning restore 612, 618
         }

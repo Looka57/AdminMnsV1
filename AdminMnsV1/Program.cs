@@ -53,33 +53,33 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    // Créer l'utilisateur Admin par défaut
-    string adminUserEmail = "admin@example.com"; // Remplacez par l'e-mail de votre administrateur
-    string adminPassword = "Admin123!"; // Remplacez par un mot de passe sécurisé
-    var adminUser = await userManager.FindByEmailAsync(adminUserEmail);
-    if (adminUser == null)
-    {
-        var newAdminUser = new User
-        {
-            UserName = adminUserEmail,
-            Email = adminUserEmail,
-            // Autres propriétés de l'administrateur
-        };
-        var result = await userManager.CreateAsync(newAdminUser, adminPassword);
-        if (result.Succeeded)
-        {
-            await userManager.AddToRoleAsync(newAdminUser, "Admin");
-        }
-        else
-        {
-            // Gérer l'erreur (par exemple, journaliser)
-            Console.WriteLine("Erreur lors de la création de l'utilisateur Admin par défaut :");
-            foreach (var error in result.Errors)
-            {
-                Console.WriteLine(error.Description);
-            }
-        }
-    }
+    //// Créer l'utilisateur Admin par défaut
+    //string adminUserEmail = "admin@example.com"; // Remplacez par l'e-mail de votre administrateur
+    //string adminPassword = "Admin123!"; // Remplacez par un mot de passe sécurisé
+    //var adminUser = await userManager.FindByEmailAsync(adminUserEmail);
+    //if (adminUser == null)
+    //{
+    //    var newAdminUser = new User
+    //    {
+    //        UserName = adminUserEmail,
+    //        Email = adminUserEmail,
+    //        // Autres propriétés de l'administrateur
+    //    };
+    //    var result = await userManager.CreateAsync(newAdminUser, adminPassword);
+    //    if (result.Succeeded)
+    //    {
+    //        await userManager.AddToRoleAsync(newAdminUser, "Admin");
+    //    }
+    //    else
+    //    {
+    //        // Gérer l'erreur (par exemple, journaliser)
+    //        Console.WriteLine("Erreur lors de la création de l'utilisateur Admin par défaut :");
+    //        foreach (var error in result.Errors)
+    //        {
+    //            Console.WriteLine(error.Description);
+    //        }
+    //    }
+    //}
 }
 
 

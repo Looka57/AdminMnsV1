@@ -89,7 +89,7 @@ namespace AdminMnsV1.Controllers
                     await model.PhotoFile.CopyToAsync(fileStream); //copier le contenu du fichier téléchargé vers ce fichier sur le serveur*/.
                 }
 
-                var newUser = new User // Utilise User car Student hérite de User pour Identity
+                var newUser = new Student // Utilise User car Student hérite de User pour Identity (discriminator)
                 {
                     LastName = model.LastName,
                     FirstName = model.FirstName,
@@ -102,7 +102,7 @@ namespace AdminMnsV1.Controllers
                     CreationDate = DateTime.Now,
                     Email = model.Email,
                     UserName = model.Email, // Important pour Identity
-                    Status = model.Status,
+                    Status = model.Status, // Stagiaire ou Candidat
                     SocialSecurityNumber = model.SocialSecurityNumber,
                     FranceTravailNumber = model.FranceTravailNumber,
                     Photo = uniqueFileName // Sauvegarde le nom du fichier (ou null si aucun fichier n'a été téléchargé)
