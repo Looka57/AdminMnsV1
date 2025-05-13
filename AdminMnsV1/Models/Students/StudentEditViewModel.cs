@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AdminMnsV1.Models.Students
 {
@@ -29,6 +30,9 @@ namespace AdminMnsV1.Models.Students
 
         [MaxLength(50, ErrorMessage = "La ville ne peut pas dépasser 50 caractères.")]
         public string City { get; set; }
+
+        public int ClassId { get; set; } // Pour stocker l'ID de la classe sélectionné
+        public List<string> ClassesAttended { get; set; } = new List<string>(); // Initialiser la liste est une bonne pratique
 
         public DateTime CreationDate { get; set; }
 

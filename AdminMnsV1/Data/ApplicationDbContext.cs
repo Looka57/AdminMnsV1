@@ -17,7 +17,7 @@ namespace AdminMnsV1.Data
 
         public DbSet<Class> Classs { get; set; } // Représente la table "Class"
         public DbSet<Attend> Attends { get; set; } // Représente la table intermediaire "Attends"
-        public DbSet<Student>Students { get; set; }  // Représente la table "Student"
+        public DbSet<Student> Students { get; set; }   // Représente la table "Student"
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,41 +32,63 @@ namespace AdminMnsV1.Data
                .Property(u => u.City)
                .IsRequired(false);
 
-            modelBuilder.Entity<User>()
-               .Property(u => u.Phone)
-               .IsRequired(false);
+            //modelBuilder.Entity<User>()
+            //    .Property(u => u.Phone)
+            //    .IsRequired(false);
+
+
+            //modelBuilder.Entity<User>()
+            //   .Property(u => u.Nationality)
+            //   .IsRequired(false);
+
+            //modelBuilder.Entity<User>()
+            //    .Property(u => u.FranceTravailNumber)
+            //    .IsRequired(false);
+
+            //modelBuilder.Entity<User>()
+            //    .Property(u => u.SocialSecurityNumber)
+            //    .IsRequired(false);
+
 
 
             // Configuration de la clé primaire composite pour Attend
             modelBuilder.Entity<Attend>()
-                .HasKey(a => new { a.StudentId, a.ClasseId });
+                 .HasKey(a => new { a.StudentId, a.ClasseId }); //// La clé primaire composite est StudentId + ClasseId
 
-            // Configuration des relations entre Attend, Student et Class
+
+            // ***********Configuration des relations entre Attend, Student et Class******************
+
+            // Configure la relation entre Attend et Student
             modelBuilder.Entity<Attend>()
-                .HasOne(a => a.Student)
-                .WithMany(s => s.Attends)
-                .HasForeignKey(a => a.StudentId);
+                .HasOne(a => a.Student) // Une inscription a un étudiant
+                .WithMany(s => s.Attends) // Un étudiant a plusieurs inscriptions
+                .HasForeignKey(a => a.StudentId); // La clé étrangère est StudentId
 
+
+            // Configure la relation entre Attend et Class
             modelBuilder.Entity<Attend>()
-                .HasOne(a => a.Class)
-                .WithMany(c => c.Attends)
-                .HasForeignKey(a => a.ClasseId);
+                .HasOne(a => a.Class) // Une inscription a une classe
+                .WithMany(c => c.Attends) // Une classe a plusieurs inscriptions
+                .HasForeignKey(a => a.ClasseId); // La clé étrangère est ClasseId
 
-            modelBuilder.Entity<Class>()
-                .HasMany(c => c.Students)
-                .WithMany(s => s.Classes)
-               .UsingEntity<Attend>(
-                    j => j
-                        .HasOne(pt => pt.Student)
-                        .WithMany(t => t.Attends)
-                        .HasForeignKey(pt => pt.StudentId),
-                    j => j
-                        .HasOne(pt => pt.Class)
-                        .WithMany(p => p.Attends)
-                        .HasForeignKey(pt => pt.ClasseId),
-                    j => {
-                        j.HasKey(t => new { t.StudentId, t.ClasseId });
-                    });
+
+
+
+            //modelBuilder.Entity<Class>()
+            //    .HasMany(c => c.Students)
+            //    .WithMany(s => s.Classes)
+            //   .UsingEntity<Attend>(
+            //        j => j
+            //            .HasOne(pt => pt.Student)
+            //            .WithMany(t => t.Attends)
+            //            .HasForeignKey(pt => pt.StudentId),
+            //        j => j
+            //            .HasOne(pt => pt.Class)
+            //            .WithMany(p => p.Attends)
+            //            .HasForeignKey(pt => pt.ClasseId),
+            //        j => {
+            //            j.HasKey(t => new { t.StudentId, t.ClasseId });
+            //        });
 
         }
     }

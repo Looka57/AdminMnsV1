@@ -88,8 +88,18 @@
 				</div>
 				<div class="col-md-4">
 					<div class="mb-3">
-						<label for="Classe" class="form-label">Classe</label>
-						<input type="text" class="form-control" id="Classe" name="Classe">
+					
+						<label asp-for="ClassId" class="form-label">Classe</label>
+
+					
+			
+						<select asp-for="ClassId" class="form-select" asp-items="Model.AvailableClasses">
+						
+							<option value="">-- Choisir une classe --</option>
+						</select>
+
+					
+						<span asp-validation-for="ClassId" class="text-danger"></span>
 					</div>
 				</div>
 

@@ -14,8 +14,8 @@ namespace AdminMnsV1.Models.Classes
         public DateOnly EndDate { get; set; }
 
 
-        public ICollection<Attend> Attends {get; set;}
-        public ICollection<Student> Students { get; set; }
+        public virtual ICollection<Attend> Attends { get; set; } = new List<Attend>();
+        //public virtual ICollection<Student> Students { get; set; } = new List<Student>();
     }
 }
 

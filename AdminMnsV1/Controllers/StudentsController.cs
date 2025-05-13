@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IO;
 using System.Runtime.ConstrainedExecution;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AdminMnsV1.Controllers
 {
@@ -23,6 +24,7 @@ namespace AdminMnsV1.Controllers
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<StudentsController> _logger;
         private readonly IWebHostEnvironment _environment; //Injecte le service qui fournit des informations sur l'environnement web de     l'application, y compris le chemin racine du contenu web (wwwroot).
 
 
@@ -39,27 +41,31 @@ namespace AdminMnsV1.Controllers
         public IActionResult Student()
         {
             //tableau de tout les students
-            var users = _context.Users
-                .Where(u => (u.Status == "Stagiaire" || u.Status == "Candidat") && !u.IsDeleted)
-                .ToList();
+            var students = _context.Set<Student>() // Cible le DbSet de Student
+         .Where(s => (s.Status == "Stagiaire" || s.Status == "Candidat") && !s.IsDeleted)
+        .Include(s => s.Attends) // <-- MAINTENANT s est de type Student, donc s.Attends est valide
+             .ThenInclude(a => a.Class) // Inclure la Classe pour chaque Attend (Class car c'est le nom de la prop dans Attend.cs)
+         .ToList();
 
-            var studentViewModels = users.Select(u => new StudentEditViewModel
+            var studentViewModels = students.Select(s => new StudentEditViewModel
             {
-                UserId = u.Id,
-                LastName = u.LastName,
-                FirstName = u.FirstName,
-                Sexe = u.Sexe,
-                BirthDate = u.BirthDate,
-                Nationality = u.Nationality,
-                Address = u.Address,
-                City = u.City,
-                Email = u.Email,
-                Phone = u.Phone,
-                CreationDate = u.CreationDate,
-                Role = u.Status, // Ici, tu utilises le Status de User comme Role dans le ViewModel
-                SocialSecurityNumber = u.SocialSecurityNumber,
-                FranceTravailNumber = u.FranceTravailNumber,
-                Photo = u.Photo
+                UserId = s.Id,
+                LastName = s.LastName,
+                FirstName = s.FirstName,
+                Sexe = s.Sexe,
+                BirthDate = s.BirthDate,
+                Nationality = s.Nationality,
+                Address = s.Address,
+                City = s.City,
+                Email = s.Email,
+                Phone = s.Phone,
+                CreationDate = s.CreationDate,
+                Role = s.Status, // Ici, tu utilises le Status de User comme Role dans le ViewModel
+                SocialSecurityNumber = s.SocialSecurityNumber,
+                FranceTravailNumber = s.FranceTravailNumber,
+                Photo = s.Photo,
+                //Classe = s.Attends.FirstOrDefault()?.Class?.NameClass, // 's' est valide ici
+                ClassesAttended = s.Attends.Select(a => a.Class?.NameClass).ToList() // 's' est valide ici
             }).ToList();
 
             return View(studentViewModels);
@@ -67,6 +73,25 @@ namespace AdminMnsV1.Controllers
 
 
         //*************CRRER UN STAGIAIRES **********
+
+
+        // Dans StudentsController.cs (action GET Create)
+        public IActionResult Create()
+        {
+            var viewModel = new StudentCreateViewModel();
+
+            // --- C'est ici que le problème prend racine s'il y a un Null ---
+            var classesFromDb = _context.Classs.OrderBy(c => c.NameClass).ToList(); // Ligne 1 : Récupère les données
+            viewModel.AvailableClasses = new SelectList(classesFromDb, "ClasseId", "NameClass"); // Ligne 2 : Crée et assigne le SelectList
+                                                                                                 // --- Fin ---
+
+            return View("~/Views/Students/Formulaire.cshtml", viewModel); // Ligne 3 : Envoie le ViewModel (qui contient AvailableClasses) à la vue
+        }
+
+
+
+
+
         [HttpPost]
         public async Task<IActionResult> Create(StudentCreateViewModel model)
         {
@@ -100,10 +125,9 @@ namespace AdminMnsV1.Controllers
                     Status = "Candidat", // Stagiaire ou Candidat
                     SocialSecurityNumber = model.SocialSecurityNumber,
                     FranceTravailNumber = model.FranceTravailNumber,
-                    Photo = uniqueFileName
+                    Photo = uniqueFileName,
+ 
                 };
-
-                Console.WriteLine($"Valeur de model.Status : {model.Status}"); // Ajoute ceci AVANT la création de newUser
 
                 var result = await _userManager.CreateAsync(newUser, model.Password);
                 if (result.Succeeded)

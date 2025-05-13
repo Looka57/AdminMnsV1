@@ -36,7 +36,13 @@ namespace AdminMnsV1.Models
         public string? Speciality { get; set; }
 
         //ADMIN 
-        public string? Service { get; set; } 
+        public string? Service { get; set; }
+
+
+        // --- Propriété AJOUTÉE pour la relation plusieurs-à-plusieurs via Attend ---
+        // Collection des inscriptions (Attend) pour cet utilisateur
+        public virtual ICollection<Attend> Attends { get; set; } = new List<Attend>();
+        // --- FIN de la propriété AJOUTÉE ---
     }
 
 

@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.ConstrainedExecution;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AdminMnsV1.Models.Students
 {
@@ -48,6 +49,9 @@ namespace AdminMnsV1.Models.Students
         public string City { get; set; }
 
 
+        public string? Class { get; set; }
+        public int ClassId { get; set; } // Pour stocker l'ID de la classe sélectionné
+        public SelectList AvailableClasses { get; set; } // Pour la liste des classes à afficher dans le dropdown
 
         [Display(Name = "Date de naissance")]
         [DataType(DataType.Date)] //Cet attribut indique que le champ BirthDate doit être traité comme un champ de date.
