@@ -7,7 +7,7 @@ namespace AdminMnsV1.Models.Classes
     {
         [Key]
         public int ClasseId { get; set; }
-        [Required]
+        //[Required]
         public string? NameClass { get; set; }
         public int AcademicYear { get; set; }
         public DateOnly StartDate { get; set; }

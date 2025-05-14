@@ -43,7 +43,7 @@ namespace AdminMnsV1.Controllers
             //tableau de tout les students
             var students = _context.Set<Student>() // Cible le DbSet de Student
          .Where(s => (s.Status == "Stagiaire" || s.Status == "Candidat") && !s.IsDeleted)
-        .Include(s => s.Attends) // <-- MAINTENANT s est de type Student, donc s.Attends est valide
+            .Include(s => s.Attends) // <-- MAINTENANT s est de type Student, donc s.Attends est valide
              .ThenInclude(a => a.Class) // Inclure la Classe pour chaque Attend (Class car c'est le nom de la prop dans Attend.cs)
          .ToList();
 
@@ -89,16 +89,23 @@ namespace AdminMnsV1.Controllers
         }
 
 
+        // Dans StudentsController.cs
 
+        //*************GÈRE LA SOUMISSION DU FORMULAIRE DE CRÉATION (POST) **********
+        // Dans StudentsController.cs
 
-
+        //*************GÈRE LA SOUMISSION DU FORMULAIRE DE CRÉATION (POST) **********
         [HttpPost]
         public async Task<IActionResult> Create(StudentCreateViewModel model)
         {
-            if (ModelState.IsValid)
+            // --- Point de départ : Vérifie si les données soumises sont valides selon les règles du ViewModel ---
+            // Les attributs [Required], [MaxLength], etc. sur les propriétés du ViewModel sont vérifiés ici.
+            if (ModelState.IsValid) // <-- Début du premier grand IF : SI la validation initiale réussit
             {
+                // --- Ici va le code qui s'exécute SEULEMENT si les données du formulaire sont syntaxiquement valides ---
+
+                // 1. Upload de photo (Votre code existant)
                 string? uniqueFileName = null;
-                //Vérification du fichier
                 if (model.PhotoFile != null && model.PhotoFile.Length > 0)
                 {
                     string uploadFolder = Path.Combine(_environment.WebRootPath, "images", "Profiles");
@@ -109,8 +116,9 @@ namespace AdminMnsV1.Controllers
                     await model.PhotoFile.CopyToAsync(fileStream);
                 }
 
-                var newUser = new Student // Utilise Student car Student hérite de User pour Identity (discriminator)
-                {
+                // 2. Crée l'objet newUser (Student) (Votre code existant)
+                var newUser = new Student // Utilise Student si Student hérite de User pour Identity
+                {
                     LastName = model.LastName,
                     FirstName = model.FirstName,
                     Sexe = model.Sexe,
@@ -122,35 +130,73 @@ namespace AdminMnsV1.Controllers
                     CreationDate = DateTime.Now,
                     Email = model.Email,
                     UserName = model.Email, // Important pour Identity
-                    Status = "Candidat", // Stagiaire ou Candidat
-                    SocialSecurityNumber = model.SocialSecurityNumber,
+                    Status = model.Status, // Utilise le Status du ViewModel
+                    SocialSecurityNumber = model.SocialSecurityNumber,
                     FranceTravailNumber = model.FranceTravailNumber,
                     Photo = uniqueFileName,
- 
                 };
 
+                // 3. Tente de créer l'utilisateur via UserManager (Votre code existant - Opération asynchrone)
                 var result = await _userManager.CreateAsync(newUser, model.Password);
-                if (result.Succeeded)
+
+                // 4. Vérifie si la création de l'utilisateur par Identity a réussi
+                if (result.Succeeded) // <-- Début du deuxième IF (imbriqué) : SI UserManager réussit
                 {
-                    Console.WriteLine($"Utilisateur créé avec succès, Statut = {newUser.Status}"); // Ajoute ceci APRES la création réussie
-                    TempData["SuccesMessage"] = "Le nouveau stagiaire a été créé avec succès.";
-                    return RedirectToAction("Student");
-                }
-                else
-                {
+                    // --- Ici va le code qui s'exécute SEULEMENT si la création Identity réussit ---
+
+                    // 5. Crée l'entrée dans la table Attend (Votre code existant)
+                    var attendEntry = new Attend
+                    {
+                        StudentId = newUser.Id, // L'ID du nouvel utilisateur/étudiant
+                        ClasseId = model.ClassId, // L'ID de la classe sélectionnée
+                                                  // EnrollmentDate = DateTime.UtcNow // Date d'inscription (si non commenté)
+                    };
+                    _context.Attends.Add(attendEntry); // Ajoutez au contexte
+                    await _context.SaveChangesAsync(); // Sauvegardez dans la BDD
+
+                    // 6. Redirige en cas de succès complet (Votre code existant)
+                    Console.WriteLine($"Utilisateur créé avec succès, Statut = {newUser.Status}");
+                    TempData["SuccesMessage"] = "Le nouveau stagiaire a été créé et inscrit à la classe sélectionnée avec succès.";
+                    return RedirectToAction("Student"); // Redirige
+                }
+                else // <-- Début du deuxième ELSE (imbriqué) : SINON (Si UserManager échoue)
+                {
+                    // --- Ici va le code qui s'exécute si la création Identity échoue (ex: email déjà utilisé) ---
+
+                    // 7. Ajoute les erreurs de UserManager à ModelState (Votre code existant)
                     foreach (var error in result.Errors)
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
-                    Console.WriteLine($"Erreur lors de la création de l'utilisateur."); // Ajoute ceci en cas d'erreur
+                    Console.WriteLine($"Erreur lors de la création de l'utilisateur.");
+
+                    // 8. Re-popule model.AvailableClasses (Nécessaire pour que le menu déroulant s'affiche si on retourne la vue)
+                    var classesFromDb = _context.Classs.OrderBy(c => c.NameClass).ToList(); // <-- CORRIGEZ "Classs" ici !
+                    model.AvailableClasses = new SelectList(classesFromDb, "ClasseId", "NameClass");
+
+                    // 9. Retourne la vue avec le modèle (contenant les erreurs de UserManager et la liste des classes)
                     return View("~/Views/Students/Formulaire.cshtml", model);
-                }
-            }
-            else
+                } // <-- Fin du deuxième ELSE (imbriqué)
+            } // <-- Fin du premier grand IF (celui de ModelState.IsValid)
+
+            // --- Début du premier grand ELSE : SINON (Si la validation initiale du modèle ÉCHOUE) ---
+            else // <-- CE BLOC ELSE DOIT IMMEDIATEMENT SUIVRE LE PREMIER GRAND IF
             {
+                // --- Ici va le code qui s'exécute lorsque la validation initiale échoue (ex: champ Nom vide si [Required]) ---
+                // Les erreurs de validation sont déjà dans ModelState grâce aux attributs ([Required], [MaxLength], etc.)
+
+                // 10. Re-popule model.AvailableClasses (Nécessaire pour que le menu déroulant s'affiche si on retourne la vue)
+                var classesFromDb = _context.Classs.OrderBy(c => c.NameClass).ToList(); // <-- CORRIGEZ "Classs" ici !
+                model.AvailableClasses = new SelectList(classesFromDb, "ClasseId", "NameClass");
+
+                // 11. Retourne la vue avec le modèle (contenant les erreurs de validation et la liste re-populée)
+                //ModelState.Remove(nameof(model.AvailableClasses));
                 return View("~/Views/Students/Formulaire.cshtml", model);
-            }
-        }
+            } // <-- Fin du premier grand ELSE
+
+            // Le code de l'action se termine ici. Il n'y a pas de code ou d'autres blocs 'else' après ce grand if/else.
+        } // <-- Fin de l'action Create [HttpPost]
+
 
 
         //*************MODIFIE UN STAGIAIRE**********
@@ -196,7 +242,7 @@ namespace AdminMnsV1.Controllers
                         }
                         else if (model.Role != "Stagiaire" && model.Role != "Candidat")
                         {
-                        
+
                         }
 
                         _context.SaveChanges(); // Sauvegarde les autres propriétés via le contexte EF
@@ -206,6 +252,7 @@ namespace AdminMnsV1.Controllers
                     }
                     else
                     {
+
                         foreach (var error in updateResult.Errors)
                         {
                             ModelState.AddModelError(string.Empty, error.Description);

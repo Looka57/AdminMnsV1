@@ -78,7 +78,17 @@ Si des messages existent, ils sont affichés dans des alertes Bootstrap. *@
 					</th>
 					<td>@item.LastName</td>
 					<td>@item.FirstName</td>
-					<td>Classe</td>
+				
+					<td>
+							@if (item.ClassesAttended != null && item.ClassesAttended.Any())
+							{
+								@string.Join(", ", item.ClassesAttended) @* Rejoins les noms des classes avec ", " *@
+							}
+							else
+							{
+							<span>Aucune classe</span> @* Affiche ceci si la liste est vide ou null *@
+							}
+					</td>
 					<td class="d-none d-sm-table-cell">@item.City</td>
 					<td class="d-none d-sm-table-cell">@item.CreationDate</td>
 					<td class="d-none d-sm-table-cell">@item.Role</td>

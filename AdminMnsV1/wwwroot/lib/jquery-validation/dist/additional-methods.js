@@ -75,7 +75,10 @@ $.validator.addMethod( "abaRoutingNumber", function( value ) {
 	return false;
 }, "Please enter a valid routing number." );
 
-// Accept a value from a file input based on a required mimetype
+	// Accept a value from a file input based on a 
+
+
+	mimetype
 $.validator.addMethod( "accept", function( value, element, param ) {
 
 	// Split mime on commas in case we have multiple types we can accept

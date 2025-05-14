@@ -50,8 +50,15 @@ namespace AdminMnsV1.Models.Students
 
 
         public string? Class { get; set; }
+
+        //[Required(ErrorMessage = "Veuillez sélectionner une classe.")] // <-- Remettez cet attribut !
+
+        [Required]
         public int ClassId { get; set; } // Pour stocker l'ID de la classe sélectionné
-        public SelectList AvailableClasses { get; set; } // Pour la liste des classes à afficher dans le dropdown
+
+
+        public SelectList AvailableClasses { get; set; } = new SelectList(Enumerable.Empty<SelectListItem>());
+
 
         [Display(Name = "Date de naissance")]
         [DataType(DataType.Date)] //Cet attribut indique que le champ BirthDate doit être traité comme un champ de date.
