@@ -1,6 +1,8 @@
 ﻿@using AdminMnsV1.Models.Students @* Importe l'espace de noms des modèles Student *@
 @model StudentCreateViewModel //Déclare que le modèle utilisé par cette vue est une instance de la classe StudentCreateViewModel. Cela permet d'accéder aux propriétés de ce modèle dans la vue.
 
+
+
 @{
 	ViewData["Title"] = "Ajout d'un nouveau stagiaire"; //Définit le titre de la page qui apparaîtra dans l'onglet du navigateur.
 }
@@ -13,7 +15,7 @@
 	<div class="enteteForm"></div>
 	<div class="formulaireStudent">
 		<div class="row mx-auto"></div>
-	
+
 		<form method="post" asp-controller="Students" asp-action="Create" enctype="multipart/form-data">
 			@* //Crée un formulaire HTML qui enverra les données via la méthode HTTP POST vers l'action Create du contrôleur Students *@
 			<div asp-validation-summary="All" class="text-danger"></div> @* Affiche un résumé de toutes les erreurs de validation au niveau du modèle		
@@ -88,15 +90,15 @@
 				</div>
 				<div class="col-md-4">
 					<div class="mb-3">
-					
+
 						<label asp-for="ClassId" class="form-label">Classe</label>
-			
+
 						<select asp-for="ClassId" class="form-select" asp-items="Model.AvailableClasses">
-						
+
 							<option value="">-- *Choisir une classe* --</option>
 						</select>
 
-					
+
 						<span asp-validation-for="ClassId" class="text-danger"></span>
 					</div>
 				</div>
@@ -116,7 +118,7 @@
 					</div>
 				</div>
 
-			
+
 				<div class="col-md-6">
 					<div class="mb-3">
 						<label asp-for="Password" class="form-label">Mot de passe</label>
@@ -143,24 +145,24 @@
 					</div>
 				</div>
 				<div class="row">
-				<div class="col-md-6">
-					<div class="mb-3">
-						<label asp-for="SocialSecurityNumber" class="form-label">N° Sécurité Sociale</label>
-						<input asp-for="SocialSecurityNumber" class="form-control" />
-						<span asp-validation-for="SocialSecurityNumber" class="text-danger"></span>
+					<div class="col-md-6">
+						<div class="mb-3">
+							<label asp-for="SocialSecurityNumber" class="form-label">N° Sécurité Sociale</label>
+							<input asp-for="SocialSecurityNumber" class="form-control" />
+							<span asp-validation-for="SocialSecurityNumber" class="text-danger"></span>
+						</div>
 					</div>
-				</div>
-				<div class="col-md-6">
-					<div class="mb-3">
-						<label asp-for="FranceTravailNumber" class="form-label">N° France Travail</label>
-						<input asp-for="FranceTravailNumber" class="form-control" />
-						<span asp-validation-for="FranceTravailNumber" class="text-danger"></span>
+					<div class="col-md-6">
+						<div class="mb-3">
+							<label asp-for="FranceTravailNumber" class="form-label">N° France Travail</label>
+							<input asp-for="FranceTravailNumber" class="form-control" />
+							<span asp-validation-for="FranceTravailNumber" class="text-danger"></span>
+						</div>
 					</div>
-				</div>
 				</div>
 			</div>
 
-			
+
 			<div class="btnLoadStagiaire">
 				<button type="submit" class="btn btn-outline-warning">Valider</button>
 				@* Crée un bouton de soumission pour le formulaire. Lorsque l'utilisateur clique sur ce bouton, les données du formulaire sont envoyées à l'action Create du contrôleur Students. *@
@@ -172,8 +174,8 @@
 @section Scripts {
 	<partial name="_ValidationScriptsPartial" />
 @* Cette section injecte un script partiel qui active la validation côté client.
-					Cela signifie que le navigateur effectuera des vérifications de validation basées sur les attributs du modèle avant même que le formulaire ne soit soumis au serveur,
-					améliorant ainsi l'expérience utilisateur en fournissant un feedback immédiat sur les erreurs de saisie.*@
+						Cela signifie que le navigateur effectuera des vérifications de validation basées sur les attributs du modèle avant même que le formulaire ne soit soumis au serveur,
+						améliorant ainsi l'expérience utilisateur en fournissant un feedback immédiat sur les erreurs de saisie.*@
 }
 
 

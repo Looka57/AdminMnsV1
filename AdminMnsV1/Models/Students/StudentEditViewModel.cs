@@ -52,6 +52,8 @@ namespace AdminMnsV1.Models.Students
         public string? Photo { get; set; }
 
 
+
+
         //C' est un modèle de données conçu pour afficher les informations d'un étudiant existant dans un formulaire de modification et pour recueillir les mises à jour de ces informations.Il contient l'identifiant de l'étudiant pour la mise à jour et des attributs de validation pour les champs modifiables.
         // Le StudentEditViewModel est une classe C# utilisée comme modèle de vue dans ASP.NET MVC. Elle permet de transporter des données entre le contrôleur et la vue de manière ciblée (ici, pour les étudiants).
 

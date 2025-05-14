@@ -1,7 +1,11 @@
-﻿@using AdminMnsV1.Models.Students
-@model IEnumerable<StudentEditViewModel>
+﻿@* @model IEnumerable<StudentEditViewModel> *@
+@using AdminMnsV1.Models.Students
+@using AdminMnsV1.Models.ViewModels
 @*Indique que la vue reçoit une collection (une liste) d'objets StudentEditViewModel du contrôleur. 
 Chaque objet dans cette collection représente un étudiant à afficher dans le tableau.*@
+@model StudentListPageViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+
 
 @{
 	ViewData["Title"] = "Liste des Etudiants"; /* Définit le titre de la page */
@@ -60,7 +64,7 @@ Si des messages existent, ils sont affichés dans des alertes Bootstrap. *@
 		</thead>
 		<tbody>
 
-			@foreach (var item in Model)@* Cette boucle foreach itère sur chaque objet StudentEditViewModel dans la collection Model 
+			@foreach (var item in Model.Students)@* Cette boucle foreach itère sur chaque objet StudentEditViewModel dans la collection Model 
 										(la liste des étudiants passée par le contrôleur).
 										Pour chaque étudiant(item), une ligne est créée avec ses informations *@
 
@@ -78,16 +82,16 @@ Si des messages existent, ils sont affichés dans des alertes Bootstrap. *@
 					</th>
 					<td>@item.LastName</td>
 					<td>@item.FirstName</td>
-				
+
 					<td>
-							@if (item.ClassesAttended != null && item.ClassesAttended.Any())
-							{
-								@string.Join(", ", item.ClassesAttended) @* Rejoins les noms des classes avec ", " *@
-							}
-							else
-							{
+						@if (item.ClassesAttended != null && item.ClassesAttended.Any())
+						{
+							@string.Join(", ", item.ClassesAttended) @* Rejoins les noms des classes avec ", " *@
+						}
+						else
+						{
 							<span>Aucune classe</span> @* Affiche ceci si la liste est vide ou null *@
-							}
+						}
 					</td>
 					<td class="d-none d-sm-table-cell">@item.City</td>
 					<td class="d-none d-sm-table-cell">@item.CreationDate</td>
@@ -120,6 +124,7 @@ Si des messages existent, ils sont affichés dans des alertes Bootstrap. *@
 						@* Elle contient un formulaire POST qui envoie les nouvelles données à /Students/Modify.
 						Chaque champ est prérempli avec les données de l'étudiant : *@
 						<form method="post" action="/Students/Modify">
+							@Html.AntiForgeryToken()
 							<div class="modal-content">
 								<div class="modal-header">
 									<h5 class="modal-title" id="modalStagiaireLabel_@item.UserId">Modifier @item.FirstName @item.LastName</h5>
@@ -169,6 +174,35 @@ Si des messages existent, ils sont affichés dans des alertes Bootstrap. *@
 										<label for="Email" class="form-label">Email</label>
 										<input type="email" class="form-control" id="Email" name="Email"
 											   value="@item.Email">
+									</div>
+									<div class="col-md-4">
+										<div class="mb-3">
+
+											<label for="ClassId" class="form-label">Classe</label>
+
+											@* Ajoutez cette ligne TEMPORAIREMENT pour voir la valeur *@
+											<div>DEBUG ClassId: @item.ClassId</div>
+
+											<select name="ClassId" id="ClassId" class="form-select">
+
+
+												<!option value="" @(item.ClassId == 0 ? "selected" : null)>-- *Choisir une classe* --</!option>
+
+
+												@if (Model.AvailableClasses != null)
+												{
+													@foreach (var option in Model.AvailableClasses)
+													{
+
+														<!option value="@option.Value"
+														@(item.ClassId.ToString() == option.Value ? "selected" : null)>
+															@option.Text
+														</!option>
+													}
+												}
+											</select>
+
+										</div>
 									</div>
 									<div class="mb-3">
 										<label for="Phone" class="form-label">Téléphone</label>
@@ -242,4 +276,3 @@ Si des messages existent, ils sont affichés dans des alertes Bootstrap. *@
 
 <!-- =======================FOOTER================ -->
 @Html.Partial("~/Views/Shared/Components/_Footer.cshtml")
-

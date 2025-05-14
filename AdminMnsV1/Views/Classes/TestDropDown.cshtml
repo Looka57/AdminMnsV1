@@ -1,0 +1,29 @@
+﻿@* @using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    // Définir des variables avec les types exacts attendus par DropDownList
+    string testName = "TestDropdown"; // string
+    var testOptions = new List<SelectListItem> // IEnumerable<SelectListItem>
+    {
+        new SelectListItem { Value = "1", Text = "Option 1" },
+        new SelectListItem { Value = "2", Text = "Option 2" }
+    };
+    string testLabel = "-- Select One --"; // string
+    object testAttributes = new { @classs = "form-select" id = "ClassId" }; // Vérifiez si vous avez exactement ceci; // object (pour les attributs HTML)
+    object testSelectedValue = 1; // object (un int peut être converti en object)
+}
+
+<h1>Test de compilation Html.DropDownList 5 arguments</h1>
+
+<p>Cette ligne teste si l'appel avec 5 arguments compile :</p>
+
+@* C'est la ligne clé pour tester si la surcharge à 5 arguments est reconnue par le compilateur * /}
+@Html.DropDownList(
+    testName,         // 1er argument : string
+    testOptions,      // 2ème argument : IEnumerable<SelectListItem>
+    testLabel,        // 3ème argument : string
+    testAttributes,   // 4ème argument : object
+    testSelectedValue // 5ème argument : object
+)
+
+<p>Si vous ne voyez PAS d'erreur de compilation et que l'application se lance, cela signifie que la surcharge à 5 arguments compile bien dans votre projet.</p> *@

@@ -16,6 +16,7 @@ using System.IO;
 using System.Runtime.ConstrainedExecution;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using AdminMnsV1.Models.ViewModels;
 
 namespace AdminMnsV1.Controllers
 {
@@ -65,10 +66,29 @@ namespace AdminMnsV1.Controllers
                 FranceTravailNumber = s.FranceTravailNumber,
                 Photo = s.Photo,
                 //Classe = s.Attends.FirstOrDefault()?.Class?.NameClass, // 's' est valide ici
-                ClassesAttended = s.Attends.Select(a => a.Class?.NameClass).ToList() // 's' est valide ici
+                ClassesAttended = s.Attends.Select(a => a.Class?.NameClass).ToList(), // 's' est valide ici
+
+                ClassId = s.Attends.Select(a => a.ClasseId).FirstOrDefault() // .FirstOrDefault() prend le premier ID trouvé
+                                                                               // Si vous avez une date dans Attend (ex: a.EnrollmentDate), vous pourriez prendre la plus récente :
+                                                                               // ClassId = s.Attends.OrderByDescending(a => a.EnrollmentDate).Select(a => a.ClasseId).FirstOrDefault()
+
+
             }).ToList();
 
-            return View(studentViewModels);
+
+
+            // Récupérez TOUTES les classes disponibles pour le menu déroulant (une seule fois)
+            var classesFromDb = _context.Classs.OrderBy(c => c.NameClass).ToList(); 
+            var availableClassesSelectList = new SelectList(classesFromDb, "ClasseId", "NameClass");
+
+            //Créez le ViewModel de la page et peuplez-le
+            var pageViewModel = new StudentListPageViewModel
+            {
+                Students = studentViewModels, // Assignez la liste des étudiants
+                AvailableClasses = availableClassesSelectList // Assignez la SelectList globale
+            };
+
+            return View(pageViewModel);
         }
 
 
@@ -171,7 +191,7 @@ namespace AdminMnsV1.Controllers
                     Console.WriteLine($"Erreur lors de la création de l'utilisateur.");
 
                     // 8. Re-popule model.AvailableClasses (Nécessaire pour que le menu déroulant s'affiche si on retourne la vue)
-                    var classesFromDb = _context.Classs.OrderBy(c => c.NameClass).ToList(); // <-- CORRIGEZ "Classs" ici !
+                    var classesFromDb = _context.Classs.OrderBy(c => c.NameClass).ToList(); 
                     model.AvailableClasses = new SelectList(classesFromDb, "ClasseId", "NameClass");
 
                     // 9. Retourne la vue avec le modèle (contenant les erreurs de UserManager et la liste des classes)
@@ -200,78 +220,114 @@ namespace AdminMnsV1.Controllers
 
 
         //*************MODIFIE UN STAGIAIRE**********
+        // Dans StudentsController.cs
+
         [HttpPost]
         public async Task<IActionResult> Modify(StudentEditViewModel model)
         {
-            if (ModelState.IsValid)
+            // 1. Vérifier si les données du ViewModel sont valides (selon les attributs [Required], etc.)
+            if (!ModelState.IsValid)
             {
-                var user = await _userManager.FindByIdAsync(model.UserId);
-                if (user != null)
-                {
-                    // Conserve la date de création originale
-                    var originalCreationDate = user.CreationDate;
-
-                    user.LastName = model.LastName;
-                    user.FirstName = model.FirstName;
-                    user.Sexe = model.Sexe;
-                    user.BirthDate = model.BirthDate;
-                    user.Nationality = model.Nationality;
-                    user.Address = model.Address;
-                    user.City = model.City;
-                    user.Email = model.Email;
-                    user.Phone = model.Phone;
-                    user.CreationDate = model.CreationDate;
-                    user.Status = model.Role; // Assigne la valeur du rôle du ViewModel au statut
-
-                    // Réassigne la date de création originale
-                    user.CreationDate = originalCreationDate;
-
-                    var updateResult = await _userManager.UpdateAsync(user);
-
-                    if (updateResult.Succeeded)
-                    {
-                        // Gérer la modification du rôle Identity si nécessaire
-                        // Récupérer les rôles actuels de l'utilisateur
-                        var existingRoles = await _userManager.GetRolesAsync(user);
-                        if (!existingRoles.Contains("Student"))
-                        {
-                            // Supprimer les rôles existants (si tu veux un seul rôle)
-                            await _userManager.RemoveFromRolesAsync(user, existingRoles);
-                            // Ajouter l'utilisateur au rôle "Student"
-                            await _userManager.AddToRoleAsync(user, "Student");
-                        }
-                        else if (model.Role != "Stagiaire" && model.Role != "Candidat")
-                        {
-
-                        }
-
-                        _context.SaveChanges(); // Sauvegarde les autres propriétés via le contexte EF
-
-                        TempData["SuccesMessage"] = "Les informations de l'étudiant ont été mises à jour avec succès.";
-                        return RedirectToAction("Student");
-                    }
-                    else
-                    {
-
-                        foreach (var error in updateResult.Errors)
-                        {
-                            ModelState.AddModelError(string.Empty, error.Description);
-                        }
-                        return View("~/Views/Students/Modifier.cshtml", model);
-                    }
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            else
-            {
-                TempData["ErreurMessage"] = "Une erreur est survenue. Les informations de l'étudiant n'ont pas été mises à jour.";
-                return RedirectToAction("Student");
+                // Rediriger avec un message d'erreur si la validation échoue
+                TempData["ErreurMessage"] = "Informations invalides fournies.";
+                return RedirectToAction("Student"); // Redirige vers la page de liste en cas d'échec de validation
             }
 
+            // 2. Trouver le stagiaire existant dans la base de données
+            var user = await _userManager.FindByIdAsync(model.UserId);
+
+            // Vérifier si l'utilisateur a été trouvé
+            if (user == null)
+            {
+                TempData["ErreurMessage"] = "Stagiaire non trouvé.";
+                return RedirectToAction("Student"); // Redirige si l'utilisateur n'existe pas
+            }
+
+            // 3. Mettre à jour les propriétés de base de l'entité User (ou Student) avec les valeurs du ViewModel
+            var originalCreationDate = user.CreationDate; // Conserve l'original
+            user.LastName = model.LastName;
+            user.FirstName = model.FirstName;
+            user.Sexe = model.Sexe;
+            user.BirthDate = model.BirthDate;
+            user.Nationality = model.Nationality;
+            user.Address = model.Address;
+            user.City = model.City;
+            user.Email = model.Email;
+            user.Phone = model.Phone;
+            // user.CreationDate = model.CreationDate; // NE PAS FAIRE CECI
+            user.Status = model.Role; // Met à jour le statut de User
+            user.SocialSecurityNumber = model.SocialSecurityNumber; // N'oubliez pas ces champs
+            user.FranceTravailNumber = model.FranceTravailNumber;
+
+            // Réassigne la date de création originale (si nécessaire, sinon pas besoin)
+            user.CreationDate = originalCreationDate;
+
+
+            // 4. *** SAUVEGARDER LES MODIFICATIONS DE L'ENTITÉ USER via UserManager EN PREMIER ***
+            var updateResult = await _userManager.UpdateAsync(user);
+
+            // Vérifier si la sauvegarde User a réussi
+            if (!updateResult.Succeeded)
+            {
+                string errors = string.Join(", ", updateResult.Errors.Select(e => e.Description));
+                TempData["ErreurMessage"] = $"Erreur Identity lors de la mise à jour du stagiaire : {errors}";
+                return RedirectToAction("Student"); // Redirige en cas d'échec de sauvegarde User Identity
+            }
+
+
+            // 5. *** LOGIQUE POUR METTRE À JOUR LA CLASSE DANS LA TABLE Attends ***
+            // (Utilise model.ClassId reçu du formulaire de la modale)
+
+            // Récupérer les entrées existantes dans la table Attends pour ce stagiaire (en utilisant user.Id)
+            var existingAttends = _context.Attends.Where(a => a.StudentId == user.Id).ToList();
+
+            // Option simple : Supprimer toutes les liaisons existantes
+            if (existingAttends.Any())
+            {
+                _context.Attends.RemoveRange(existingAttends); // Marque les anciennes entrées pour suppression
+            }
+
+            // Si une classe a été sélectionnée (model.ClassId > 0), ajouter la nouvelle liaison
+            if (model.ClassId > 0)
+            {
+                var newAttend = new Attend // Assurez-vous d'avoir une classe modèle Attend
+                {
+                    StudentId = user.Id, // L'ID de l'utilisateur/stagiaire (string)
+                    ClasseId = model.ClassId, // L'ID de la classe sélectionnée (int)
+                                              // Ajoutez EnrollmentDate si applicable
+                                              // EnrollmentDate = DateTime.UtcNow
+                };
+                _context.Attends.Add(newAttend); // Ajoute la nouvelle entrée au contexte
+            }
+            // Si model.ClassId est 0, aucune nouvelle liaison n'est ajoutée après la suppression des anciennes.
+
+
+            // 6. *** SAUVEGARDER LES CHANGEMENTS DANS LE CONTEXTE DE LA BASE DE DONNÉES pour les entités Attend ***
+            // Appelez SaveChangesAsync() UNE SEULE FOIS pour sauvegarder toutes les modifications sur les entités non-Identity.
+            // C'est ici que les suppressions et additions sur _context.Attends sont écrites en BDD.
+            await _context.SaveChangesAsync();
+
+
+            // 7. Afficher un message de succès et rediriger vers la page de liste
+            TempData["SuccesMessage"] = $"Le stagiaire {user.FirstName} {user.LastName} a été mis à jour avec succès.";
+            return RedirectToAction("Student"); // Redirige vers l'action qui affiche la liste
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         ////*************SUPPRIME UN STAGIAIRE**********
 
         [HttpPost]
