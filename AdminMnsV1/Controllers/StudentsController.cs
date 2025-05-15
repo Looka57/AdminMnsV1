@@ -118,14 +118,12 @@ namespace AdminMnsV1.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(StudentCreateViewModel model)
         {
-            // --- Point de départ : Vérifie si les données soumises sont valides selon les règles du ViewModel ---
-            // Les attributs [Required], [MaxLength], etc. sur les propriétés du ViewModel sont vérifiés ici.
-            if (ModelState.IsValid) // <-- Début du premier grand IF : SI la validation initiale réussit
+            // --- Point de départ : Vérifie si les données soumises sont valides selon les règles du ViewModel ---
+            // Les attributs [Required], [MaxLength], etc. sur les propriétés du ViewModel sont vérifiés ici.
+            if (ModelState.IsValid)
             {
-                // --- Ici va le code qui s'exécute SEULEMENT si les données du formulaire sont syntaxiquement valides ---
+                string? uniqueFileName = "default_profile.png"; // Nom de votre image par défaut
 
-                // 1. Upload de photo (Votre code existant)
-                string? uniqueFileName = null;
                 if (model.PhotoFile != null && model.PhotoFile.Length > 0)
                 {
                     string uploadFolder = Path.Combine(_environment.WebRootPath, "images", "Profiles");
