@@ -1,11 +1,14 @@
-﻿@* @model IEnumerable<StudentEditViewModel> *@
+﻿@* @using ... : permet d’utiliser les classes de tes modèles sans devoir taper les noms complets. *@
+@* @model IEnumerable<StudentEditViewModel> *@
 @using AdminMnsV1.Models.Students
 @using AdminMnsV1.Models.ViewModels
+
+@model StudentListPageViewModel
+@* la vue reçoit un objet StudentListPageViewModel *@
+
+@using Microsoft.AspNetCore.Mvc.Rendering
 @*Indique que la vue reçoit une collection (une liste) d'objets StudentEditViewModel du contrôleur. 
 Chaque objet dans cette collection représente un étudiant à afficher dans le tableau.*@
-@model StudentListPageViewModel
-@using Microsoft.AspNetCore.Mvc.Rendering
-
 
 @{
 	ViewData["Title"] = "Liste des Etudiants"; /* Définit le titre de la page */
@@ -65,9 +68,8 @@ Si des messages existent, ils sont affichés dans des alertes Bootstrap. *@
 		<tbody>
 
 			@foreach (var item in Model.Students)@* Cette boucle foreach itère sur chaque objet StudentEditViewModel dans la collection Model 
-										(la liste des étudiants passée par le contrôleur).
-										Pour chaque étudiant(item), une ligne est créée avec ses informations *@
-
+			(la liste des étudiants passée par le contrôleur).
+			Pour chaque étudiant(item), une ligne est créée avec ses informations *@
 			{
 				<tr>
 					<th scope="row">
@@ -77,16 +79,16 @@ Si des messages existent, ils sont affichés dans des alertes Bootstrap. *@
 						}
 						else
 						{
-							<span>Pas de photo</span> @* <img src="~/images/profiles/default.png" alt="Pas de photo" width="50" height="50" style="border-radius: 50%;"> *@
+							<span>Pas de photo</span>  <img src="~/images/logo/defaut.png" alt="Pas de photo" width="50" height="50" style="border-radius: 50%;">
 						}
 					</th>
 					<td>@item.LastName</td>
 					<td>@item.FirstName</td>
 
 					<td>
-						@if (item.ClassesAttended != null && item.ClassesAttended.Any())
+						@if (item.ClassesAttended != null && item.ClassesAttended.Any()) @* Vérifie si ClassesAttended n’est pas vide. *@
 						{
-							@string.Join(", ", item.ClassesAttended) @* Rejoins les noms des classes avec ", " *@
+							@string.Join(", ", item.ClassesAttended) @* Rejoins les noms des classes avec ", "  les affiche séparées par virgule. *@
 						}
 						else
 						{
@@ -110,21 +112,25 @@ Si des messages existent, ils sont affichés dans des alertes Bootstrap. *@
 							<button type="submit" class="btn btn-link text-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce stagiaire ?')">
 								<img width="20" height="20"
 									 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+								@* Le deleted est envoyé via POST à l’action /Students/deleted. *@
 							</button>
 						</form>
 					</td>
 				</tr>
 
+
 				@* **********MODAL*************** *@
 
-				@* Une modale Bootstrap personnalisée par étudiant(id unique). *@
+				@* Une modale Bootstrap personnalisée par étudiant(id unique). Le formulaire est envoyé
+				via POST à l’action /Students/Modify. *@
+
 				<div class="modal fade" id="modalStagiaire_@item.UserId" tabindex="-1" aria-labelledby="modalStagiaireLabel_@item.UserId"
 					 aria-hidden="true">
 					<div class="modal-dialog">
 						@* Elle contient un formulaire POST qui envoie les nouvelles données à /Students/Modify.
 						Chaque champ est prérempli avec les données de l'étudiant : *@
 						<form method="post" action="/Students/Modify">
-							@Html.AntiForgeryToken()
+							@Html.AntiForgeryToken() @* CSRF token pour la sécurité. Empeche les attaque CSRF *@
 							<div class="modal-content">
 								<div class="modal-header">
 									<h5 class="modal-title" id="modalStagiaireLabel_@item.UserId">Modifier @item.FirstName @item.LastName</h5>
@@ -177,17 +183,9 @@ Si des messages existent, ils sont affichés dans des alertes Bootstrap. *@
 									</div>
 									<div class="col-md-4">
 										<div class="mb-3">
-
 											<label for="ClassId" class="form-label">Classe</label>
-
-											@* Ajoutez cette ligne TEMPORAIREMENT pour voir la valeur *@
-											<div>DEBUG ClassId: @item.ClassId</div>
-
 											<select name="ClassId" id="ClassId" class="form-select">
-
-
 												<!option value="" @(item.ClassId == 0 ? "selected" : null)>-- *Choisir une classe* --</!option>
-
 
 												@if (Model.AvailableClasses != null)
 												{
@@ -195,7 +193,7 @@ Si des messages existent, ils sont affichés dans des alertes Bootstrap. *@
 													{
 
 														<!option value="@option.Value"
-														@(item.ClassId.ToString() == option.Value ? "selected" : null)>
+															@(item.ClassId.ToString() == option.Value ? "selected" : null)>
 															@option.Text
 														</!option>
 													}
@@ -266,13 +264,8 @@ Si des messages existent, ils sont affichés dans des alertes Bootstrap. *@
 			</li>
 		</ul>
 	</nav>
-
-
-
-
-
 </div>
-}
+	
 
 <!-- =======================FOOTER================ -->
 @Html.Partial("~/Views/Shared/Components/_Footer.cshtml")

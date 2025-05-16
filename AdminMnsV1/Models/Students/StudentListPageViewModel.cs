@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.Rendering; // N'oubliez pas ceci
+using Microsoft.AspNetCore.Mvc.Rendering;
 using AdminMnsV1.Models.Students; // Pour utiliser StudentEditViewModel
 
 namespace AdminMnsV1.Models.ViewModels // Créez ou utilisez un dossier ViewModels si vous le souhaitez

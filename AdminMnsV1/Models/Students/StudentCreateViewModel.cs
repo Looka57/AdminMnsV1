@@ -51,8 +51,6 @@ namespace AdminMnsV1.Models.Students
 
         public string? Class { get; set; }
 
-        //[Required(ErrorMessage = "Veuillez sélectionner une classe.")] // <-- Remettez cet attribut !
-
         [Required]
         public int ClassId { get; set; } // Pour stocker l'ID de la classe sélectionné
 

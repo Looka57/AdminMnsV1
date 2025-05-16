@@ -26,7 +26,8 @@ namespace AdminMnsV1.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationDbContext _context;
         private readonly ILogger<StudentsController> _logger;
-        private readonly IWebHostEnvironment _environment; //Injecte le service qui fournit des informations sur l'environnement web de     l'application, y compris le chemin racine du contenu web (wwwroot).
+        private readonly IWebHostEnvironment _environment; //Injecte le service qui fournit des informations sur l'environnement web de l'application, y compris le chemin racine du contenu web (wwwroot).
+
 
 
         public StudentsController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext context, IWebHostEnvironment environment)
@@ -43,9 +44,9 @@ namespace AdminMnsV1.Controllers
         {
             //tableau de tout les students
             var students = _context.Set<Student>() // Cible le DbSet de Student
-         .Where(s => (s.Status == "Stagiaire" || s.Status == "Candidat") && !s.IsDeleted)
+            .Where(s => (s.Status == "Stagiaire" || s.Status == "Candidat") && !s.IsDeleted)
             .Include(s => s.Attends) // <-- MAINTENANT s est de type Student, donc s.Attends est valide
-             .ThenInclude(a => a.Class) // Inclure la Classe pour chaque Attend (Class car c'est le nom de la prop dans Attend.cs)
+            .ThenInclude(a => a.Class) // Inclure la Classe pour chaque Attend (Class car c'est le nom de la prop dans Attend.cs)
          .ToList();
 
             var studentViewModels = students.Select(s => new StudentEditViewModel

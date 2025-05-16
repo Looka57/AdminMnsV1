@@ -26,7 +26,7 @@ namespace AdminMnsV1.Controllers
             //recuper le nombre d'eleve par classes 
             var classStudentCounts = _context.Attends
            .Include(a => a.Class)
-           .Where(a => a.Class != null)
+           .Where(a => a.Class != null && a.Student.Status =="Stagiaire" && !a.Student.IsDeleted )
            .GroupBy(a => a.Class)
            .Select(g => new
            {
@@ -49,24 +49,20 @@ namespace AdminMnsV1.Controllers
             { "Ran3", ("/images/logo/ran_logo.png", "ran icon") },
             { "Ran4", ("/images/logo/ran_logo.png", "ran icon") },
         };
-            var classCards = classStudentCounts.Select(item => // Si vous utilisez l'option 1 (GroupBy simple)
-                                                               // var classCards = allClassEntities.Select(c => // Si vous utilisez l'option 1 étendue (avec classes vides)
-            {
-                // Tenter de trouver les informations de l'icône dans le dictionnaire en utilisant le nom de la classe
-                if (classIconMapping.TryGetValue(item.Class.NameClass, out var iconInfo)) // Si Option 1 (GroupBy simple)
-                                                                                          // if (classIconMapping.TryGetValue(c.NameClass, out var iconInfo)) // Si Option 1 étendue
+            var classCards = classStudentCounts.Select(item =>
+            {                
+                if (classIconMapping.TryGetValue(item.Class.NameClass, out var iconInfo)) 
                 {
                     // Si la classe est trouvée dans le dictionnaire
                     return new CardModel
                     {
-                        Title = item.Class.NameClass, // Nom de la classe de la BDD (si Option 1 simple)
-                                                      // Title = c.NameClass, // Nom de la classe de la BDD (si Option 1 étendue)
-                        Number = item.StudentCount.ToString(), // Nombre d'élèves calculé (si Option 1 simple)
-                                                               // Number = counts.TryGetValue(c.ClasseId, out var count) ? count.ToString() : "0", // Nombre d'élèves (si Option 1 étendue)
-                        Url = "../Classes/Class", // URL de la carte (peut être dynamique si besoin)
+                        Title = item.Class.NameClass, // Nom de la classe de la BDD 
+                                                      // Title = c.NameClass, // Nom de la classe de la BDD 
+                        Number = item.StudentCount.ToString(), // Nombre d'élèves calculé
+                                                               // Number = counts.TryGetValue(c.ClasseId, out var count) ? count.ToString() : "0", // Nombre d'élèves 
+                        Url = "../Classes/Class", // URL de la carte 
                         IconUrl = iconInfo.IconUrl, // <<< Obtient l'URL de l'icône depuis le dictionnaire
                         AltText = iconInfo.AltText // <<< Obtient le AltText depuis le dictionnaire
-                                                   // Ajoutez d'autres propriétés de CardModel si besoin
                     };
                 }
                 else
@@ -75,14 +71,13 @@ namespace AdminMnsV1.Controllers
                     // Vous pouvez utiliser une icône par défaut ou gérer l'absence d'icône.
                     return new CardModel
                     {
-                        Title = item.Class.NameClass, // Nom de la classe de la BDD (si Option 1 simple)
-                                                      // Title = c.NameClass, // Nom de la classe de la BDD (si Option 1 étendue)
-                        Number = item.StudentCount.ToString(), // Nombre d'élèves calculé (si Option 1 simple)
-                                                               // Number = counts.TryGetValue(c.ClasseId, out var count) ? count.ToString() : "0", // Nombre d'élèves (si Option 1 étendue)
+                        Title = item.Class.NameClass, // Nom de la classe de la BDD 
+                                                      // Title = c.NameClass, // Nom de la classe de la BDD 
+                        Number = item.StudentCount.ToString(), // Nombre d'élèves calculé 
+                                                               // Number = counts.TryGetValue(c.ClasseId, out var count) ? count.ToString() : "0", 
                         Url = "../Classes/Class",
                         IconUrl = "/images/logo/defaut.png", // <<< URL d'une icône par défaut
                         AltText = "Icône par défaut" // <<< Texte alternatif par défaut
-                                                     // Ajoutez d'autres propriétés de CardModel si besoin
                     };
                 }
             }).ToList();
