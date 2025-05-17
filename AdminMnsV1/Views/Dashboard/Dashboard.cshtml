@@ -28,6 +28,12 @@
 	}
 </div>
 
+<script>
+	// Récupère les valeurs de ViewBag et les rend disponibles globalement
+	window.nombreHommes = @ViewBag.NombreHommes;
+	window.nombreFemmes = @ViewBag.NombreFemmes;
+</script>
+
 
 <!-- =======================GRAPHIQUES STAGIAIRE + ABS RETARD================ -->
 
@@ -168,10 +174,12 @@
 
 
  <script>
+		
         // Récupère les valeurs de ViewBag et les rend disponibles globalement
         window.nombreHommes = @ViewBag.NombreHommes;
         window.nombreFemmes = @ViewBag.NombreFemmes;
     </script>
+			<script src="~/js/styleGraphStudentDonuts.js"></script>
 
 <!-- =======================FOOTER================ -->
 @Html.Partial("~/Views/Shared/Components/_Footer.cshtml")

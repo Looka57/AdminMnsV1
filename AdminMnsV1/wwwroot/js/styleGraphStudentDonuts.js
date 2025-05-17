@@ -1,6 +1,6 @@
 ﻿// 5. Graphique en donut des stagiaires
 const pieCanvas = document.querySelector('#stagiaireChart');
-
+if (pieCanvas && typeof Chart !== 'undefined') {
     const pieChart = new Chart(pieCanvas, {
         type: 'doughnut',
         data: {
@@ -55,4 +55,3 @@ const pieCanvas = document.querySelector('#stagiaireChart');
             },
         },
     });
-}
