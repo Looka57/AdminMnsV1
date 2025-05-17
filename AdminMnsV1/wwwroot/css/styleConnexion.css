@@ -1,118 +1,146 @@
 /********************** DEBUT PAGE CONNEXION ************************/
 
 .containers {
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
-	flex-wrap: nowrap;
-	min-height: 100vh;
-	width: 100%;
-	background: url(../images/bgFondConnexion.png);
-	background-size: cover;
-	background-position: center;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: nowrap;
+    min-height: 100vh;
+    width: 100%;
+    background: url(../images/bgFondConnexion.png);
+    background-size: cover;
+    background-position: center;
 }
 
 .main {
-	position: relative;
-	right: 40%;
-	width: 350px;
-	height: 500px;
-	background-color: #151A37;
-	overflow: hidden;
-	border-radius: 10px;
-	/* box-shadow: 5px 10px 20px #000; */
+    position: relative;
+    right: 40%;
+    width: 350px;
+    height: 500px;
+    background-color: #151A37;
+    overflow: hidden;
+    border-radius: 10px;
+    /* box-shadow: 5px 10px 20px #000; */
 }
 
 #chk {
-	display: none;
+    display: none;
 }
 
 .signup {
-	position: relative;
-	width: 100%;
-	height: 100%;
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .formConnexion label {
-	color: #fff;
-	font-size: 2.3em;
-	justify-content: center;
-	display: flex;
-	margin: 60px 60px 30px 60px;
-	font-weight: bold;
-	cursor: pointer;
-	transition: .5s ease-in-out;
+    color: #fff;
+    font-size: 2.3em;
+    justify-content: center;
+    display: flex;
+    margin: 60px 60px 30px 60px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .5s ease-in-out;
 }
 
 .formConnexion input {
-	width: 60%;
-	height: 20px;
-	background: #ffffff;
-	justify-content: center;
-	display: flex;
-	margin: 20px auto;
-	padding: 15px;
-	border: none;
-	outline: none;
-	border-radius: 5px;
+    width: 60%;
+    height: 20px;
+    background: #ffffff;
+    justify-content: center;
+    display: flex;
+    margin: 20px auto;
+    padding: 15px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
 }
 
 .formConnexion a {
-	color: #fff;
-	text-decoration: none;
+    color: #fff;
+    text-decoration: none;
 }
 
-.formConnexion a:hover {
-	color: #fff;
-	text-decoration: underline;
-}
+    .formConnexion a:hover {
+        color: #fff;
+        text-decoration: underline;
+    }
 
 .btnConnexion,
 .btnInscription {
-	width: 60%;
-	height: 40px;
-	margin: 10px auto;
-	justify-content: center;
-	display: block;
-	color: #ffffff;
-	background: #51535d;
-	font-size: 1em;
-	font-weight: bold;
-	margin-top: 20px;
-	outline: none;
-	border: none;
-	border-radius: 5px;
-	transition: .2s ease-in;
-	cursor: pointer;
+    width: 60%;
+    height: 40px;
+    margin: 10px auto;
+    justify-content: center;
+    display: block;
+    color: #ffffff;
+    background: #51535d;
+    font-size: 1em;
+    font-weight: bold;
+    margin-top: 20px;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    transition: .2s ease-in;
+    cursor: pointer;
 }
 
 button:hover {
-	background: #6d44b8;
+    background: #6d44b8;
 }
 
 .login {
-	height: 460px;
-	background: #FF6616;
-	border-radius: 60% / 10%;
-	transform: translateY(-180px);
-	transition: .8s ease-in-out;
+    height: 460px;
+    background: #FF6616;
+    border-radius: 60% / 10%;
+    transform: translateY(-180px);
+    transition: .8s ease-in-out;
 }
 
-.login label {
-	color: #000000;
-	transform: scale(.6);
+    .login label {
+        color: #000000;
+        transform: scale(.6);
+    }
+
+#chk:checked ~ .login {
+    transform: translateY(-500px);
 }
 
-#chk:checked~.login {
-	transform: translateY(-500px);
+    #chk:checked ~ .login label {
+        transform: scale(1);
+    }
+
+#chk:checked ~ .signup label {
+    transform: scale(.6);
 }
 
-#chk:checked~.login label {
-	transform: scale(1);
-}
 
-#chk:checked~.signup label {
-	transform: scale(.6);
-}
 
 /************************ FIN PAGE CONNEXION *********************/
+
+
+.page-wrapper.login-layout-active .container-fluid.containerPrincipal.nav-container-for-login {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    flex-basis: 0;
+    flex-grow: 0;
+    flex-shrink: 1;
+}
+
+
+.page-wrapper.login-layout-active .mainDashboard.main-content-for-login {
+    margin-left: 0;
+    width: 100%;
+    max-width: 100%;
+    flex-grow: 1;
+    flex-basis: 100%;
+    padding-left: 0;
+    left: 0;
+    position: relative;
+}

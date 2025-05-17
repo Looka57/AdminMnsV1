@@ -1,23 +1,23 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using AdminMnsV1.Data; 
-using AdminMnsV1.Models; 
-
+using AdminMnsV1.Data;
+using AdminMnsV1.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
-//Pour que votre DbContext soit disponible dans votre application via l'injection de dépendances, vous devez l'enregistrer dans le conteneur de services.
+// Enregistrement de votre DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));//Ce code récupère la chaîne de connexion nommée "DefaultConnection" de votre fichier appsettings.json et configure EF Core pour utiliser le fournisseur SQL Server.
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-// Ajout d'Identity
+// Ajout d'Identity avec votre classe User, les rÃ´les et la configuration des options
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
-    // Configuration des options d'Identity (facultatif)
+    options.SignIn.RequireConfirmedAccount = true; // IMPORTANT : Cette ligne est essentielle pour l'UI gÃ©nÃ©rÃ©e
+    // Configuration des options d'Identity
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
@@ -29,17 +29,11 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     options.Lockout.AllowedForNewUsers = true;
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
-
-// Configuration de l'authentification et de l'autorisation
-builder.Services.AddAuthentication();
-builder.Services.AddAuthorization();
-
+    .AddDefaultTokenProviders(); // NÃ©cessaire pour la gÃ©nÃ©ration de tokens (rÃ©initialisation mdp, confirmation email)
 
 var app = builder.Build();
 
 // creation des roles
-
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -53,9 +47,9 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    //// Créer l'utilisateur Admin par défaut
-    //string adminUserEmail = "admin@example.com"; // Remplacez par l'e-mail de votre administrateur
-    //string adminPassword = "Admin123!"; // Remplacez par un mot de passe sécurisé
+    //// Crï¿½er l'utilisateur Admin par dï¿½faut (dÃ©commenter si vous voulez l'utiliser)
+    //string adminUserEmail = "admin@example.com";
+    //string adminPassword = "Admin123!";
     //var adminUser = await userManager.FindByEmailAsync(adminUserEmail);
     //if (adminUser == null)
     //{
@@ -63,7 +57,6 @@ using (var scope = app.Services.CreateScope())
     //    {
     //        UserName = adminUserEmail,
     //        Email = adminUserEmail,
-    //        // Autres propriétés de l'administrateur
     //    };
     //    var result = await userManager.CreateAsync(newAdminUser, adminPassword);
     //    if (result.Succeeded)
@@ -72,8 +65,7 @@ using (var scope = app.Services.CreateScope())
     //    }
     //    else
     //    {
-    //        // Gérer l'erreur (par exemple, journaliser)
-    //        Console.WriteLine("Erreur lors de la création de l'utilisateur Admin par défaut :");
+    //        Console.WriteLine("Erreur lors de la crÃ©ation de l'utilisateur Admin par dÃ©faut:");
     //        foreach (var error in result.Errors)
     //        {
     //            Console.WriteLine(error.Description);
@@ -82,26 +74,24 @@ using (var scope = app.Services.CreateScope())
     //}
 }
 
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles(); // GÃ©nÃ©ralement placÃ© ici pour servir les fichiers statiques
 app.UseRouting();
 
-app.UseAuthorization();
+app.UseAuthentication(); // GÃ¨re l'authentification des utilisateurs
+app.UseAuthorization();  // GÃ¨re l'autorisation des utilisateurs (UNE SEULE FOIS)
 
-app.MapStaticAssets();
-
+app.MapRazorPages(); // Permet aux pages Razor de fonctionner
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
+    pattern: "{controller=Home}/{action=Login}/{id?}");
+// Supprimez .WithStaticAssets(); si ce n'est pas une extension standard et que cela pose problÃ¨me
 
 app.Run();

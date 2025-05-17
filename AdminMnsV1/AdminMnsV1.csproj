@@ -7,7 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Aeras\**" />
+    <Content Remove="Aeras\**" />
+    <EmbeddedResource Remove="Aeras\**" />
+    <None Remove="Aeras\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4">
       <PrivateAssets>all</PrivateAssets>
