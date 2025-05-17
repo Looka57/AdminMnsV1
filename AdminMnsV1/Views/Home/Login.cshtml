@@ -2,29 +2,37 @@
 
 @{
     ViewData["Title"] = "Connexion";
-   
 }
-<!-- PAGE DE CONNEXION -->
 <div class="containers m-0">
     <div class="main">
         <input type="checkbox" id="chk" aria-hidden="true">
+
         <div class="signup">
-            <form class="formConnexion" method="POST" action="../View/tableauStagiaire.html">
-                <label for="chk" aria-hidden="true">Stagiaire</label>
-                <input type="email" name="email" autocomplete="off" placeholder="Email" required="">
-                <input type="password" name="pswd" autocomplete="off" placeholder="Mot de passe" required="">
-                <button class="btnConnexion">Connexion</button>
+            <form class="formConnexion" method="POST" asp-controller="Home" asp-action="LoginStudent">
+                <label for="chk" aria-hidden="true">Stagiaire</label> <input type="email" asp-for="Email" name="Email" autocomplete="off" placeholder="Email" required="">
+                <span asp-validation-for="Email" class="text-danger"></span>
+
+                <input type="password" asp-for="Password" name="Password" autocomplete="off" placeholder="Mot de passe" required="">
+                <span asp-validation-for="Password" class="text-danger"></span>
+
+                <button type="submit" class="btnConnexion">Connexion</button>
                 <p class="text-center"><a href="#">Mot de passe oublié ?</a></p>
+
+                @* C'EST TRÈS IMPORTANT POUR AFFICHER LES MESSAGES D'ERREUR GÉNÉRAUX *@
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             </form>
         </div>
 
         <div class="login">
-            <form class="formConnexion" method="POST" action="../View/tableau.html">
+            <form class="formConnexion" asp-controller="Home" asp-action="LoginAdmin" method="POST">
                 <label for="chk" aria-hidden="true">Admin</label>
-                <input type="email" name="email" autocomplete="off" placeholder="Email" required="">
-                <input type="password" name="pswd" autocomplete="off" placeholder="Mot de passe" required="">
+                <input type="email" asp-for="Email" name="Email" autocomplete="off" placeholder="Email" required="">
+                <span asp-validation-for="Email" class="text-danger"></span>
+                <input type="password" asp-for="Password" name="Password" autocomplete="off" placeholder="Mot de passe" required="">
+                <span asp-validation-for="Password" class="text-danger"></span>
                 <p class="text-center"><a href="#">Mot de passe oublié ?</a></p>
-                <button class="btnInscription">Valider</button>
+                <button type="submit" class="btnInscription">Valider</button>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             </form>
         </div>
     </div>

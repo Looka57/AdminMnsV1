@@ -1,0 +1,107 @@
+﻿@using AdminMnsV1.Models
+
+@{
+	ViewData["Title"] = "Tableau de Bord Stagiaire";
+
+}
+
+
+<!-- =====================MAIN TABLEAU=============================== -->
+<div class="mainDashboard ">
+    <div class="topBar p-4">
+        <div class="toggle">
+            <img width="40" height="40" src="https://img.icons8.com/ios/50/menu--v1.png" alt="menu--v1" />
+        </div>
+
+        <div class="search">
+            <label>
+                <input type="text" placeholder="Recherche" />
+                <img width="20" height="20" src="https://img.icons8.com/ios/50/search--v1.png"
+                     alt="search--v1" />
+            </label>
+        </div>
+
+        <div class="user">
+            <img src="../Public/assets/images/gohan.jpg" alt="">
+        </div>
+    </div>
+    <h1 class="mx-4 mt-5">Bonjour Looka !</h1>
+
+    <!-- =====================CARDS=============================== -->
+
+    <div class="cardBox ">
+        <a href="classe.html" class="card-link">
+            <div class="cards border-0">
+                <div>
+                    <div class="cardNumber">15</div>
+                    <div class="cardName">Classe</div>
+                </div>
+                <div class="iconCard">
+                    <img width="60" height="60" src="https://img.icons8.com/glyph-neue/64/classroom.png"
+                         alt="classroom" />
+                </div>
+            </div>
+        </a>
+
+        <a href="dossier.html" class="card-link">
+            <div class="cards border-0">
+                <div>
+                    <div class="cardNumber">0</div>
+                    <div class="cardName">Dossier Validé</div>
+                </div>
+                <div class="iconCard">
+                    <img width="60" height="60"
+                         src="https://img.icons8.com/glyph-neue/64/user-folder.png" alt="user-folder" />
+                </div>
+            </div>
+        </a>
+
+        <a href="#" class="card-link">
+            <div class="cards border-0">
+                <div>
+                    <div class="cardNumber">5</div>
+                    <div class="cardName">Notifications</div>
+                </div>
+                <div class="iconCard">
+                    <img width="60" height="60"
+                         src="https://img.icons8.com/ios-filled/50/appointment-reminders--v1.png"
+                         alt="appointment-reminders--v1" />
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- =======================GRAPHIQUES STAGIAIRE ABS RETARD================ -->
+
+    <div class="graphs">
+        <div class="graphLateAbs border rounded-3 bg-light">
+            <div class="title">
+                <h4>Total de Retards-Absences</h4>
+            </div>
+            <div class="chartContainerAbs w-100">
+                <canvas id="absencesChart" aria-label="chart" role="img"></canvas>
+            </div>
+        </div>
+        <div class="progressFiles p-3 border rounded-3 bg-light">
+            <h4>Progression du dossier</h4>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam earum asperiores vel vitae facere delectus fuga amet atque blanditiis hic, assumenda officia tempora omnis rerum magni ipsam quos eaque molestias!</p>
+
+        </div>
+    </div>
+
+
+    <!-- =======================FOOTER================ -->
+    <hr>
+    <footer class="footer">
+        <div class="linkFooter ">
+            <ul>
+                <li><a href="">Politique de confidentialité</a></li>
+                <li><a href="">Parametre</a></li>
+                <li><a href="">Contacter Nous</a></li>
+
+            </ul>
+            <p class="text-center">&copy 2025 Metz Numeric School</p>
+        </div>
+    </footer>
+</div>
+    </div>

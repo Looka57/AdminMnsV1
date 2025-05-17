@@ -1,11 +1,13 @@
 ﻿using AdminMnsV1.Data;
 using AdminMnsV1.Models;
+using Microsoft.AspNetCore.Authorization;
 
 
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdminMnsV1.Controllers
 {
+        [Authorize]
     public class DashboardController : Controller
     {
 
@@ -16,9 +18,11 @@ namespace AdminMnsV1.Controllers
             _context = context;
         }
 
-
+        // DASHBOARD ADMIN
+        [Authorize(Roles = "Admin")]
         public IActionResult Dashboard()
         {
+            ViewData["Title"] = "Tableau de Bord Admin";
 
             //recuper le nombre total de classes 
             var classCount = _context.Classs
@@ -56,6 +60,20 @@ namespace AdminMnsV1.Controllers
 
 
             return View(cards);
+        }
+
+        // DASHBOARD STAGIAIRE
+        // CETTE ACTION MANQUAIT DANS VOTRE CODE PRÉCÉDENT
+        // Applique l'autorisation : Seuls les utilisateurs avec le rôle "Stagiaire" peuvent accéder à cette action.
+        //[Authorize(Roles = "Student")]
+
+        // DASHBOARD STUDENT (STAGIAIRE)
+        [Authorize(Roles = "Student")] // <<< Autorise SEULEMENT les utilisateurs avec le rôle "Student"
+        public IActionResult DashboardStudent()
+        {
+            ViewData["Title"] = "Tableau de Bord Student"; // Vous pouvez changer en "Student Dashboard"
+            // TODO : Ajoutez ici la logique spécifique au tableau de bord du stagiaire
+            return View(); // Cela va chercher Views/Dashboard/DashboardStudent.cshtml
         }
     }
 }
