@@ -556,7 +556,6 @@ namespace AdminMnsV1.Tests
           
         }
       
-
         [TestMethod]
         public async Task Delete_Post_ValidId_SuccessAndRedirects()
         {

@@ -312,9 +312,6 @@ namespace AdminMnsV1.Controllers
         }
 
 
-
-
-
         ////*************SUPPRIME UN STAGIAIRE**********
 
         [HttpPost]
