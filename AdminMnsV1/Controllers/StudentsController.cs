@@ -112,8 +112,7 @@ namespace AdminMnsV1.Controllers
 
         // Dans StudentsController.cs
 
-        //*************GÈRE LA SOUMISSION DU FORMULAIRE DE CRÉATION (POST) **********
-        // Dans StudentsController.cs
+    
 
         //*************GÈRE LA SOUMISSION DU FORMULAIRE DE CRÉATION (POST) **********
         [HttpPost]
@@ -316,17 +315,6 @@ namespace AdminMnsV1.Controllers
 
 
 
-
-
-
-
-
-
-
-
-
-
-
         ////*************SUPPRIME UN STAGIAIRE**********
 
         [HttpPost]
@@ -336,11 +324,21 @@ namespace AdminMnsV1.Controllers
 
             if (user == null)
             {
-                return NotFound();
+                TempData["ErreurMessage"] = "Stagiaire non trouvé."; // Ajoutez cette ligne
+                return RedirectToAction("Student"); // Changez ici pour rediriger au lieu de NotFound
+                                                    // Ou si c'était déjà RedirectToAction, assurez-vous du message TempData
             }
 
             user.IsDeleted = true;
-            await _userManager.UpdateAsync(user); // Utilise UserManager pour mettre à jour l'utilisateur
+            var updateResult = await _userManager.UpdateAsync(user); // Utilise UserManager pour mettre à jour l'utilisateur
+
+            if (!updateResult.Succeeded)
+            {
+                string errors = string.Join(", ", updateResult.Errors.Select(e => e.Description));
+                TempData["ErreurMessage"] = $"Erreur lors du marquage du stagiaire comme supprimé : {errors}";
+                return RedirectToAction(nameof(Student)); // Retourne en cas d'échec de la mise à jour
+            }
+        
 
             TempData["SuccesMessage"] = $"L'utilisateur {user.FirstName} {user.LastName} a été marqué comme supprimé.";
             return RedirectToAction(nameof(Student));
