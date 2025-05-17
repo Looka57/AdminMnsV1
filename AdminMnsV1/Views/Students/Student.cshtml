@@ -1,22 +1,61 @@
-﻿@{
-	ViewData["Title"] = "Student";
+﻿@* @using ... : permet d’utiliser les classes de tes modèles sans devoir taper les noms complets. *@
+@* @model IEnumerable<StudentEditViewModel> *@
+@using AdminMnsV1.Models.Students
+@using AdminMnsV1.Models.ViewModels
+
+@model StudentListPageViewModel
+@* la vue reçoit un objet StudentListPageViewModel *@
+
+@using Microsoft.AspNetCore.Mvc.Rendering
+@*Indique que la vue reçoit une collection (une liste) d'objets StudentEditViewModel du contrôleur. 
+Chaque objet dans cette collection représente un étudiant à afficher dans le tableau.*@
+
+@{
+	ViewData["Title"] = "Liste des Etudiants"; /* Définit le titre de la page */
 }
 
-<!-- TABLEAU STUDENTS -->
+@* LEs messages de succes et d'erreur des modifications' *@
+
+@*  Ces blocs Razor vérifient si des messages de succès ou d'erreur ont été stockés dans TempData. 
+ TempData est un dictionnaire qui permet de passer des données entre les actions de contrôleur successives.
+ Si un message existe, il est affiché dans une div d'alerte Bootstrap.*@
+
+@if (TempData["SuccesMessage"] != null)
+{
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		@TempData["SuccesMessage"]
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+@if (TempData["ErreurMessage"] != null)
+{
+	<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+		@TempData["ErreurMessage"]
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+@* TempData : permet de passer des messages temporairement entre deux actions.
+Si des messages existent, ils sont affichés dans des alertes Bootstrap. *@
+
+
+
 <div class="studentTable">
 	<h1 class="mt-5">Stagiaires</h1>
-
+	@* Affiche un bouton qui redirige l'utilisateur vers l'action Formulaire du contrôleur Formulaires, où le formulaire de création d'un nouvel étudiant est affiché. *@
 	<div class="btnNewStudent">
-		<a href="@Url.Action("Formulaire","Formulaires")" class="btn btn-outline-warning">
-			<img width="20" height="20" src="https://img.icons8.com/ios/50/plus--v1.png" alt="plus icon" class="me-2" />
+		<a href="@Url.Action("Create","Students")" class="btn btn-outline-warning">
 			Nouveau Stagiaire
 		</a>
 	</div>
 
+
+	@* **********TABLEAU ETUDIANTS*************** *@
 	<table class="table align-middle table-striped table-hover table-custom bg-secondary table-responsive">
 		<thead>
 			<tr>
-				<th scope="col">#</th>
+				<th scope="col">Photo</th>
 				<th scope="col">Nom</th>
 				<th scope="col">Prénom</th>
 				<th scope="col">Classe</th>
@@ -27,236 +66,184 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr>
-				<th scope="row">1</th>
-				<td>Midoriya</td>
-				<td>Izuku</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Musutafu</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Candidat</td>
-				<td>
-					<a href="#" data-bs-toggle="modal" data-bs-target="#modalStagiaire">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row">2</th>
-				<td>Bakugo</td>
-				<td>Katsuki</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Musutafu</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Stagiaire</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row">3</th>
-				<td>Todoroki</td>
-				<td>Shoto</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Musutafu</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Stagiaire</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row">4</th>
-				<td>Uraraka</td>
-				<td>Ochaco</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Kutsh</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Stagiaire</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
 
-			</tr>
-			<tr>
-				<th scope="row">5</th>
-				<td>Iida</td>
-				<td>Tenya</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Musutafu</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Candidat</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
+			@foreach (var item in Model.Students)@* Cette boucle foreach itère sur chaque objet StudentEditViewModel dans la collection Model 
+			(la liste des étudiants passée par le contrôleur).
+			Pour chaque étudiant(item), une ligne est créée avec ses informations *@
+			{
+				<tr>
+					<th scope="row">
+						@if (!string.IsNullOrEmpty(item.Photo))
+						{
+							<img src="~/images/Profiles/@item.Photo" alt="@item.FirstName @item.LastName" width="50" height="50" style="border-radius: 50%;">
+						}
+						else
+						{
+							<span>Pas de photo</span>  <img src="~/images/logo/defaut.png" alt="Pas de photo" width="50" height="50" style="border-radius: 50%;">
+						}
+					</th>
+					<td>@item.LastName</td>
+					<td>@item.FirstName</td>
 
-			</tr>
-			<tr>
-				<th scope="row">6</th>
-				<td>Tokoyami</td>
-				<td>Fumikage</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Musutafu</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Stagiaire</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
+					<td>
+						@if (item.ClassesAttended != null && item.ClassesAttended.Any()) @* Vérifie si ClassesAttended n’est pas vide. *@
+						{
+							@string.Join(", ", item.ClassesAttended) @* Rejoins les noms des classes avec ", "  les affiche séparées par virgule. *@
+						}
+						else
+						{
+							<span>Aucune classe</span> @* Affiche ceci si la liste est vide ou null *@
+						}
+					</td>
+					<td class="d-none d-sm-table-cell">@item.City</td>
+					<td class="d-none d-sm-table-cell">@item.CreationDate</td>
+					<td class="d-none d-sm-table-cell">@item.Role</td>
+					<td>
+						<a href="#" data-bs-toggle="modal" data-bs-target="#modalStagiaire_@item.UserId">
+							<img width="20" height="20"
+								 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
+								 alt="visible" />
+						</a>
+					</td>
+					<td>
+						@* Formulaire qui appelle l'action Delete du contrôleur Students avec l’ID de l'étudiant.
+						Avec une confirmation JS (onclick="return confirm(...)").*@
+						<form method="post" action="@Url.Action("Delete", "Students", new { id = item.UserId })" style="display:inline;">
+							<button type="submit" class="btn btn-link text-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce stagiaire ?')">
+								<img width="20" height="20"
+									 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
+								@* Le deleted est envoyé via POST à l’action /Students/deleted. *@
+							</button>
+						</form>
+					</td>
+				</tr>
 
-			</tr>
-			<tr>
-				<th scope="row">7</th>
-				<td>Asui</td>
-				<td>Tsuyu</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Musutafu</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Candidat</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
 
-			</tr>
-			<tr>
-				<th scope="row">8</th>
-				<td>Kirishima</td>
-				<td>Eijiro</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Osaka</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Candidat</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
+				@* **********MODAL*************** *@
 
-			</tr>
-			<tr>
-				<th scope="row">9</th>
-				<td>Yaoyorozu</td>
-				<td>Momo</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Tokyo</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Stagiaire</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
+				@* Une modale Bootstrap personnalisée par étudiant(id unique). Le formulaire est envoyé
+				via POST à l’action /Students/Modify. *@
 
-			</tr>
-			<tr>
-				<th scope="row">10</th>
-				<td>Kaminari</td>
-				<td>Denki</td>
-				<td>2-A</td>
-				<td class="d-none d-md-table-cell">Musutafu</td>
-				<td class="d-none d-md-table-cell">2018-04-01</td>
-				<td class="d-none d-md-table-cell">Candidat</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/fluency-systems-filled/48/visible.png"
-							 alt="visible" />
-					</a>
-				</td>
-				<td>
-					<a href="">
-						<img width="20" height="20"
-							 src="https://img.icons8.com/ios-filled/50/waste.png" alt="waste" />
-					</a>
-				</td>
-			</tr>
+				<div class="modal fade" id="modalStagiaire_@item.UserId" tabindex="-1" aria-labelledby="modalStagiaireLabel_@item.UserId"
+					 aria-hidden="true">
+					<div class="modal-dialog">
+						@* Elle contient un formulaire POST qui envoie les nouvelles données à /Students/Modify.
+						Chaque champ est prérempli avec les données de l'étudiant : *@
+						<form method="post" action="/Students/Modify">
+							@Html.AntiForgeryToken() @* CSRF token pour la sécurité. Empeche les attaque CSRF *@
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="modalStagiaireLabel_@item.UserId">Modifier @item.FirstName @item.LastName</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal"
+											aria-label="Close"></button>
+								</div>
+								@* Chaque item est un étudiant, et s'il possède une propriété (LastName, sexe, FirstName...)
+								il va l'afficher dans la cellule' *@
+								<div class="modal-body">
+									<input type="hidden" name="UserId" value="@item.UserId" />
+									<div class="mb-3">
+										<label for="LastName" class="form-label">Nom</label>
+										<input type="text" class="form-control" id="LastName" name="LastName" value="@item.LastName">
+									</div>
+									<div class="mb-3">
+										<label for="FirstName" class="form-label">Prénom</label>
+										<input type="text" class="form-control" id="FirstName" name="FirstName" value="@item.FirstName">
+									</div>
+									<div class="mb-3">
+										<label for="Sexe" class="form-label">Sexe</label>
+										<select class="form-select" id="Sexe" name="Sexe">
+											<option value="Male" selected="@(item.Sexe == "Male" ? "selected" : null)">Masculin</option>
+											<option value="Female" selected="@(item.Sexe == "Female" ? "selected" : null)">Féminin</option>
+										</select>
+									</div>
+									<div class="mb-3">
+										<label for="BirthDate" class="form-label">Date de naissance</label>
+										<input type="date" class="form-control" id="BirthDate" name="BirthDate"
+											   value="@item.BirthDate.ToString("yyyy-MM-dd")">
+									</div>
+									<div class="mb-3">
+										<label for="Nationality" class="form-label">Nationalité</label>
+										<input type="text" class="form-control" id="Nationality" name="Nationality"
+											   value="@item.Nationality">
+									</div>
+									<div class="mb-3">
+										<label for="Address" class="form-label">Adresse</label>
+										<input type="text" class="form-control" id="Address" name="Address"
+											   value="@item.Address">
+									</div>
+									<div class="mb-3">
+										<label for="City" class="form-label">Ville</label>
+										<input type="text" class="form-control" id="City" name="City"
+											   value="@item.City">
+									</div>
+									<div class="mb-3">
+										<label for="Email" class="form-label">Email</label>
+										<input type="email" class="form-control" id="Email" name="Email"
+											   value="@item.Email">
+									</div>
+									<div class="col-md-4">
+										<div class="mb-3">
+											<label for="ClassId" class="form-label">Classe</label>
+											<select name="ClassId" id="ClassId" class="form-select">
+												<!option value="" @(item.ClassId == 0 ? "selected" : null)>-- *Choisir une classe* --</!option>
+
+												@if (Model.AvailableClasses != null)
+												{
+													@foreach (var option in Model.AvailableClasses)
+													{
+
+														<!option value="@option.Value"
+															@(item.ClassId.ToString() == option.Value ? "selected" : null)>
+															@option.Text
+														</!option>
+													}
+												}
+											</select>
+
+										</div>
+									</div>
+									<div class="mb-3">
+										<label for="Phone" class="form-label">Téléphone</label>
+										<input type="tel" class="form-control" id="Phone" name="Phone"
+											   value="@item.Phone">
+									</div>
+									<div class="mb-3">
+										<label class="form-label">Date création dossier</label>
+										<div>@item.CreationDate.ToString("dd/MM/yyyy HH:mm")</div>
+									</div>
+									<div class="mb-3">
+										<label for="Role" class="form-label">Role</label>
+										<select class="form-select" id="Role" name="Role">
+											<option value="Candidat" selected="@(item.Role == "Candidat" ? "selected" : null)">Candidat</option>
+											<option value="Stagiaire" selected="@(item.Role == "Stagiaire" ? "selected" : null)">Stagiaire</option>
+										</select>
+									</div>
+									<div class="mb-3">
+										<label for="SocialSecurityNumber" class="form-label">N° Sécurité Sociale</label>
+										<input type="text" class="form-control" id="SocialSecurityNumber" name="SocialSecurityNumber"
+											   value="@item.SocialSecurityNumber">
+									</div>
+									<div class="mb-3">
+										<label for="FranceTravailNumber" class="form-label">N° France Travail</label>
+										<input type="text" class="form-control" id="FranceTravailNumber"
+											   name="FranceTravailNumber" value="@item.FranceTravailNumber">
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="submit" class="btn btn-primary">Enregistrer</button>
+									<button type="button" class="btn btn-secondary"
+											data-bs-dismiss="modal">
+										Annuler
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+
+			}
 		</tbody>
 	</table>
-
-
 
 
 	<!-- PAGINATION -->
@@ -277,118 +264,8 @@
 			</li>
 		</ul>
 	</nav>
-
-
-
-	<!-- Modal -->
-	<div class="modal fade" id="modalStagiaire" tabindex="-1" aria-labelledby="modalStagiaireLabel"
-		 aria-hidden="true">
-		<div class="modal-dialog">
-			<form method="post" action="/Stagiaire/Modifier">
-				<!-- Adapte l'action à ton contrôleur -->
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="modalStagiaireLabel">Modifier le Stagiaire</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal"
-								aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						<!-- Exemple d'un champ : Nom -->
-						<div class="mb-3">
-							<label for="Nom" class="form-label">Nom</label>
-							<input type="text" class="form-control" id="Nom" name="Nom" value="Midoriya">
-						</div>
-						<div class="mb-3">
-							<label for="Prenom" class="form-label">Prénom</label>
-							<input type="text" class="form-control" id="Prenom" name="Prenom" value="Izuku">
-						</div>
-						<div class="mb-3">
-							<label for="Sexe" class="form-label">Sexe</label>
-							<select class="form-select" id="Sexe" name="Sexe">
-								<option value="Masculin" selected>Masculin</option>
-								<option value="Féminin">Féminin</option>
-							</select>
-						</div>
-						<div class="mb-3">
-							<label for="DateNaissance" class="form-label">Date de naissance</label>
-							<input type="date" class="form-control" id="DateNaissance" name="DateNaissance"
-								   value="2008-05-14">
-						</div>
-						<div class="mb-3">
-							<label for="Nationalite" class="form-label">Nationalité</label>
-							<input type="text" class="form-control" id="Nationalite" name="Nationalite"
-								   value="Japonais">
-						</div>
-						<div class="mb-3">
-							<label for="Adresse" class="form-label">Adresse</label>
-							<input type="text" class="form-control" id="Adresse" name="Adresse"
-								   value="15 rue quelque chose">
-						</div>
-						<div class="mb-3">
-							<label for="Ville" class="form-label">Ville</label>
-							<input type="text" class="form-control" id="Ville" name="Ville"
-								   value="Musutafu">
-						</div>
-						<div class="mb-3">
-							<label for="Mail" class="form-label">Mail</label>
-							<input type="email" class="form-control" id="Mail" name="Mail"
-								   value="Bob@gogole.com">
-						</div>
-						<div class="mb-3">
-							<label for="Telephone" class="form-label">Téléphone</label>
-							<input type="tel" class="form-control" id="Telephone" name="Telephone"
-								   value="06.06.060.06">
-						</div>
-						<div class="mb-3">
-							<label for="DateCreation" class="form-label">Date création dossier</label>
-							<input type="date" class="form-control" id="DateCreation" name="DateCreation"
-								   value="2018-04-01">
-						</div>
-						<div class="mb-3">
-							<label for="Classe" class="form-label">Classe</label>
-							<input type="text" class="form-control" id="Classe" name="Classe" value="2-A">
-						</div>
-						<div class="mb-3">
-							<label for="Statut" class="form-label">Statut</label>
-							<select class="form-select" id="Statut" name="Statut">
-								<option value="En cours" selected>En cours</option>
-								<option value="Refuser">Refuser</option>
-								<option value="Terminé">Terminé</option>
-							</select>
-						</div>
-						<div class="mb-3">
-							<label for="Role" class="form-label">Role</label>
-							<select class="form-select" id="Role" name="Role">
-								<option value="Candidat" selected>Candidat</option>
-								<option value="Stagiaire">Stagiaire</option>
-							</select>
-						</div>
-						<div class="mb-3">
-							<label for="NumSecu" class="form-label">N° Sécurité Sociale</label>
-							<input type="text" class="form-control" id="NumSecu" name="NumSecu"
-								   value="1234567890">
-						</div>
-						<div class="mb-3">
-							<label for="NumFranceTravail" class="form-label">N° France Travail</label>
-							<input type="text" class="form-control" id="NumFranceTravail"
-								   name="NumFranceTravail" value="B118545">
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="submit" class="btn btn-primary">Enregistrer</button>
-						<button type="button" class="btn btn-secondary"
-								data-bs-dismiss="modal">
-							Annuler
-						</button>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
-
 </div>
-}
+	
 
 <!-- =======================FOOTER================ -->
 @Html.Partial("~/Views/Shared/Components/_Footer.cshtml")
-

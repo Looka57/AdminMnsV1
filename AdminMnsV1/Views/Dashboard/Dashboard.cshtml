@@ -1,32 +1,30 @@
 ﻿@using AdminMnsV1.Models
+@model List<CardModel>
 @{
-	ViewData["Title"] = "Dashboard";
+	ViewData["Title"] = "Tableau de Bord";
 
-	<!-- =====================CARDS DASHBOR=ARD=============================== -->
-	var cards = new List<CardModel>  
-	// Cette ligne déclare et initialise une variable nommée cards comme une nouvelle liste d'objets de type CardModel. 
-	// La notation <CardModel> spécifie que cette liste ne peut contenir que des instances de la classe CardModel.
-	{
-		new CardModel { Url = "../Classes/Class", Number = "15", Title = "Classes", IconUrl = "https://img.icons8.com/glyph-neue/64/classroom.png", AltText = "classroom" },
-		new CardModel { Url = "../Candidatures/Candidature", Number = "254", Title = "Dossiers", IconUrl = "https://img.icons8.com/glyph-neue/64/user-folder.png", AltText = "user-folder" },
-		new CardModel { Url = "../Students/Student", Number = "1.502", Title = "Stagiaires", IconUrl = "https://img.icons8.com/glyph-neue/64/student-male.png", AltText = "student-male" },
-		new CardModel { Url = "#", Number = "5", Title = "Notifications", IconUrl = "https://img.icons8.com/ios-filled/50/appointment-reminders--v1.png", AltText = "reminder" }
-
-		// Pour chaque ensemble de données de carte, une nouvelle instance de la classe CardModel est créée à l'aide du mot-clé new.
-	};
 }
 
 <h1 class="mx-4 mt-5">Bonjour Bob !</h1>
 
 <div class="cardBox">
-	@foreach (var card in cards) 
-	// Elle itère à travers chaque élément de la collection cards
-	// Pour chaque élément de la liste, l'élément actuel est accessible via la variable card.
+
+	<!-- =====================CARDS DASHBORARD=============================== -->
+	@foreach (var card in Model)
 	{
-		// C'est le chemin d'accès à une vue partielle nommée _Card, située dans le dossier Components
-		@Html.Partial("Components/_Card", card)		//Ceci est une méthode d'assistance HTML en Razor.	
-		// card: C'est le modèle qui est passé à la vue partielle _Card pour chaque itération de la boucle.
-		//  Dans chaque itération, l'objet CardModel courant (card) de la liste cards est transmis à la vue partielle _Card. 
+		<div class="">
+			<a href="@card.Url" class="card-link">
+				<div class="cards border-0">
+					<div>
+						<div class="cardNumber">@card.Number</div>
+						<div class="cardName">@card.Title</div>
+					</div>
+					<div class="iconCard">
+						<img width="60" height="60" src="@card.IconUrl" alt="@card.AltText" />
+					</div>
+				</div>
+			</a>
+		</div>
 	}
 </div>
 
@@ -169,6 +167,11 @@
 </div>
 
 
+ <script>
+        // Récupère les valeurs de ViewBag et les rend disponibles globalement
+        window.nombreHommes = @ViewBag.NombreHommes;
+        window.nombreFemmes = @ViewBag.NombreFemmes;
+    </script>
 
 <!-- =======================FOOTER================ -->
 @Html.Partial("~/Views/Shared/Components/_Footer.cshtml")

@@ -1,28 +1,26 @@
-﻿
-// 5. Graphique en donut des stagiaires
+﻿// 5. Graphique en donut des stagiaires
 const pieCanvas = document.querySelector('#stagiaireChart');
 
     const pieChart = new Chart(pieCanvas, {
         type: 'doughnut',
         data: {
             labels: ['Hommes', 'Femmes'],
-            datasets: [
-                {
-                    label: 'Hommes',
-                    data: [45, 0],
-                    backgroundColor: ['rgba(21, 26, 55, 0.8)', 'rgba(21, 26, 55, 0.3)'],
-                    borderColor: ['rgba(21, 26, 55, 1)', 'rgba(21, 26, 55, 0.5)'],
-                    borderWidth: 1,
-                    cutout: '70%',
-                },
-                {
-                    label: 'Femmes',
-                    data: [0, 30],
-                    backgroundColor: ['rgba(255, 102, 22, 0.3)', 'rgba(255, 102, 22, 0.8)'],
-                    borderColor: ['rgba(255, 102, 22, 0.5)', 'rgba(255, 102, 22, 1)'],
-                    borderWidth: 1,
-                    cutout: '50%',
-                },
+            datasets: [{
+                label: 'Hommes',
+                data: [window.nombreHommes, 0], // Utilise la variable globale
+                backgroundColor: ['rgba(21, 26, 55, 0.8)', 'rgba(21, 26, 55, 0.3)'],
+                borderColor: ['rgba(21, 26, 55, 1)', 'rgba(21, 26, 55, 0.5)'],
+                borderWidth: 1,
+                cutout: '70%',
+            },
+            {
+                label: 'Femmes',
+                data: [0, window.nombreFemmes], // Utilise la variable globale
+                backgroundColor: ['rgba(255, 102, 22, 0.3)', 'rgba(255, 102, 22, 0.8)'],
+                borderColor: ['rgba(255, 102, 22, 0.5)', 'rgba(255, 102, 22, 1)'],
+                borderWidth: 1,
+                cutout: '50%',
+            },
             ],
         },
         options: {
@@ -56,24 +54,5 @@ const pieCanvas = document.querySelector('#stagiaireChart');
                 },
             },
         },
-        plugins: [
-            {
-                beforeDraw: function (chart) {
-                    let width = chart.width,
-                        height = chart.height,
-                        ctx = chart.ctx;
-                    if (window.innerWidth > 768) {
-                        ctx.restore();
-                        let image = new Image();
-                        image.src = 'https://img.icons8.com/ios-filled/50/couple-posing.png';
-                        let imageSize = 80;
-                        let x = width / 2.37 - imageSize / 2,
-                            y = height / 2 - imageSize / 2;
-                        ctx.drawImage(image, x, y, imageSize, imageSize);
-                        ctx.save();
-                    }
-                },
-            },
-        ],
     });
-
+}
