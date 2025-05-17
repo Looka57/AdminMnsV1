@@ -28,12 +28,6 @@
 	}
 </div>
 
-<script>
-	// Récupère les valeurs de ViewBag et les rend disponibles globalement
-	window.nombreHommes = @ViewBag.NombreHommes;
-	window.nombreFemmes = @ViewBag.NombreFemmes;
-</script>
-
 
 <!-- =======================GRAPHIQUES STAGIAIRE + ABS RETARD================ -->
 
@@ -173,14 +167,20 @@
 </div>
 
 
- <script>
-		
-        // Récupère les valeurs de ViewBag et les rend disponibles globalement
-        window.nombreHommes = @ViewBag.NombreHommes;
-        window.nombreFemmes = @ViewBag.NombreFemmes;
-    </script>
-			<script src="~/js/styleGraphStudentDonuts.js"></script>
+<script>
+	// 1. Récupère les valeurs de ViewBag et les rend disponibles globalement.
+	// Ce script s'exécute à la fin du <body>, après le chargement des autres scripts.
+	window.nombreHommes = @ViewBag.NombreHommes;
+	window.nombreFemmes = @ViewBag.NombreFemmes;
 
+	// POUR LE DÉBOGAGE : Vérifiez les valeurs dans la console
+	console.log('Valeur de nombreHommes (définie par ViewBag):', window.nombreHommes);
+	console.log('Valeur de nombreFemmes (définie par ViewBag):', window.nombreFemmes);
+
+	// 2. Dispatche un événement personnalisé pour indiquer que les données sont prêtes.
+	// Le script styleGraphStudentDonuts.js (qui est déjà chargé) écoutera cet événement.
+	document.dispatchEvent(new CustomEvent('stagiaireDataReady'));
+</script>
 <!-- =======================FOOTER================ -->
 @Html.Partial("~/Views/Shared/Components/_Footer.cshtml")
 
