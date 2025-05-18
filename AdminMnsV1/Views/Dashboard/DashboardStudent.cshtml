@@ -1,4 +1,7 @@
 ﻿@using AdminMnsV1.Models
+@* En haut de votre fichier Views/Dashboard/Dashboard.cshtml *@
+@model AdminMnsV1.ViewModels.DashboardViewModel
+
 
 @{
 	ViewData["Title"] = "Tableau de Bord Stagiaire";
@@ -7,69 +10,30 @@
 
 
 <!-- =====================MAIN TABLEAU=============================== -->
-<div class="mainDashboard ">
-    <div class="topBar p-4">
-        <div class="toggle">
-            <img width="40" height="40" src="https://img.icons8.com/ios/50/menu--v1.png" alt="menu--v1" />
-        </div>
-
-        <div class="search">
-            <label>
-                <input type="text" placeholder="Recherche" />
-                <img width="20" height="20" src="https://img.icons8.com/ios/50/search--v1.png"
-                     alt="search--v1" />
-            </label>
-        </div>
-
-        <div class="user">
-            <img src="../Public/assets/images/gohan.jpg" alt="">
-        </div>
-    </div>
-    <h1 class="mx-4 mt-5">Bonjour Looka !</h1>
+   
+    <h1 class="mx-4 mt-5">Bienvenue @Model.LoggedInUser.FirstName @Model.LoggedInUser.LastName !</h1>
 
     <!-- =====================CARDS=============================== -->
 
     <div class="cardBox ">
-        <a href="classe.html" class="card-link">
-            <div class="cards border-0">
-                <div>
-                    <div class="cardNumber">15</div>
-                    <div class="cardName">Classe</div>
+    @foreach (var card in Model.Cards)
+    {
+        <div class="">
+            <a href="@card.Url" class="card-link">
+                <div class="cards border-0">
+                    <div>
+                        <div class="cardNumber">@card.Number</div>
+                        <div class="cardName">@card.Title</div>
+                    </div>
+                    <div class="iconCard">
+                        <img width="60" height="60" src="@card.IconUrl" alt="@card.AltText" />
+                    </div>
                 </div>
-                <div class="iconCard">
-                    <img width="60" height="60" src="https://img.icons8.com/glyph-neue/64/classroom.png"
-                         alt="classroom" />
-                </div>
-            </div>
-        </a>
-
-        <a href="dossier.html" class="card-link">
-            <div class="cards border-0">
-                <div>
-                    <div class="cardNumber">0</div>
-                    <div class="cardName">Dossier Validé</div>
-                </div>
-                <div class="iconCard">
-                    <img width="60" height="60"
-                         src="https://img.icons8.com/glyph-neue/64/user-folder.png" alt="user-folder" />
-                </div>
-            </div>
-        </a>
-
-        <a href="#" class="card-link">
-            <div class="cards border-0">
-                <div>
-                    <div class="cardNumber">5</div>
-                    <div class="cardName">Notifications</div>
-                </div>
-                <div class="iconCard">
-                    <img width="60" height="60"
-                         src="https://img.icons8.com/ios-filled/50/appointment-reminders--v1.png"
-                         alt="appointment-reminders--v1" />
-                </div>
-            </div>
-        </a>
-    </div>
+            </a>
+        </div>
+    }
+</div>
+   
 
     <!-- =======================GRAPHIQUES STAGIAIRE ABS RETARD================ -->
 
@@ -103,5 +67,3 @@
             <p class="text-center">&copy 2025 Metz Numeric School</p>
         </div>
     </footer>
-</div>
-    </div>

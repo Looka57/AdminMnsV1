@@ -6,8 +6,7 @@
 	ViewData["Title"] = "Tableau de Bord Admin"; // Utilisez le ViewData défini dans le contrôleur
 }
 
-<h1 class="mx-4 mt-5"> $"Bienvenue @Model.LoggedInUser.FirstName @Model.LoggedInUser.LastName !"</h1>
-
+<h1 class="mx-4 mt-5">Bienvenue @Model.LoggedInUser.FirstName @Model.LoggedInUser.LastName !</h1>
 <div class="cardBox">
 
 	<!-- =====================CARDS DASHBORARD=============================== -->
@@ -169,26 +168,22 @@
 
 
 <script>
-	// Corrige la syntaxe du titre
-	// J'ai déjà corrigé ceci dans le code de votre <h1> plus haut, mais il est bon de le rappeler.
-	// <h1 class="mx-4 mt-5">Bienvenue @Model.LoggedInUser.FirstName @Model.LoggedInUser.LastName !</h1>
 
-	// Rend les variables globales (accessible via window.nombreHommes/Femmes)
-	window.nombreHommes = @Model.NumberOfMen;
-	window.nombreFemmes = @Model.NumberOfWomen;
+		window.nombreHommes = @Model.NumberOfMen;
+		window.nombreFemmes = @Model.NumberOfWomen;
 
-	// POUR LE DÉBOGAGE : Vérifiez les valeurs dans la console
-	// Correction du texte pour ne plus mentionner "ViewBag"
-	console.log('Valeur de nombreHommes (définie par le ViewModel):', window.nombreHommes);
-	console.log('Valeur de nombreFemmes (définie par le ViewModel):', window.nombreFemmes);
+		// POUR LE DÉBOGAGE : Vérifiez les valeurs dans la console
+		// Correction du texte pour ne plus mentionner "ViewBag"
+		console.log('Valeur de nombreHommes (définie par le ViewModel):', window.nombreHommes);
+		console.log('Valeur de nombreFemmes (définie par le ViewModel):', window.nombreFemmes);
 
-	// Dispatche UN SEUL événement personnalisé EN PASSANT les données via 'detail'
-	document.dispatchEvent(new CustomEvent('stagiaireDataReady', {
-		detail: {
-			hommes: window.nombreHommes,
-			femmes: window.nombreFemmes
-		}
-	})); // NOUVEAU : Correction des parenthèses et accolades manquantes
+		// Dispatche UN SEUL événement personnalisé EN PASSANT les données via 'detail'
+		document.dispatchEvent(new CustomEvent('stagiaireDataReady', {
+			detail: {
+				hommes: window.nombreHommes,
+				femmes: window.nombreFemmes
+			}
+		})); // NOUVEAU : Correction des parenthèses et accolades manquantes
 </script>
 <script src="~/js/styleGraphStudentDonuts.js"></script>
 

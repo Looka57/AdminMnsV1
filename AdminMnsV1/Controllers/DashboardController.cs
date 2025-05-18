@@ -86,13 +86,22 @@ namespace AdminMnsV1.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
+            var cards = new List<CardModel>
+            {
+                new CardModel { Url = "../Classes/Class", Number = "5", Title = "Classes", IconUrl = "https://img.icons8.com/glyph-neue/64/classroom.png", AltText = "classroom" },
+                new CardModel { Url = "../Candidatures/Candidature", Number = "1", Title = "Dossiers", IconUrl = "https://img.icons8.com/glyph-neue/64/user-folder.png", AltText = "user-folder" },
+                new CardModel { Url = "#", Number = "5", Title = "Notifications", IconUrl = "https://img.icons8.com/ios-filled/50/appointment-reminders--v1.png", AltText = "reminder" }
+            };
+
             // Crée un ViewModel (même si c'est un DashboardViewModel vide pour l'instant)
             // Si le tableau de bord Stagiaire a des données très différentes,
             // vous pourriez créer un 'StudentDashboardViewModel' dédié.
             var viewModel = new DashboardViewModel
             {
                 LoggedInUser = currentUser,
-                Cards = new List<CardModel>() // Initialisez la liste des cartes pour les stagiaires si besoin
+                Cards = cards, // Assigner la liste 'cards' que vous avez créée
+                               // Si le tableau de bord Stagiaire a des statistiques spécifiques (nombre de cours, notes, etc.),
+                               // vous devrez les récupérer et les ajouter ici au ViewModel.
             };
 
             // TODO : Ajoutez ici la logique spécifique au tableau de bord du stagiaire
