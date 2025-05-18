@@ -4,18 +4,21 @@
 let pieChartStagiaires;
 
 // Fonction pour initialiser ou mettre à jour le graphique des stagiaires
-function initializeOrUpdateStagiaireChart() {
+// Cette fonction recevra l'objet d'événement en argument
+function initializeOrUpdateStagiaireChart(event) {
     const pieCanvas = document.querySelector('#stagiaireChart');
 
-    // Vérifier si le canvas existe et si les données globales sont disponibles
-    if (!pieCanvas || typeof window.nombreHommes === 'undefined' || typeof window.nombreFemmes === 'undefined') {
+    // Récupère les données directement de l'événement s'il est passé,
+    // sinon utilise les variables globales comme fallback (moins robuste mais présent)
+    const nombreHommes = event && event.detail ? event.detail.hommes : window.nombreHommes;
+    const nombreFemmes = event && event.detail ? event.detail.femmes : window.nombreFemmes;
+
+    // Vérifier si le canvas existe et si les données sont définies
+    if (!pieCanvas || typeof nombreHommes === 'undefined' || typeof nombreFemmes === 'undefined') {
         // Si le canvas ou les données ne sont pas encore prêts, ne rien faire pour l'instant.
-        // Cette fonction sera appelée à nouveau quand les données seront prêtes.
+        // Cette fonction sera appelée à nouveau quand les données seront prêtes ou au DOMContentLoaded.
         return;
     }
-
-    const nombreHommes = window.nombreHommes;
-    const nombreFemmes = window.nombreFemmes;
 
     // Pour le débogage : Vérifiez les valeurs dans la console
     console.log('Tente de dessiner le graphique des stagiaires avec :', { nombreHommes, nombreFemmes });
@@ -31,25 +34,24 @@ function initializeOrUpdateStagiaireChart() {
         pieChartStagiaires = new Chart(pieCanvas, {
             type: 'doughnut',
             data: {
-                // Les labels globaux du graphique sont 'Hommes' et 'Femmes' pour les segments
-                labels: ['Hommes', 'Femmes'],
+                labels: ['Hommes', 'Femmes'], // Labels pour les segments (même si invisibles pour l'autre anneau)
                 datasets: [{
                     // Dataset pour les HOMMES (anneau intérieur)
-                    label: 'Hommes', // Label pour ce dataset
-                    data: [nombreHommes, 0], // Valeur pour Hommes, 0 pour le segment 'Femmes' invisible
-                    backgroundColor: ['rgba(21, 26, 55, 0.8)', 'rgba(21, 26, 55, 0.3)'], // Couleur pour hommes, couleur semi-transparente pour le segment à 0
+                    label: 'Hommes',
+                    data: [nombreHommes, 0], // Hommes | L'autre segment est 0
+                    backgroundColor: ['rgba(21, 26, 55, 0.8)', 'rgba(21, 26, 55, 0.3)'],
                     borderColor: ['rgba(21, 26, 55, 1)', 'rgba(21, 26, 55, 0.5)'],
                     borderWidth: 1,
-                    cutout: '70%', // Plus grand trou central = anneau plus fin et intérieur
+                    cutout: '70%',
                 },
                 {
                     // Dataset pour les FEMMES (anneau extérieur)
-                    label: 'Femmes', // Label pour ce dataset
-                    data: [0, nombreFemmes], // 0 pour le segment 'Hommes' invisible, valeur pour Femmes
-                    backgroundColor: ['rgba(255, 102, 22, 0.3)', 'rgba(255, 102, 22, 0.8)'], // Couleur semi-transparente pour le segment à 0, couleur pour femmes
+                    label: 'Femmes',
+                    data: [0, nombreFemmes], // L'autre segment est 0 | Femmes
+                    backgroundColor: ['rgba(255, 102, 22, 0.3)', 'rgba(255, 102, 22, 0.8)'],
                     borderColor: ['rgba(255, 102, 22, 0.5)', 'rgba(255, 102, 22, 1)'],
                     borderWidth: 1,
-                    cutout: '50%', // Plus petit trou central = anneau plus large et extérieur
+                    cutout: '50%',
                 }],
             },
             options: {
@@ -61,7 +63,6 @@ function initializeOrUpdateStagiaireChart() {
                         labels: {
                             usePointStyle: true,
                             font: { size: 14 },
-                            // Ceci génère des labels de légende personnalisés
                             generateLabels: function (chart) {
                                 return [
                                     {
@@ -85,10 +86,7 @@ function initializeOrUpdateStagiaireChart() {
                     tooltip: {
                         callbacks: {
                             label: function (context) {
-                                // context.dataset.label sera 'Hommes' ou 'Femmes' (le label du dataset survolé)
-                                // context.raw sera la valeur du segment spécifique (nombreHommes, 0, ou nombreFemmes)
-
-                                const datasetLabel = context.dataset.label; // 'Hommes' ou 'Femmes'
+                                const datasetLabel = context.dataset.label;
                                 const value = context.raw;
 
                                 // Si la valeur du segment est 0, on ne veut pas l'afficher dans le tooltip
@@ -96,11 +94,9 @@ function initializeOrUpdateStagiaireChart() {
                                     return '';
                                 }
 
-                                // Calcul du total pour le pourcentage global
-                                const totalGeneral = window.nombreHommes + window.nombreFemmes;
+                                const totalGeneral = nombreHommes + nombreFemmes; // Utilisez les variables récupérées localement
                                 const percentage = totalGeneral > 0 ? ((value / totalGeneral) * 100).toFixed(2) : 0;
 
-                                // Affiche le label du dataset (Hommes/Femmes), sa valeur et le pourcentage global
                                 return `${datasetLabel}: ${value} (${percentage}%)`;
                             }
                         }
@@ -114,6 +110,6 @@ function initializeOrUpdateStagiaireChart() {
 // Écoutez un événement personnalisé qui signale que les données sont prêtes
 document.addEventListener('stagiaireDataReady', initializeOrUpdateStagiaireChart);
 
-// Assurez-vous également que la fonction est appelée une fois que le DOM est complètement chargé,
-// pour les cas où l'événement 'stagiaireDataReady' pourrait être déjà passé si Chart.js se charge très tard.
+// Écoutez également l'événement DOMContentLoaded comme solution de repli
+// au cas où le script se chargerait après que l'événement stagiaireDataReady ait déjà été déclenché.
 document.addEventListener('DOMContentLoaded', initializeOrUpdateStagiaireChart);

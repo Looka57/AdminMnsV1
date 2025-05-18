@@ -38,18 +38,42 @@
 				@* La navigation n'est plus conditionnelle ici *@
 				<ul>
 					<li>
-						<a asp-controller="Home" asp-action="Index">
+						<a asp-controller="Home" asp-action="Login">
 							<span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios/50/control-panel--v2.png" alt="control-panel--v2" /></span><span class="title">MNS</span>
 						</a>
 					</li>
-					<li><a asp-controller="Dashboard" asp-action="Dashboard"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios/50/control-panel--v2.png" alt="control-panel--v2" /></span><span class="title">Tableau</span></a></li>
-					<li><a asp-controller="Students" asp-action="Student"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/student-male.png" alt="student-male" /></span><span class="title">Stagiaires</span></a></li>
-					<li><a asp-controller="Experts" asp-action="Expert"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios-filled/50/podium-with-speaker.png" alt="podium-with-speaker" /></span><span class="title">Intervenants</span></a></li>
-					<li><a asp-controller="Candidatures" asp-action="Candidature"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/user-folder.png" alt="user-folder" /></span><span class="title">Dossiers</span></a></li>
-					<li><a asp-controller="DelaysAbs" asp-action="DelayAbs"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios-filled/50/task-planning.png" alt="task-planning" /></span><span class="title">Retards-Absences</span></a></li>
-					<li><a asp-controller="Classes" asp-action="Class"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/classroom.png" alt="classroom" /></span><span class="title">Classes</span></a></li>
+					<li>
+						<a asp-controller="Dashboard" asp-action="Dashboard">
+							<span class="icon">
+								<img width="40" height="40" src="https://img.icons8.com/ios/50/control-panel--v2.png" alt="control-panel--v2" />
+							</span><span class="title">Tableau</span>
+						</a>
+					</li>
+					<li>
+						<a asp-controller="Students" asp-action="Student">
+							<span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/student-male.png" alt="student-male" /></span>
+							<span class="title">Stagiaires</span>
+						</a>
+					</li>
+					<li>
+						<a asp-controller="Experts" asp-action="Expert">
+							<span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios-filled/50/podium-with-speaker.png" alt="podium-with-speaker" /></span>
+							<span class="title">Intervenants</span>
+						</a>
+					</li>
+					<li>
+						<a asp-controller="Candidatures" asp-action="Candidature"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/user-folder.png" alt="user-folder" /></span><span class="title">Dossiers</span></a>
+					</li>
+					<li>
+						<a asp-controller="DelaysAbs" asp-action="DelayAbs"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios-filled/50/task-planning.png" alt="task-planning" /></span><span class="title">Retards-Absences</span></a>
+					</li>
+					<li>
+						<a asp-controller="Classes" asp-action="Class"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/classroom.png" alt="classroom" /></span><span class="title">Classes</span></a>
+					</li>
 					@* <li><a asp-controller="Home" asp-action="Messagerie"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios-filled/50/chat.png" alt="chat" /></span><span class="title">Messagerie</span></a></li> *@
-					<li><a asp-controller="Profils" asp-action="Profil"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/user--v1.png" alt="user--v1" /></span><span class="title">Profils</span></a></li>
+					<li>
+						<a asp-controller="Profils" asp-action="Profil"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/user--v1.png" alt="user--v1" /></span><span class="title">Profils</span></a>
+					</li>
 				</ul>
 			</div>
 		</div>

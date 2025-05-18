@@ -1,16 +1,17 @@
-﻿@using AdminMnsV1.Models
-@model List<CardModel>
-@{
-	ViewData["Title"] = "Tableau de Bord";
+﻿@* En haut de votre fichier Views/Dashboard/Dashboard.cshtml *@
+@model AdminMnsV1.ViewModels.DashboardViewModel
+@using AdminMnsV1.Models @* Utile si CardModel est défini dans Models *@
 
+@{
+	ViewData["Title"] = "Tableau de Bord Admin"; // Utilisez le ViewData défini dans le contrôleur
 }
 
-<h1 class="mx-4 mt-5">Bonjour Bob !</h1>
+<h1 class="mx-4 mt-5"> $"Bienvenue @Model.LoggedInUser.FirstName @Model.LoggedInUser.LastName !"</h1>
 
 <div class="cardBox">
 
 	<!-- =====================CARDS DASHBORARD=============================== -->
-	@foreach (var card in Model)
+	@foreach (var card in Model.Cards)
 	{
 		<div class="">
 			<a href="@card.Url" class="card-link">
@@ -168,19 +169,29 @@
 
 
 <script>
-	// 1. Récupère les valeurs de ViewBag et les rend disponibles globalement.
-	// Ce script s'exécute à la fin du <body>, après le chargement des autres scripts.
-	window.nombreHommes = @ViewBag.NombreHommes;
-	window.nombreFemmes = @ViewBag.NombreFemmes;
+	// Corrige la syntaxe du titre
+	// J'ai déjà corrigé ceci dans le code de votre <h1> plus haut, mais il est bon de le rappeler.
+	// <h1 class="mx-4 mt-5">Bienvenue @Model.LoggedInUser.FirstName @Model.LoggedInUser.LastName !</h1>
+
+	// Rend les variables globales (accessible via window.nombreHommes/Femmes)
+	window.nombreHommes = @Model.NumberOfMen;
+	window.nombreFemmes = @Model.NumberOfWomen;
 
 	// POUR LE DÉBOGAGE : Vérifiez les valeurs dans la console
-	console.log('Valeur de nombreHommes (définie par ViewBag):', window.nombreHommes);
-	console.log('Valeur de nombreFemmes (définie par ViewBag):', window.nombreFemmes);
+	// Correction du texte pour ne plus mentionner "ViewBag"
+	console.log('Valeur de nombreHommes (définie par le ViewModel):', window.nombreHommes);
+	console.log('Valeur de nombreFemmes (définie par le ViewModel):', window.nombreFemmes);
 
-	// 2. Dispatche un événement personnalisé pour indiquer que les données sont prêtes.
-	// Le script styleGraphStudentDonuts.js (qui est déjà chargé) écoutera cet événement.
-	document.dispatchEvent(new CustomEvent('stagiaireDataReady'));
+	// Dispatche UN SEUL événement personnalisé EN PASSANT les données via 'detail'
+	document.dispatchEvent(new CustomEvent('stagiaireDataReady', {
+		detail: {
+			hommes: window.nombreHommes,
+			femmes: window.nombreFemmes
+		}
+	})); // NOUVEAU : Correction des parenthèses et accolades manquantes
 </script>
+<script src="~/js/styleGraphStudentDonuts.js"></script>
+
 <!-- =======================FOOTER================ -->
 @Html.Partial("~/Views/Shared/Components/_Footer.cshtml")
 

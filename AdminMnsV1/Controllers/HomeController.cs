@@ -32,9 +32,6 @@ namespace AdminMnsV1.Controllers
         }
 
 
-
-
-
         // Méthode appelée par le formulaire "Stagiaire"
         [HttpPost]
         [ValidateAntiForgeryToken] // Toujours utiliser pour les POST
@@ -95,48 +92,6 @@ namespace AdminMnsV1.Controllers
 
 
 
-
-
-
-
-
-        //    // *** LOGIQUE DE VÉRIFICATION HARDCODÉE POUR STAGIAIRE (À REMPLACER PLUS TARD) ***
-        //    if (model.Email == "stagiaire@mns.com" && model.Password == "stagiaire123")
-        //        {
-        //            // Authentification réussie pour un stagiaire
-        //            var claims = new List<Claim>
-        //            {
-        //                new Claim(ClaimTypes.Name, model.Email),
-        //                new Claim(ClaimTypes.Role, "Student"), // Attribuez le rôle 'Student' (EN ANGLAIS)
-        //            };
-        //            var claimsIdentity = new ClaimsIdentity(claims, IdentityConstants.ApplicationScheme);
-        //            var authProperties = new AuthenticationProperties
-        //            {
-        //                IsPersistent = model.RememberMe, // Gère l'option "Se souvenir de moi"
-        //                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30) // Exemple de durée de vie du cookie
-        //            };
-
-        //            await HttpContext.SignInAsync(
-        //                IdentityConstants.ApplicationScheme,
-        //                new ClaimsPrincipal(claimsIdentity),
-        //                authProperties);
-
-        //            // Redirige vers la page spécifique du tableau de bord stagiaire
-        //            return RedirectToAction("DashboardStudent", "Dashboard");
-        //        }
-        //        else
-        //        {
-        //            // Message d'erreur si les identifiants hardcodés ne correspondent pas
-        //            ModelState.AddModelError(string.Empty, "Email ou mot de passe invalide.");
-        //        }
-        //    }
-        //    // Si ModelState.IsValid est false ou si la connexion hardcodée échoue
-        //    return View("Login", model); // Retourne à la vue Login avec les erreurs
-        //}
-
-
-
-
         // POST: /Home/LoginAdmin (Traite la soumission du formulaire Admin)
         [HttpPost]
         [ValidateAntiForgeryToken] // Toujours utiliser pour les POST
@@ -187,48 +142,7 @@ namespace AdminMnsV1.Controllers
         }
 
 
-
-
-
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        // *** LOGIQUE DE VÉRIFICATION HARDCODÉE POUR ADMIN (À REMPLACER PLUS TARD) ***
-        //        if (model.Email == "admin@mns.com" && model.Password == "admin123")
-        //        {
-        //            // Authentification réussie pour un admin
-        //            var claims = new List<Claim>
-        //            {
-        //                new Claim(ClaimTypes.Name, model.Email),
-        //                new Claim(ClaimTypes.Role, "Admin"), // Attribuez le rôle 'Admin'
-        //            };
-        //            var claimsIdentity = new ClaimsIdentity(claims, IdentityConstants.ApplicationScheme);
-        //            var authProperties = new AuthenticationProperties
-        //            {
-        //                IsPersistent = model.RememberMe,
-        //                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
-        //            };
-
-        //            await HttpContext.SignInAsync(
-        //                IdentityConstants.ApplicationScheme,
-        //                new ClaimsPrincipal(claimsIdentity),
-        //                authProperties);
-
-        //            // Redirige vers la page spécifique du tableau de bord admin
-        //            return RedirectToAction("Dashboard", "Dashboard");
-        //        }
-        //        else
-        //        {
-        //            // Message d'erreur si les identifiants hardcodés ne correspondent pas
-
-        //            ModelState.AddModelError(string.Empty, "Email ou mot de passe invalide.");
-        //        }
-        //    }
-        //    // Si ModelState.IsValid est false ou si la connexion hardcodée échoue
-        //    return View("Login", model); // Retourne à la vue Login avec les erreurs
-        //}
-
-        // Action de déconnexion utilisant SignInManager (standard avec Identity)
+        //DECONNEXION
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
