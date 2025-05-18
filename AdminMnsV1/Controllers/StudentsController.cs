@@ -160,7 +160,7 @@ namespace AdminMnsV1.Controllers
                 // 4. Vérifie si la création de l'utilisateur par Identity a réussi
                 if (result.Succeeded) // <-- Début du deuxième IF (imbriqué) : SI UserManager réussit
                 {
-                    // --- Ici va le code qui s'exécute SEULEMENT si la création Identity réussit ---
+                   var roleResult = await _userManager.AddToRoleAsync(newUser, "Student"); // Ajoute le rôle à l'utilisateur
 
                     // 5. Crée l'entrée dans la table Attend (Votre code existant)
                     var attendEntry = new Attend

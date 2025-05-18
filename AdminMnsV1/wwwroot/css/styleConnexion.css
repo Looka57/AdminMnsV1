@@ -33,12 +33,9 @@
     height: 100%;
 }
 
-/* Dans votre fichier CSS personnalisé (ex: styleConnexion.css ou site.css) */
-
+/*//surcharge surcharge deq la librairie*/
 .pb-3 {
-    
     padding-bottom: 0 !important;
-   
 }
 
 .formConnexion label {
@@ -139,7 +136,7 @@ button:hover {
     flex-basis: 0;
     flex-grow: 0;
     flex-shrink: 1;
-    height:100vh;
+    height: 100vh;
 }
 
 

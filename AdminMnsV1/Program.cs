@@ -73,7 +73,7 @@ using (var scope = app.Services.CreateScope())
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
     // Assurez-vous que le rôle "Student" est bien créé
-    string[] roleNames = { "Admin", "Expert", "Student" }; // <<< Le rôle "Student" est ici
+    string[] roleNames = { "Admin", "Expert", "Student" };
     foreach (var roleName in roleNames)
     {
         if (!await roleManager.RoleExistsAsync(roleName))
@@ -81,11 +81,52 @@ using (var scope = app.Services.CreateScope())
             await roleManager.CreateAsync(new IdentityRole(roleName));
         }
     }
+
+    //     // --- AJOUTEZ LE CODE SUIVANT ICI POUR CRÉER L'UTILISATEUR ADMIN PAR DÉFAUT ---
+    //    string adminEmail = "admin@mns.com"; // L'email de votre administrateur
+    //    string adminPassword = "VotreMotDePasseAdmin123!"; // <--- TRÈS IMPORTANT : CHANGEZ CE MOT DE PASSE POUR LA PRODUCTION !!!
+    //    string adminRole = "Admin";
+
+    //    // Vérifie si l'utilisateur admin existe déjà
+    //    if (await userManager.FindByNameAsync(adminEmail) == null)
+    //    {
+    //        var adminUser = new User // Utilisez votre modèle d'utilisateur 'User'
+    //        {
+    //            UserName = adminEmail,
+    //            Email = adminEmail,
+    //            EmailConfirmed = true, // Indique que l'email est déjà confirmé
+    //            Status = "Null"
+    //        };
+
+    //        // Tente de créer l'utilisateur
+    //        var result = await userManager.CreateAsync(adminUser, adminPassword);
+
+    //        if (result.Succeeded)
+    //        {
+    //            // Si la création est réussie, assigne l'utilisateur au rôle Admin
+    //            await userManager.AddToRoleAsync(adminUser, adminRole);
+    //            Console.WriteLine($"Utilisateur '{adminEmail}' créé et assigné au rôle '{adminRole}'.");
+    //        }
+    //        else
+    //        {
+    //            // Affiche les erreurs si la création a échoué
+    //            Console.WriteLine($"Erreur lors de la création de l'utilisateur admin :");
+    //            foreach (var error in result.Errors)
+    //            {
+    //                Console.WriteLine($"- {error.Description}");
+    //            }
+    //        }
+    //    }
+    //    else
+    //    {
+    //        Console.WriteLine($"L'utilisateur '{adminEmail}' existe déjà dans la base de données.");
+    //    }
+    //}
+
+    app.MapRazorPages(); // Permet aux pages Razor de fonctionner
+    app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Login}/{id?}");
+
+    app.Run();
 }
-
-app.MapRazorPages(); // Permet aux pages Razor de fonctionner
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Login}/{id?}");
-
-app.Run();
