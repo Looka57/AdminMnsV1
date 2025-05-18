@@ -33,6 +33,14 @@
     height: 100%;
 }
 
+/* Dans votre fichier CSS personnalisé (ex: styleConnexion.css ou site.css) */
+
+.pb-3 {
+    
+    padding-bottom: 0 !important;
+   
+}
+
 .formConnexion label {
     color: #fff;
     font-size: 2.3em;
@@ -131,6 +139,7 @@ button:hover {
     flex-basis: 0;
     flex-grow: 0;
     flex-shrink: 1;
+    height:100vh;
 }
 
 

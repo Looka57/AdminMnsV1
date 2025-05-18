@@ -1,120 +1,111 @@
-﻿@{
-    // Détermine si la page actuelle est la page de connexion (Home/Login)
-    var currentController = ViewContext.RouteData.Values["controller"] as string;
-    var currentAction = ViewContext.RouteData.Values["action"] as string;
-
-    // La variable 'isLoginPage' sera 'true' si nous sommes sur la page de connexion, 'false' sinon.
-    bool isLoginPage = (currentController?.Equals("Home", StringComparison.OrdinalIgnoreCase) == true &&
-                        currentAction?.Equals("Login", StringComparison.OrdinalIgnoreCase) == true);
-}
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"] - MNS</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>@ViewData["Title"] - MNS</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="~/css/site.css">
-    <link rel="stylesheet" href="~/css/style.css">
-    <link rel="stylesheet" href="~/css/styleNavigation.css">
-    <link rel="stylesheet" href="~/css/styleCards.css">
-    <link rel="stylesheet" href="~/css/styleCardAnime.css">
-    <link rel="stylesheet" href="~/css/styleClasse.css">
-    <link rel="stylesheet" href="~/css/styleConnexion.css"> @* <--- Votre fichier CSS pour les ajustements de connexion *@
-    <link rel="stylesheet" href="~/css/styleDossier.css">
-    <link rel="stylesheet" href="~/css/styleDossierStagiaire.css">
-    <link rel="stylesheet" href="~/css/styleFooter.css">
-    <link rel="stylesheet" href="~/css/styleGestion.css">
-    <link rel="stylesheet" href="~/css/formulaire.css">
-    <link rel="stylesheet" href="~/css/styleProfil.css">
-    <link rel="stylesheet" href="~/css/styleRetardAbs.css">
-    <link rel="stylesheet" href="~/css/styleStagiaire.css">
-    <link rel="stylesheet" href="~/css/styleTableau.css">
-    <link rel="stylesheet" href="~/css/styleMediaQuery.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+	<link rel="stylesheet" href="~/css/site.css">
+	<link rel="stylesheet" href="~/css/style.css">
+	<link rel="stylesheet" href="~/css/styleNavigation.css">
+	<link rel="stylesheet" href="~/css/styleCards.css">
+	<link rel="stylesheet" href="~/css/styleCardAnime.css">
+	<link rel="stylesheet" href="~/css/styleClasse.css">
+	<link rel="stylesheet" href="~/css/styleConnexion.css">
+	<link rel="stylesheet" href="~/css/styleDossier.css">
+	<link rel="stylesheet" href="~/css/styleDossierStagiaire.css">
+	<link rel="stylesheet" href="~/css/styleFooter.css">
+	<link rel="stylesheet" href="~/css/styleGestion.css">
+	<link rel="stylesheet" href="~/css/formulaire.css">
+	<link rel="stylesheet" href="~/css/styleProfil.css">
+	<link rel="stylesheet" href="~/css/styleRetardAbs.css">
+	<link rel="stylesheet" href="~/css/styleStagiaire.css">
+	<link rel="stylesheet" href="~/css/styleTableau.css">
+	<link rel="stylesheet" href="~/css/styleMediaQuery.css">
 </head>
 <body>
 
-    <div class="page-wrapper @(isLoginPage ? "login-layout-active" : "")">
+	<div class="page-wrapper">
+		@* Suppression de la classe conditionnelle *@
 
-        <div class="container-fluid containerPrincipal bg-secondary @(isLoginPage ? "nav-container-for-login" : "")">
-            @if (!isLoginPage) // Condition pour NE PAS AFFICHER la navigation
-            {
-                <div class="navigation">
-                    <ul>
-                        <li><a asp-controller="Home" asp-action="Index"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios/50/control-panel--v2.png" alt="control-panel--v2" /></span><span class="title">MNS</span></a></li>
-                        <li><a asp-controller="Dashboard" asp-action="Dashboard"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios/50/control-panel--v2.png" alt="control-panel--v2" /></span><span class="title">Tableau</span></a></li>
-                        <li><a asp-controller="Students" asp-action="Student"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/student-male.png" alt="student-male" /></span><span class="title">Stagiaires</span></a></li>
-                        <li><a asp-controller="Experts" asp-action="Expert"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios-filled/50/podium-with-speaker.png" alt="podium-with-speaker" /></span><span class="title">Intervenants</span></a></li>
-                        <li><a asp-controller="Candidatures" asp-action="Candidature"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/user-folder.png" alt="user-folder" /></span><span class="title">Dossiers</span></a></li>
-                        <li><a asp-controller="DelaysAbs" asp-action="DelayAbs"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios-filled/50/task-planning.png" alt="task-planning" /></span><span class="title">Retards-Absences</span></a></li>
-                        <li><a asp-controller="Classes" asp-action="Class"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/classroom.png" alt="classroom" /></span><span class="title">Classes</span></a></li>
-                        @* <li><a asp-controller="Home" asp-action="Messagerie"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios-filled/50/chat.png" alt="chat" /></span><span class="title">Messagerie</span></a></li> *@
-                        <li><a asp-controller="Profils" asp-action="Profil"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/user--v1.png" alt="user--v1" /></span><span class="title">Profils</span></a></li>
-                    </ul>
-                </div>
-            }
-        </div>
+		<div class="container-fluid containerPrincipal bg-secondary">
+			@* Suppression de la classe conditionnelle *@
+			<div class="navigation">
+				@* La navigation n'est plus conditionnelle ici *@
+				<ul>
+					<li>
+						<a asp-controller="Home" asp-action="Index">
+							<span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios/50/control-panel--v2.png" alt="control-panel--v2" /></span><span class="title">MNS</span>
+						</a>
+					</li>
+					<li><a asp-controller="Dashboard" asp-action="Dashboard"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios/50/control-panel--v2.png" alt="control-panel--v2" /></span><span class="title">Tableau</span></a></li>
+					<li><a asp-controller="Students" asp-action="Student"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/student-male.png" alt="student-male" /></span><span class="title">Stagiaires</span></a></li>
+					<li><a asp-controller="Experts" asp-action="Expert"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios-filled/50/podium-with-speaker.png" alt="podium-with-speaker" /></span><span class="title">Intervenants</span></a></li>
+					<li><a asp-controller="Candidatures" asp-action="Candidature"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/user-folder.png" alt="user-folder" /></span><span class="title">Dossiers</span></a></li>
+					<li><a asp-controller="DelaysAbs" asp-action="DelayAbs"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios-filled/50/task-planning.png" alt="task-planning" /></span><span class="title">Retards-Absences</span></a></li>
+					<li><a asp-controller="Classes" asp-action="Class"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/classroom.png" alt="classroom" /></span><span class="title">Classes</span></a></li>
+					@* <li><a asp-controller="Home" asp-action="Messagerie"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios-filled/50/chat.png" alt="chat" /></span><span class="title">Messagerie</span></a></li> *@
+					<li><a asp-controller="Profils" asp-action="Profil"><span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/user--v1.png" alt="user--v1" /></span><span class="title">Profils</span></a></li>
+				</ul>
+			</div>
+		</div>
 
-        <div class="mainDashboard @(isLoginPage ? "main-content-for-login" : "")">
+		<div class="mainDashboard">
+			@* Suppression de la classe conditionnelle *@
 
-            @if (!isLoginPage) // Condition pour NE PAS AFFICHER la topBar (recherche, profil)
-            {
-                <div class="topBar p-4">
-                    <div class="toggle"><img width="40" height="40" src="https://img.icons8.com/ios/50/menu--v1.png" alt="menu--v1" /></div>
-                    <div class="search"><div class="container my-4"><div class="input-group"><input type="text" class="form-control" id="searchInput" placeholder="Rechercher..."><button class="btn btn-outline-secondary" type="button" id="searchBtn"><i class="bi bi-search"></i></button></div></div></div>
-                    <div class="user"><a href="profil.html"><img src="~/images/gohan.jpg" alt="photo de profil"></a></div>
-                </div>
-            }
-            <main class="container-fluid p-0">
-                @RenderBody()
-            </main>
+			<div class="topBar p-4">
+				@* La topBar n'est plus conditionnelle ici *@
+				<div class="toggle"><img width="40" height="40" src="https://img.icons8.com/ios/50/menu--v1.png" alt="menu--v1" /></div>
+				<div class="search"><div class="container my-4"><div class="input-group"><input type="text" class="form-control" id="searchInput" placeholder="Rechercher..."><button class="btn btn-outline-secondary" type="button" id="searchBtn"><i class="bi bi-search"></i></button></div></div></div>
+				<div class="user"><a href="profil.html"><img src="~/images/gohan.jpg" alt="photo de profil"></a></div>
+			</div>
+			<main class="container-fluid p-0">
+				@RenderBody()
+			</main>
 
-            @* Votre pied de page (footer) peut aussi être conditionnel si vous le souhaitez. *@
-            @*
-            <hr />
-            <footer class="">
-                <p>&copy; 2025 Metz Numeric School</p>
-                <ul class="list-inline">
-                    <li class="list-inline-item"><a href="#">Politique de confidentialité</a></li>
-                    <li class="list-inline-item"><a href="#">Paramètres</a></li>
-                    <li class="list-inline-item"><a href="#">Contact</a></li>
-                </ul>
-            </footer>
-            *@
-        </div>
-    </div>
+			@* Votre pied de page (footer) peut aussi être conditionnel si vous le souhaitez. *@
+			@*
+			<hr />
+			<footer>
+				<p>&copy; 2025 Metz Numeric School</p>
+				<ul class="list-inline">
+					<li class="list-inline-item"><a href="#">Politique de confidentialité</a></li>
+					<li class="list-inline-item"><a href="#">Paramètres</a></li>
+					<li class="list-inline-item"><a href="#">Contact</a></li>
+				</ul>
+			</footer>
+			*@
+		</div>
+	</div>
 
-    @if (!isLoginPage)
-    {
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0.0/jquery.counterup.min.js"></script>
-        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-        <script>AOS.init();</script>
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-        <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+	@* Les scripts ne sont plus conditionnels ici *@
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0.0/jquery.counterup.min.js"></script>
+	<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+	<script>AOS.init();</script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+	<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
-        <script src="~/js/style.js" asp-append-version="true"></script>
-        <script src="~/js/styleOngletClass.js"></script>
-        <script src="~/js/styleCounter.js"></script>
-        <script src="~/js/styleDatePicker.js"></script>
-        <script src="~/js/styleGraphCandidature.js"></script>
-        <script src="~/js/styleGraphClassPolar.js"></script>
-        <script src="~/js/styleGraphDelayAbs.js"></script>
-        <script src="~/js/styleGraphStudentDash.js"></script>
-        <script src="~/js/styleMenuBarNav.js"></script>
-        <script src="~/js/styleMenuHamburger.js"></script>
-    }
+	<script src="~/js/style.js" asp-append-version="true"></script>
+	<script src="~/js/styleOngletClass.js"></script>
+	<script src="~/js/styleCounter.js"></script>
+	<script src="~/js/styleDatePicker.js"></script>
+	<script src="~/js/styleGraphCandidature.js"></script>
+	<script src="~/js/styleGraphClassPolar.js"></script>
+	<script src="~/js/styleGraphDelayAbs.js"></script>
+	<script src="~/js/styleGraphStudentDash.js"></script>
+	<script src="~/js/styleMenuBarNav.js"></script>
+	<script src="~/js/styleMenuHamburger.js"></script>
 
-    @await RenderSectionAsync("Scripts", required: false)
+	@await RenderSectionAsync("Scripts", required: false)
 
 </body>
 </html>

@@ -1,10 +1,11 @@
 ﻿@model AdminMnsV1.Models.LoginViewModel
 
 @{
+	Layout = "_AuthLayout";
     ViewData["Title"] = "Connexion";
 }
 <div class="containers m-0">
-    <div class="main">
+    <div class="main pb-0">
         <input type="checkbox" id="chk" aria-hidden="true">
 
         <div class="signup">
@@ -19,7 +20,7 @@
                 <p class="text-center"><a href="#">Mot de passe oublié ?</a></p>
 
                 @* C'EST TRÈS IMPORTANT POUR AFFICHER LES MESSAGES D'ERREUR GÉNÉRAUX *@
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div asp-validation-summary="ModelOnly" class="text-danger text-center"></div>
             </form>
         </div>
 
@@ -32,7 +33,7 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
                 <p class="text-center"><a href="#">Mot de passe oublié ?</a></p>
                 <button type="submit" class="btnInscription">Valider</button>
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div asp-validation-summary="ModelOnly" class="text-center text-light"></div>
             </form>
         </div>
     </div>

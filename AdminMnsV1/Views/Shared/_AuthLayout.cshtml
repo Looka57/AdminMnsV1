@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] Mns Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css">
+    <link rel="stylesheet" href="~/css/style.css">
+    <link rel="stylesheet" href="~/css/styleNavigation.css">
+    <link rel="stylesheet" href="~/css/styleCards.css">
+    <link rel="stylesheet" href="~/css/styleCardAnime.css">
+    <link rel="stylesheet" href="~/css/styleClasse.css">
+    <link rel="stylesheet" href="~/css/styleConnexion.css">
+    <link rel="stylesheet" href="~/css/styleDossier.css">
+    <link rel="stylesheet" href="~/css/styleDossierStagiaire.css">
+    <link rel="stylesheet" href="~/css/styleFooter.css">
+    <link rel="stylesheet" href="~/css/styleGestion.css">
+    <link rel="stylesheet" href="~/css/formulaire.css">
+    <link rel="stylesheet" href="~/css/styleProfil.css">
+    <link rel="stylesheet" href="~/css/styleRetardAbs.css">
+    <link rel="stylesheet" href="~/css/styleStagiaire.css">
+    <link rel="stylesheet" href="~/css/styleTableau.css">
+    <link rel="stylesheet" href="~/css/styleMediaQuery.css">
+
+    @* <link rel="stylesheet" href="~/css/styleMediaQuery.css"> *@
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="page-wrapper">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
