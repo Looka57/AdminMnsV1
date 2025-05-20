@@ -2,27 +2,33 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using AdminMnsV1.Data;
 using AdminMnsV1.Models;
-using Microsoft.AspNetCore.Authentication.Cookies; // Assurez-vous que c'est bien présent
+using Microsoft.AspNetCore.Authentication.Cookies;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages(); // Nécessaire pour les pages Identity (même si non scaffoldées)
+// Ces lignes enregistrent les services nécessaires pour que MVC (Modèle-Vue-Contrôleur) et les pages Razor (utilisées par Identity) fonctionnent dans l' application.
 
-// Enregistrement de votre DbContext
+// Enregistrement du DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//C'est la configuration de Entity Framework Core. Il utiliser SQL Server et se connecte à la base de données via la chaîne de connexion "DefaultConnection" (définie dans appsettings.json).
+//****ApplicationDbContext est votre pont vers la base de données.
 
-// --- NOUVELLE CONFIGURATION SIMPLIFIÉE POUR IDENTITY ET LES COOKIES ---
+
+//C'est la configuration clé d'ASP.NET Core Identity.
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     // Options de connexion
     options.SignIn.RequireConfirmedAccount = false; // <<< MIS À FALSE TEMPORAIREMENT POUR LE DÉBOGAGE
                                                     // Cela désactive la vérification de confirmation d'email
-                                                    // Ce n'est pas lié à votre problème de base de données mais peut causer des blocages
 
     // Options de mot de passe
+    //Ce sont les règles de complexité pour les mots de passe des utilisateurs.
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
@@ -34,19 +40,20 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
 })
-    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddEntityFrameworkStores<ApplicationDbContext>() //C'est la configuration clé d'ASP.NET Core Identity.
+                                                      //Identity stocke toutes ses données (utilisateurs, mots de passe hachés, rôles, revendications) dans ApplicationDbContext, et donc dans la base de données SQL Server.
     .AddDefaultTokenProviders(); // Nécessaire pour la génération de tokens (réinitialisation mdp, confirmation email)
 
-// Configurez le cookie d'application Identity ici, CELA REMPLACE L'ANCIEN BLOC AddCookie()
+
+// Configurez le cookie d'application Identity
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Home/Login";          // Votre page de connexion
     options.LogoutPath = "/Home/Logout";        // Votre page de déconnexion
-    options.AccessDeniedPath = "/Home/AccessDenied"; // Votre page d'accès refusé
+    options.AccessDeniedPath = "/Home/AccessDenied"; // Votre page d'accès refusé erreur 404
     options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Durée de vie du cookie
     options.SlidingExpiration = true;          // Renouvelle le cookie à chaque requête s'il est à mi-vie
 });
-// --- FIN NOUVELLE CONFIGURATION ---
 
 
 var app = builder.Build();
@@ -59,20 +66,25 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // Généralement placé ici pour servir les fichiers statiques
+app.UseStaticFiles(); //Permet à application de servir des fichiers statiques comme les fichiers CSS (~/css/) et                  JavaScript (~/js/) qui sont listés dans le _Layout.cshtml.
 
-app.UseRouting();
+app.UseRouting(); //Permet au middleware de routage d'identifier la bonne "endpoint" (le contrôleur et l'action) pour   une requête entrante.
 
+//*****C'est l'ordre le plus important pour Identity.******
 // Middleware d'authentification et d'autorisation DANS LE BON ORDRE
-app.UseAuthentication(); // Gère l'authentification des utilisateurs
-app.UseAuthorization();  // Gère l'autorisation des utilisateurs
 
-// création des rôles au démarrage de l'application
+app.UseAuthentication(); // Gère l'authentification des utilisateurs (à partir du cookie d'authentification, par        exemple).
+app.UseAuthorization();  // Gère l'autorisation des utilisateurs Vérifie si l'utilisateur identifié a la permission d'accéder à la ressource demandée. L'authentification doit toujours précéder l'autorisation.
+
+
+
+//************* création des rôles au démarrage de l'application ****************
+
+//est un excellent moyen de s'assurer que les rôles ("Admin", "Expert", "Student") existent dans la base de données au démarrage de l'application. C'est essentiel pour que User.IsInRole() fonctionne. 
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-    // Assurez-vous que le rôle "Student" est bien créé
     string[] roleNames = { "Admin", "Expert", "Student" };
     foreach (var roleName in roleNames)
     {
@@ -82,7 +94,7 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    //     // --- AJOUTEZ LE CODE SUIVANT ICI POUR CRÉER L'UTILISATEUR ADMIN PAR DÉFAUT ---
+    //     // ---LE CODE SUIVANT  POUR CRÉER L'UTILISATEUR ADMIN PAR DÉFAUT ---
     //    string adminEmail = "admin@mns.com"; // L'email de votre administrateur
     //    string adminPassword = "VotreMotDePasseAdmin123!"; // <--- TRÈS IMPORTANT : CHANGEZ CE MOT DE PASSE POUR LA PRODUCTION !!!
     //    string adminRole = "Admin";
@@ -124,6 +136,8 @@ using (var scope = app.Services.CreateScope())
     //}
 
     app.MapRazorPages(); // Permet aux pages Razor de fonctionner
+
+    // Définit la route par défaut de votre application, qui dirigera les requêtes vers Home/Login si aucun contrôleur/action n'est spécifié.
     app.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Login}/{id?}");

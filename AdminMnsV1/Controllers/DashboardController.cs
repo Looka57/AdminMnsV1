@@ -7,13 +7,15 @@ using AdminMnsV1.ViewModels; // Assurez-vous d'avoir ce 'using'
 using System.Threading.Tasks;
 using System.Linq; // Pour les méthodes Count(), Where()
 
+//Le DashboardController est une classe MVC qui gère les requêtes HTTP et prépare les données pour les vues du tableau de bord
+
 namespace AdminMnsV1.Controllers
 {
-    [Authorize] // S'applique à toutes les actions du contrôleur par défaut
+    [Authorize] // S'applique à toutes les actions du contrôleur par défaut L'attribut au niveau du contrôleur signifie que toutes les actions dans ce contrôleur nécessitent que l'utilisateur soit connecté (authentifié).
     public class DashboardController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly UserManager<User> _userManager;
+        private readonly ApplicationDbContext _context; //Le contrôleur reçoit une instance de votre DbContext pour interagir avec la base de données.
+        private readonly UserManager<User> _userManager; //Le contrôleur reçoit une instance de UserManager, un service Identity essentiel pour gérer les utilisateurs (récupérer l'utilisateur connecté, vérifier les rôles, créer/modifier des utilisateurs, etc.
 
         public DashboardController(ApplicationDbContext context, UserManager<User> userManager)
         {
@@ -21,14 +23,20 @@ namespace AdminMnsV1.Controllers
             _userManager = userManager;
         }
 
+
+
         // Tableau de Bord pour les ADMINS (une seule action désormais)
         [Authorize(Roles = "Admin")]
+        //Cet attribut spécifique indique que seule un utilisateur ayant le rôle "Admin" peut accéder à cette action. C'est une couche de sécurité supplémentaire en plus de l'authentification générale du contrôleur.
         public async Task<IActionResult> Dashboard() // Renommé en "Dashboard" pour plus de clarté
         {
             ViewData["Title"] = "Tableau de Bord Admin";
 
             // 1. Récupérer l'utilisateur actuellement connecté
             var currentUser = await _userManager.GetUserAsync(User);
+            //C'est une ligne cruciale ! Elle utilise le UserManager pour récupérer l'objet User complet (incluant FirstName, LastName, Status, etc.) pour l'utilisateur actuellement connecté. L'objet User passé en paramètre à GetUserAsync représente le Principal de l'utilisateur authentifié.
+
+
             if (currentUser == null)
             {
                 // Cela ne devrait pas arriver si l'attribut [Authorize] fonctionne,

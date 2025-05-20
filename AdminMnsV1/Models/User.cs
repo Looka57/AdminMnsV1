@@ -41,6 +41,7 @@ namespace AdminMnsV1.Models
 
         // Collection des inscriptions (Attend) pour cet utilisateur
         public virtual ICollection<Attend> Attends { get; set; } = new List<Attend>();
+        //Ceci indique une relation un-à-plusieurs avec votre modèle Attend. Un User peut avoir plusieurs Attend (inscriptions/présences). virtual est utilisé par Entity Framework Core pour le chargement paresseux (Lazy Loading)
     }
 
 
