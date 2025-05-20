@@ -47,8 +47,8 @@ namespace AdminMnsV1.Tests
             _mockEnvironment = new Mock<IWebHostEnvironment>();
             _mockEnvironment.Setup(e => e.WebRootPath).Returns("wwwroot");
 
-            _mockContext.Classs.Add(new AdminMnsV1.Models.Classes.Class { ClasseId = 1, NameClass = "Classe A" });
-            _mockContext.Classs.Add(new AdminMnsV1.Models.Classes.Class { ClasseId = 2, NameClass = "Classe B" });
+            _mockContext.Classs.Add(new AdminMnsV1.Models.Classes.SchoolClass { ClasseId = 1, NameClass = "Classe A" });
+            _mockContext.Classs.Add(new AdminMnsV1.Models.Classes.SchoolClass { ClasseId = 2, NameClass = "Classe B" });
             _mockContext.SaveChanges();
         }
 

@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace AdminMnsV1.Repositories
+namespace AdminMnsV1.Repositories.Implementation
 {
     public class StudentRepository : IStudentRepository
     {

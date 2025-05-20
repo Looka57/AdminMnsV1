@@ -15,7 +15,7 @@ namespace AdminMnsV1.Data
         {
         }
 
-        public DbSet<Class> Classs { get; set; } // Représente la table "Class"
+        public DbSet<SchoolClass> SchoolClass { get; set; } // Représente la table "Class"
         public DbSet<Attend> Attends { get; set; } // Représente la table intermediaire "Attends"
         public DbSet<Student> Students { get; set; }   // Représente la table "Student"
 

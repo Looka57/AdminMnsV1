@@ -3,7 +3,7 @@ using AdminMnsV1.Models.Students;
 
 namespace AdminMnsV1.Models.Classes
 {
-    public class Class
+    public class SchoolClass
     {
         [Key]
         public int ClasseId { get; set; }

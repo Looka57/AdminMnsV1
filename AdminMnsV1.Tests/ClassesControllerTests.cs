@@ -44,11 +44,11 @@ namespace AdminMnsV1.Tests
         private void SeedDatabase()
         {
             // Crée des classes
-            var classeCda = new Class { ClasseId = 1, NameClass = "CDA", AcademicYear = 2024, StartDate = new DateOnly(2024, 9, 1), EndDate = new DateOnly(2025, 6, 30) };
-            var classeJava = new Class { ClasseId = 2, NameClass = "Java", AcademicYear = 2024, StartDate = new DateOnly(2024, 9, 1), EndDate = new DateOnly(2025, 6, 30) };
-            var classeReseau = new Class { ClasseId = 3, NameClass = "réseau", AcademicYear = 2024, StartDate = new DateOnly(2024, 9, 1), EndDate = new DateOnly(2025, 6, 30) };
-            var classeEmpty = new Class { ClasseId = 4, NameClass = "ClasseVide", AcademicYear = 2024, StartDate = new DateOnly(2024, 9, 1), EndDate = new DateOnly(2025, 6, 30) };
-            var classeOld = new Class { ClasseId = 5, NameClass = "AncienneClasse", AcademicYear = 2023, StartDate = new DateOnly(2023, 1, 1), EndDate = new DateOnly(2023, 12, 31) };
+            var classeCda = new SchoolClass { ClasseId = 1, NameClass = "CDA", AcademicYear = 2024, StartDate = new DateOnly(2024, 9, 1), EndDate = new DateOnly(2025, 6, 30) };
+            var classeJava = new SchoolClass { ClasseId = 2, NameClass = "Java", AcademicYear = 2024, StartDate = new DateOnly(2024, 9, 1), EndDate = new DateOnly(2025, 6, 30) };
+            var classeReseau = new SchoolClass { ClasseId = 3, NameClass = "réseau", AcademicYear = 2024, StartDate = new DateOnly(2024, 9, 1), EndDate = new DateOnly(2025, 6, 30) };
+            var classeEmpty = new SchoolClass { ClasseId = 4, NameClass = "ClasseVide", AcademicYear = 2024, StartDate = new DateOnly(2024, 9, 1), EndDate = new DateOnly(2025, 6, 30) };
+            var classeOld = new SchoolClass { ClasseId = 5, NameClass = "AncienneClasse", AcademicYear = 2023, StartDate = new DateOnly(2023, 1, 1), EndDate = new DateOnly(2023, 12, 31) };
 
             _mockContext.Classs.AddRange(classeCda, classeJava, classeReseau, classeEmpty, classeOld);
 
@@ -130,7 +130,7 @@ namespace AdminMnsV1.Tests
             _mockContext.SaveChanges();
 
             // Crée des classes mais sans aucun stagiaire associé
-            _mockContext.Classs.Add(new Class { ClasseId = 10, NameClass = "ClasseTest", AcademicYear = 2024, StartDate = new DateOnly(2024, 9, 1), EndDate = new DateOnly(2025, 6, 30) });
+            _mockContext.Classs.Add(new SchoolClass { ClasseId = 10, NameClass = "ClasseTest", AcademicYear = 2024, StartDate = new DateOnly(2024, 9, 1), EndDate = new DateOnly(2025, 6, 30) });
             _mockContext.SaveChanges();
 
             var controller = new ClassesController(_mockContext);

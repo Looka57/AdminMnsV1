@@ -15,7 +15,7 @@ namespace AdminMnsV1.Models
         // Clé étrangère vers la table Class
         [ForeignKey("Class")]
         public int ClasseId { get; set; }
-        public Class Class { get; set; }
+        public SchoolClass Class { get; set; }
 
     }
 }

@@ -8,12 +8,12 @@ using System.Collections.Generic; // Pour utiliser List<>
 using System.Linq;            // Pour les requêtes LINQ (Count(), Where())
 using System.Security.Claims; // Pour ClaimsPrincipal
 using System.Threading.Tasks; // Pour les opérations asynchrones
-using System;                 // Pour UnauthorizedAccessException
+using System;
 
 
 //Maintenant que nous avons défini le contrat avec l'interface, nous devons créer une classe qui va "réaliser" ce contrat. C'est la classe DashboardService qui implémente IDashboardService
 
-namespace AdminMnsV1.Services
+namespace AdminMnsV1.Services.Implementation
 {
     public class DashboardService : IDashboardService //implémente 'IDashboardService'
     {
@@ -50,15 +50,15 @@ namespace AdminMnsV1.Services
             // Récupérer toutes les données statistiques nécessaires au tableau de bord Admin
             // Cette logique était auparavant dans le contrôleur. Elle est maintenant ici,car c'est la responsabilité du service de préparer les données. 
 
-            var classCount = _context.Classs.Count(); // Compte le nombre total de classes
+            var classCount = _context.SchoolClass.Count(); // Compte le nombre total de classes
             var studentCount = _context.Users // Filtre les utilisateurs par statut "Stagiaire" et non supprimés
-                .Where(u => (u.Status == "Stagiaire") && !u.IsDeleted)
+                .Where(u => u.Status == "Stagiaire" && !u.IsDeleted)
                 .Count();
             var numberMen = _context.Users // Compte les hommes stagiaires
-                .Where(u => (u.Status == "Stagiaire") && u.Sexe == "Male")
+                .Where(u => u.Status == "Stagiaire" && u.Sexe == "Male")
                 .Count();
             var numberWomen = _context.Users // Compte les femmes stagiaires
-                .Where(u => (u.Status == "Stagiaire") && u.Sexe == "Female")
+                .Where(u => u.Status == "Stagiaire" && u.Sexe == "Female")
                 .Count();
 
 

@@ -1,19 +1,20 @@
-﻿@using AdminMnsV1.Models; // Pour CardModel, User, Student, Class (si vous les avez)
-@using System.Collections.Generic
+﻿@using AdminMnsV1.Models;@*  // Pour CardModel, User, Student, Class *@
+@using AdminMnsV1.Models.ViewModels; @* // IMPORTANT : Pour ClassListViewModel et ClassWithStudentsViewModel *@
 
-@* @using AdminMnsV1.Models.Students
-@using AdminMnsV1.Models.ViewModels
-@model IEnumerable<AdminMnsV1.Models.CardModel> *@
+
 @{
 	ViewData["Title"] = "Classes";
 }
 
 <h1 class="mt-5 mx-4">Classes</h1>
 <div class="cardBox">
-	@for (var i = 0; i < Model.Count(); i++)
+	@* Ici, vous bouclez sur la liste des classes (chaque élément étant un ClassWithStudentsViewModel) *@
+	@for (var i = 0; i < Model.ClassesWithStudents.Count; i++)
 	{
-		var card = Model.ElementAt(i);
-		<div class="cards" onclick="openTab(@i)" border-0">
+		var classItem = Model.ClassesWithStudents[i];
+		var card = classItem.ClassCard; 
+		@* Accédez à la CardModel spécifique pour cette classe *@
+		<div class="cards" onclick="openTab(@i)" border-0>
 			<div>
 				<div class="cardNumber">@card.Number</div>
 				<div class="cardName">@card.Title</div>
@@ -26,80 +27,47 @@
 </div>
 
 <div class="tabsContentOnglet m-5">
-	@for (var i = 0; i < Model.Count(); i++)
+	@* Vous re-bouclez sur la même liste pour afficher les tableaux d'élèves *@
+	@for (var i = 0; i < Model.ClassesWithStudents.Count; i++)
 	{
-		var card = Model.ElementAt(i);
+		var classItem = Model.ClassesWithStudents[i];
+		var card = classItem.ClassCard; @* Accédez à la CardModel pour le titre de la classe *@
 		<div class="tabContent m-3" id="tabContent-@i">
-			<h2>Eleves de la classe:  @card.Title</h2>
+			<h2>Eleves de la classe: @card.Title</h2>
 			<div class="tableauClass p-3 ">
-				<table class="table-container table align-middle table-striped table-hover table-custom"
-					   id="tableContainer-@i">
+				<table class="table-container table align-middle table-striped table-hover table-custom text-center"
+					   id="tableContainer-@i">
 					<thead>
 						<tr>
-
 							<th scope="col">Photo</th>
 							<th scope="col">Nom</th>
 							<th scope="col">Prénom</th>
 							<th scope="col" class="d-none d-sm-table-cell">Classe</th>
+							<th scope="col" class="d-none d-sm-table-cell">Email</th>
 							<th scope="col" class="d-none d-sm-table-cell">Ville</th>
 							<th scope="col" class="d-none d-sm-table-cell">Date Inscription</th>
 						</tr>
 					</thead>
-
-					@foreach (var item in Model.Students)
-					{
-
-						<tbody>
+					<tbody>
+						@* ET MAINTENANT : Vous bouclez sur la liste d'élèves spécifique à CETTE classe *@
+						@foreach (var student in classItem.StudentsInClass)
+						{
 							<tr>
-								<th scope="row">
-									@if (!string.IsNullOrEmpty(item.Photo))
-									{
-										<img src="~/images/Profiles/@item.Photo" alt="@item.FirstName @item.LastName" width="50" height="50" style="border-radius: 50%;">
-									}
-									else
-									{
-										<span>Pas de photo</span>  <img src="~/images/logo/defaut.png" alt="Pas de photo" width="50" height="50" style="border-radius: 50%;">
-									}
-								</th>
-								<td>Nom Eleve 1</td>
-								<td>Prénom Eleve 1</td>
-								<td class="d-none d-sm-table-cell">@card.Title</td>
-								<td class="d-none d-sm-table-cell">Ville Eleve 1</td>
-								<td class="d-none d-sm-table-cell">2024-01-15</td>
 
-
+								<td><img src="~/images/Profiles/@student.Photo" alt="@student.FirstName @student.LastName" width="50" height="50" style="border-radius: 50%;"></td>
+								<td>@student.LastName</td> @* Utilisez les données réelles de l'élève *@
+								<td>@student.FirstName</td> @* Utilisez les données réelles de l'élève *@
+								<td class="d-none d-sm-table-cell">@card.Title</td> @* La classe est celle de la carte courante *@
+								<td class="d-none d-sm-table-cell">@student.Email</td>
+								<td class="d-none d-sm-table-cell">@student.City</td> @* Utilisez les données réelles de l'élève *@
+								<td class="d-none d-sm-table-cell">@(student.CreationDate?.ToString("yyyy-MM-dd") ?? "N/A")</td>
 							</tr>
-							<tr>
-								<th scope="row">
-									@if (!string.IsNullOrEmpty(item.Photo))
-									{
-										<img src="~/images/Profiles/@item.Photo" alt="@item.FirstName @item.LastName" width="50" height="50" style="border-radius: 50%;">
-									}
-									else
-									{
-										<span>Pas de photo</span>  <img src="~/images/logo/defaut.png" alt="Pas de photo" width="50" height="50" style="border-radius: 50%;">
-									}
-								</th>
-								<td>Nom Eleve 2</td>
-								<td>Prénom Eleve 2</td>
-								<td class="d-none d-sm-table-cell">@card.Title</td>
-								<td class="d-none d-sm-table-cell">Ville Eleve 2</td>
-								<td class="d-none d-sm-table-cell">2024-02-20</td>
-
-							</tr>
-						</tbody>
-					}
+						}
+					</tbody>
 				</table>
 			</div>
 		</div>
 	}
 </div>
 
-
-
-
-<!-- TABLEAU APPARITION JS -->
-<!-- =======================FOOTER================ -->
 @Html.Partial("~/Views/Shared/Components/_Footer.cshtml")
-
-

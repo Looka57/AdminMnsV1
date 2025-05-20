@@ -10,7 +10,7 @@ namespace AdminMnsV1.Models.Students
         public virtual ICollection<Attend> Attends { get; set; } = new List<Attend>();
 
         // Collection des classes via la table de jointure Attend
-        public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
+        public virtual ICollection<SchoolClass> Classes { get; set; } = new List<SchoolClass>();
 
     }
 }

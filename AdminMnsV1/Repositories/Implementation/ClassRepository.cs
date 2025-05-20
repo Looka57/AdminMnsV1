@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AdminMnsV1.Repositories
+namespace AdminMnsV1.Repositories.Implementation
 {
     public class ClassRepository : IClassRepository
     {
@@ -18,14 +18,14 @@ namespace AdminMnsV1.Repositories
             _context = context;
         }
 
-        public async Task<List<Class>> GetAllClassesAsync()
+        public async Task<List<SchoolClass>> GetAllClassesAsync()
         {
-            return await _context.Classs.OrderBy(c => c.NameClass).ToListAsync();
+            return await _context.SchoolClass.OrderBy(c => c.NameClass).ToListAsync();
         }
 
-        public async Task<Class?> GetClassByIdAsync(int id)
+        public async Task<SchoolClass?> GetClassByIdAsync(int id)
         {
-            return await _context.Classs.FindAsync(id);
+            return await _context.SchoolClass.FindAsync(id);
         }
 
         // Implémentation de la nouvelle méthode
