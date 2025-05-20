@@ -1,8 +1,6 @@
 ﻿@using AdminMnsV1.Models.Students @* Importe l'espace de noms des modèles Student *@
 @model StudentCreateViewModel //Déclare que le modèle utilisé par cette vue est une instance de la classe StudentCreateViewModel. Cela permet d'accéder aux propriétés de ce modèle dans la vue.
 
-
-
 @{
 	ViewData["Title"] = "Ajout d'un nouveau stagiaire"; //Définit le titre de la page qui apparaîtra dans l'onglet du navigateur.
 }
@@ -17,6 +15,7 @@
 		<div class="row mx-auto"></div>
 
 		<form method="post" asp-controller="Students" asp-action="Create" enctype="multipart/form-data">
+			 @Html.AntiForgeryToken();
 			@* //Crée un formulaire HTML qui enverra les données via la méthode HTTP POST vers l'action Create du contrôleur Students *@
 			<div asp-validation-summary="All" class="text-danger"></div> @* Affiche un résumé de toutes les erreurs de validation au niveau du modèle		
 																		Si le ModelState dans le contrôleur contient des erreurs, elles seront affichées ici en rouge..*@

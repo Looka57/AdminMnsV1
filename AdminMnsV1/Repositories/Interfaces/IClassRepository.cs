@@ -9,6 +9,7 @@ namespace AdminMnsV1.Repositories.Interfaces
     {
         Task<List<Class>> GetAllClassesAsync();
         Task<Class?> GetClassByIdAsync(int id);
-        // Ajoute d'autres méthodes CRUD si nécessaire pour Class
+        // Nouvelle méthode pour obtenir les classes avec le nombre d'étudiants
+        Task<List<object>> GetClassesWithStudentCountsAsync(); // On utilise object ici pour la flexibilité initiale
     }
 }

@@ -27,5 +27,21 @@ namespace AdminMnsV1.Repositories
         {
             return await _context.Classs.FindAsync(id);
         }
+
+        // Implémentation de la nouvelle méthode
+        public async Task<List<object>> GetClassesWithStudentCountsAsync()
+        {
+            return await _context.Attends
+                .Include(a => a.Class)
+                .Where(a => a.Class != null && a.Student.Status == "Stagiaire" && !a.Student.IsDeleted)
+                .GroupBy(a => a.Class)
+                .Select(g => new
+                {
+                    Class = g.Key,
+                    StudentCount = g.Count()
+                })
+                .OrderBy(g => g.Class.NameClass) // Ajouté pour un tri cohérent
+                .ToListAsync<object>(); // Cast en List<object> car le type anonyme n'est pas public
+        }
     }
 }

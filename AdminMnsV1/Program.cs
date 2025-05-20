@@ -7,6 +7,7 @@ using AdminMnsV1.Repositories.Interfaces;
 using AdminMnsV1.Repositories;
 using AdminMnsV1.Services.Interfaces;
 using AdminMnsV1.Services;
+using AdminMnsV1.Interfaces;
 
 
 
@@ -23,12 +24,19 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 //C'est la configuration de Entity Framework Core. Il utiliser SQL Server et se connecte à la base de données via la chaîne de connexion "DefaultConnection" (définie dans appsettings.json).
 //****ApplicationDbContext est votre pont vers la base de données.
 
+
+//AddScoped signifie qu'une nouvelle instance du service sera créée pour chaque requête HTTP
 // Enregistrement des Repositories
 builder.Services.AddScoped<IStudentRepository, StudentRepository>(); // Interface vers Implémentation
-builder.Services.AddScoped<IClassRepository, ClassRepository>();     // Interface vers Implémentation
+builder.Services.AddScoped<IClassRepository, ClassRepository>();    
 
 // Enregistrement des Services
-builder.Services.AddScoped<IStudentService, StudentService>();       // Interface vers Implémentation
+builder.Services.AddScoped<IStudentService, StudentService>();      
+builder.Services.AddScoped<IClassService, ClassService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
+
+
+
 
 //C'est la configuration clé d'ASP.NET Core Identity.
 builder.Services.AddIdentity<User, IdentityRole>(options =>
@@ -82,7 +90,6 @@ app.UseRouting(); //Permet au middleware de routage d'identifier la bonne "endpo
 
 //*****C'est l'ordre le plus important pour Identity.******
 // Middleware d'authentification et d'autorisation DANS LE BON ORDRE
-
 app.UseAuthentication(); // Gère l'authentification des utilisateurs (à partir du cookie d'authentification, par        exemple).
 app.UseAuthorization();  // Gère l'autorisation des utilisateurs Vérifie si l'utilisateur identifié a la permission d'accéder à la ressource demandée. L'authentification doit toujours précéder l'autorisation.
 

@@ -1,4 +1,9 @@
-﻿@model IEnumerable<AdminMnsV1.Models.CardModel>
+﻿@using AdminMnsV1.Models; // Pour CardModel, User, Student, Class (si vous les avez)
+@using System.Collections.Generic
+
+@* @using AdminMnsV1.Models.Students
+@using AdminMnsV1.Models.ViewModels
+@model IEnumerable<AdminMnsV1.Models.CardModel> *@
 @{
 	ViewData["Title"] = "Classes";
 }
@@ -25,42 +30,65 @@
 	{
 		var card = Model.ElementAt(i);
 		<div class="tabContent m-3" id="tabContent-@i">
-			<h2 >Eleves de la classe:  @card.Title</h2>
+			<h2>Eleves de la classe:  @card.Title</h2>
 			<div class="tableauClass p-3 ">
 				<table class="table-container table align-middle table-striped table-hover table-custom"
 					   id="tableContainer-@i">
 					<thead>
 						<tr>
-							<th scope="col">#</th>
+
+							<th scope="col">Photo</th>
 							<th scope="col">Nom</th>
 							<th scope="col">Prénom</th>
 							<th scope="col" class="d-none d-sm-table-cell">Classe</th>
 							<th scope="col" class="d-none d-sm-table-cell">Ville</th>
 							<th scope="col" class="d-none d-sm-table-cell">Date Inscription</th>
-							<th scope="col">Statuts</th>
 						</tr>
 					</thead>
-					<tbody>
-						<tr>
-							<th scope="row">1</th>
-							<td>Nom Eleve 1</td>
-							<td>Prénom Eleve 1</td>
-							<td class="d-none d-sm-table-cell">@card.Title</td>
-							<td class="d-none d-sm-table-cell">Ville Eleve 1</td>
-							<td class="d-none d-sm-table-cell">2024-01-15</td>
-							<td>Actif</td>
 
-						</tr>
-						<tr>
-							<th scope="row">2</th>
-							<td>Nom Eleve 2</td>
-							<td>Prénom Eleve 2</td>
-							<td class="d-none d-sm-table-cell">@card.Title</td>
-							<td class="d-none d-sm-table-cell">Ville Eleve 2</td>
-							<td class="d-none d-sm-table-cell">2024-02-20</td>
-							<td>Inactif</td>
-						</tr>
-					</tbody>
+					@foreach (var item in Model.Students)
+					{
+
+						<tbody>
+							<tr>
+								<th scope="row">
+									@if (!string.IsNullOrEmpty(item.Photo))
+									{
+										<img src="~/images/Profiles/@item.Photo" alt="@item.FirstName @item.LastName" width="50" height="50" style="border-radius: 50%;">
+									}
+									else
+									{
+										<span>Pas de photo</span>  <img src="~/images/logo/defaut.png" alt="Pas de photo" width="50" height="50" style="border-radius: 50%;">
+									}
+								</th>
+								<td>Nom Eleve 1</td>
+								<td>Prénom Eleve 1</td>
+								<td class="d-none d-sm-table-cell">@card.Title</td>
+								<td class="d-none d-sm-table-cell">Ville Eleve 1</td>
+								<td class="d-none d-sm-table-cell">2024-01-15</td>
+
+
+							</tr>
+							<tr>
+								<th scope="row">
+									@if (!string.IsNullOrEmpty(item.Photo))
+									{
+										<img src="~/images/Profiles/@item.Photo" alt="@item.FirstName @item.LastName" width="50" height="50" style="border-radius: 50%;">
+									}
+									else
+									{
+										<span>Pas de photo</span>  <img src="~/images/logo/defaut.png" alt="Pas de photo" width="50" height="50" style="border-radius: 50%;">
+									}
+								</th>
+								<td>Nom Eleve 2</td>
+								<td>Prénom Eleve 2</td>
+								<td class="d-none d-sm-table-cell">@card.Title</td>
+								<td class="d-none d-sm-table-cell">Ville Eleve 2</td>
+								<td class="d-none d-sm-table-cell">2024-02-20</td>
+
+							</tr>
+						</tbody>
+					}
 				</table>
 			</div>
 		</div>
@@ -71,8 +99,6 @@
 
 
 <!-- TABLEAU APPARITION JS -->
-
-
 <!-- =======================FOOTER================ -->
 @Html.Partial("~/Views/Shared/Components/_Footer.cshtml")
 

@@ -1,122 +1,74 @@
-﻿using AdminMnsV1.Data;
-using AdminMnsV1.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using AdminMnsV1.ViewModels; // Assurez-vous d'avoir ce 'using'
-using System.Threading.Tasks;
-using System.Linq; // Pour les méthodes Count(), Where()
-
-//Le DashboardController est une classe MVC qui gère les requêtes HTTP et prépare les données pour les vues du tableau de bord
+﻿// Controllers/DashboardController.cs
+using Microsoft.AspNetCore.Mvc;        // Pour les classes MVC comme Controller, IActionResult
+using Microsoft.AspNetCore.Authorization; // Pour l'attribut [Authorize]
+using AdminMnsV1.ViewModels;           // Pour utiliser DashboardViewModel
+using AdminMnsV1.Interfaces;           // NOUVEAU: Importez l'interface du service que nous allons utiliser
+using System.Threading.Tasks;         // Pour les opérations asynchrones
+using System;
 
 namespace AdminMnsV1.Controllers
 {
-    [Authorize] // S'applique à toutes les actions du contrôleur par défaut L'attribut au niveau du contrôleur signifie que toutes les actions dans ce contrôleur nécessitent que l'utilisateur soit connecté (authentifié).
-    public class DashboardController : Controller
+    [Authorize] // Attribut: indique que toutes les actions dans ce contrôleur nécessitent une authentification
+    public class DashboardController : Controller // Déclaration du contrôleur
     {
-        private readonly ApplicationDbContext _context; //Le contrôleur reçoit une instance de votre DbContext pour interagir avec la base de données.
-        private readonly UserManager<User> _userManager; //Le contrôleur reçoit une instance de UserManager, un service Identity essentiel pour gérer les utilisateurs (récupérer l'utilisateur connecté, vérifier les rôles, créer/modifier des utilisateurs, etc.
 
-        public DashboardController(ApplicationDbContext context, UserManager<User> userManager)
+        // NOUVEAU: Déclarez une variable pour stocker l'interface de votre service
+        // Le contrôleur ne travaille qu'avec l'interface, pas l'implémentation concrète.
+        private readonly IDashboardService _dashboardService;
+
+        // Constructeur du contrôleur : ASP.NET Core va injecter l'implémentation de IDashboardService (qui sera DashboardService, grâce à la configuration dans Program.cs)
+        public DashboardController(IDashboardService dashboardService)
         {
-            _context = context;
-            _userManager = userManager;
+            _dashboardService = dashboardService; // Assigne le service injecté à notre variable privée
         }
 
 
 
-        // Tableau de Bord pour les ADMINS (une seule action désormais)
-        [Authorize(Roles = "Admin")]
-        //Cet attribut spécifique indique que seule un utilisateur ayant le rôle "Admin" peut accéder à cette action. C'est une couche de sécurité supplémentaire en plus de l'authentification générale du contrôleur.
-        public async Task<IActionResult> Dashboard() // Renommé en "Dashboard" pour plus de clarté
+        //-------------------------------- Action pour le tableau de bord des Administrateurs---------------------
+        [Authorize(Roles = "Admin")] // Attribut: Seuls les utilisateurs avec le rôle "Admin" peuvent accéder à cette action
+        public async Task<IActionResult> Dashboard()  // Méthode asynchrone qui retourne un résultat d'action
         {
             ViewData["Title"] = "Tableau de Bord Admin";
 
-            // 1. Récupérer l'utilisateur actuellement connecté
-            var currentUser = await _userManager.GetUserAsync(User);
-            //C'est une ligne cruciale ! Elle utilise le UserManager pour récupérer l'objet User complet (incluant FirstName, LastName, Status, etc.) pour l'utilisateur actuellement connecté. L'objet User passé en paramètre à GetUserAsync représente le Principal de l'utilisateur authentifié.
-
-
-            if (currentUser == null)
+            try // Bloque try-catch pour gérer les erreurs
             {
-                // Cela ne devrait pas arriver si l'attribut [Authorize] fonctionne,
-                // mais c'est une bonne pratique de sécurité.
-                return RedirectToAction("Login", "Home");
+                // Délègue entièrement la récupération des données au service  Le contrôleur appelle simplement une méthode du service et attend le ViewModel.
+                var viewModel = await _dashboardService.GetAdminDashboardDataAsync(User);
+                return View(viewModel); // Passe le ViewModel à la vue pour affichage
+            
             }
-
-            // 2. Récupérer toutes vos données statistiques
-            var classCount = _context.Classs.Count();
-            var studentCount = _context.Users
-                .Where(u => (u.Status == "Stagiaire") && !u.IsDeleted)
-                .Count();
-            var numberMen = _context.Users
-                .Where(u => (u.Status == "Stagiaire") && u.Sexe == "Male")
-                .Count();
-            var numberWomen = _context.Users
-                .Where(u => (u.Status == "Stagiaire") && u.Sexe == "Female")
-                .Count();
-
-            // 3. Préparer la liste de vos CardModels
-            var cards = new List<CardModel>
+            catch (UnauthorizedAccessException) // Si le service lève cette exception (utilisateur non trouvé/autorisé)
             {
-                new CardModel { Url = "../Classes/Class", Number = classCount.ToString(), Title = "Classes", IconUrl = "https://img.icons8.com/glyph-neue/64/classroom.png", AltText = "classroom" },
-                new CardModel { Url = "../Candidatures/Candidature", Number = "254", Title = "Dossiers", IconUrl = "https://img.icons8.com/glyph-neue/64/user-folder.png", AltText = "user-folder" },
-                new CardModel { Url = "../Students/Student", Number = studentCount.ToString(), Title = "Stagiaires", IconUrl = "https://img.icons8.com/glyph-neue/64/student-male.png", AltText = "student-male" },
-                new CardModel { Url = "#", Number = "5", Title = "Notifications", IconUrl = "https://img.icons8.com/ios-filled/50/appointment-reminders--v1.png", AltText = "reminder" }
-            };
-
-            // 4. Créer et peupler votre DashboardViewModel
-            var viewModel = new DashboardViewModel
+                return RedirectToAction("Login", "Home"); // Le contrôleur décide de rediriger vers la page de connexion
+            }
+            catch (Exception ex) // Pour toutes les autres exceptions inattendues
             {
-                LoggedInUser = currentUser, // L'utilisateur connecté
-                Cards = cards,              // La liste des cartes
-                TotalClasses = classCount,  // Les stats
-                TotalStudents = studentCount,
-                NumberOfMen = numberMen,
-                NumberOfWomen = numberWomen
-            };
-
-            // 5. Passer le ViewModel complet à la vue
-            return View(viewModel);
+                // Gérer d'autres erreurs potentielles (logging, page d'erreur générique)
+                return StatusCode(500, "Une erreur interne est survenue lors du chargement du tableau de bord.");  // Retourne un code d'erreur HTTP 500 avec un message convivial
+            }
         }
 
-
-        // DASHBOARD STAGIAIRE (STUDENT)
-        [Authorize(Roles = "Student")] // Autorise SEULEMENT les utilisateurs avec le rôle "Student"
+        //-------------------------------- Action pour le tableau de bord des Students--------------------
+        [Authorize(Roles = "Student")] // Attribut: Seuls les utilisateurs avec le rôle "Student" peuvent accéder à cette action
         public async Task<IActionResult> DashboardStudent()
         {
             ViewData["Title"] = "Tableau de Bord Student";
 
-            // Récupérer l'utilisateur connecté
-            var currentUser = await _userManager.GetUserAsync(User);
-            if (currentUser == null)
+            try
+            {
+                // Délègue entièrement la récupération des données au service
+                var viewModel = await _dashboardService.GetStudentDashboardDataAsync(User);
+                return View(viewModel);
+            }
+            catch (UnauthorizedAccessException)
             {
                 return RedirectToAction("Login", "Home");
             }
-
-            var cards = new List<CardModel>
+            catch (Exception ex)
             {
-                new CardModel { Url = "../Classes/Class", Number = "5", Title = "Classes", IconUrl = "https://img.icons8.com/glyph-neue/64/classroom.png", AltText = "classroom" },
-                new CardModel { Url = "../Candidatures/Candidature", Number = "1", Title = "Dossiers", IconUrl = "https://img.icons8.com/glyph-neue/64/user-folder.png", AltText = "user-folder" },
-                new CardModel { Url = "#", Number = "5", Title = "Notifications", IconUrl = "https://img.icons8.com/ios-filled/50/appointment-reminders--v1.png", AltText = "reminder" }
-            };
-
-            // Crée un ViewModel (même si c'est un DashboardViewModel vide pour l'instant)
-            // Si le tableau de bord Stagiaire a des données très différentes,
-            // vous pourriez créer un 'StudentDashboardViewModel' dédié.
-            var viewModel = new DashboardViewModel
-            {
-                LoggedInUser = currentUser,
-                Cards = cards, // Assigner la liste 'cards' que vous avez créée
-                               // Si le tableau de bord Stagiaire a des statistiques spécifiques (nombre de cours, notes, etc.),
-                               // vous devrez les récupérer et les ajouter ici au ViewModel.
-            };
-
-            // TODO : Ajoutez ici la logique spécifique au tableau de bord du stagiaire
-            // Par exemple, récupérer les cours du stagiaire, ses notes, etc.
-            // viewModel.Courses = await _context.Courses.Where(c => c.StudentId == currentUser.Id).ToListAsync();
-
-            return View(viewModel); // Passe le ViewModel à la vue
+                // Console.WriteLine(ex.Message);
+                return StatusCode(500, "Une erreur interne est survenue lors du chargement du tableau de bord du stagiaire.");
+            }
         }
     }
 }
