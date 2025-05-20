@@ -3,6 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using AdminMnsV1.Data;
 using AdminMnsV1.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using AdminMnsV1.Repositories.Interfaces;
+using AdminMnsV1.Repositories;
+using AdminMnsV1.Services.Interfaces;
+using AdminMnsV1.Services;
 
 
 
@@ -19,6 +23,12 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 //C'est la configuration de Entity Framework Core. Il utiliser SQL Server et se connecte à la base de données via la chaîne de connexion "DefaultConnection" (définie dans appsettings.json).
 //****ApplicationDbContext est votre pont vers la base de données.
 
+// Enregistrement des Repositories
+builder.Services.AddScoped<IStudentRepository, StudentRepository>(); // Interface vers Implémentation
+builder.Services.AddScoped<IClassRepository, ClassRepository>();     // Interface vers Implémentation
+
+// Enregistrement des Services
+builder.Services.AddScoped<IStudentService, StudentService>();       // Interface vers Implémentation
 
 //C'est la configuration clé d'ASP.NET Core Identity.
 builder.Services.AddIdentity<User, IdentityRole>(options =>
