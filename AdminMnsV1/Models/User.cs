@@ -41,7 +41,17 @@ namespace AdminMnsV1.Models
 
         // Collection des inscriptions (Attend) pour cet utilisateur
         public virtual ICollection<Attend> Attends { get; set; } = new List<Attend>();
-        //Ceci indique une relation un-à-plusieurs avec votre modèle Attend. Un User peut avoir plusieurs Attend (inscriptions/présences). virtual est utilisé par Entity Framework Core pour le chargement paresseux (Lazy Loading)
+
+
+        // Collection des candidatures pour cet utilisateur
+        public virtual ICollection<Candidature.Candidature> Candidatures { get; set; } = new List<Candidature.Candidature>(); // J'ai utilisé Candidature.Candidature si Candidature est dans le namespace AdminMnsV1.Models.Candidature
+        //Ceci indique une relation un-à-plusieurs avec votre modèle Candidature. Un User peut avoir plusieurs Candidature (inscriptions/présences). virtual est utilisé par Entity Framework Core pour le chargement paresseux (Lazy Loading)
+
+        // Collection des documents pour cet utilisateur (en tant qu'étudiant ou autre)
+        public virtual ICollection<Documents.Documents> Documents { get; set; } = new List<Documents.Documents>();
+
+
+
     }
 
 

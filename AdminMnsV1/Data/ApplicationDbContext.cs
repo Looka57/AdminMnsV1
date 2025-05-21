@@ -5,6 +5,10 @@ using AdminMnsV1.Models.Students;
 using AdminMnsV1.Models.Experts;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using AdminMnsV1.Models.Classes;
+using AdminMnsV1.Models.Candidature;
+using System.Reflection.Metadata;
+using AdminMnsV1.Models.DocumentTypes;
+using AdminMnsV1.Models.Documents;
 
 namespace AdminMnsV1.Data
 {
@@ -18,11 +22,23 @@ namespace AdminMnsV1.Data
         public DbSet<SchoolClass> SchoolClass { get; set; } // Représente la table "Class"
         public DbSet<Attend> Attends { get; set; } // Représente la table intermediaire "Attends"
         public DbSet<Student> Students { get; set; }   // Représente la table "Student"
+        public DbSet<Candidature> Candidatures { get; set; } // Représente la table "Candidature"
+        public DbSet<Documents> Documents { get; set; } // Représente la table "Documents"
+        public DbSet<DocumentType> DocumentTypes { get; set; } // Représente la table "DocumentType"
+
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+
+        //    modelBuilder.Entity<User>()
+        //.HasDiscriminator<string>("Discriminator")
+        //.HasValue<User>("User")
+        //.HasValue<Administrator>("Administrator");
+
 
             modelBuilder.Entity<User>()
                 .Property(u => u.Address)
@@ -32,26 +48,9 @@ namespace AdminMnsV1.Data
                .Property(u => u.City)
                .IsRequired(false);
 
-            //modelBuilder.Entity<User>()
-            //    .Property(u => u.Phone)
-            //    .IsRequired(false);
 
 
-            //modelBuilder.Entity<User>()
-            //   .Property(u => u.Nationality)
-            //   .IsRequired(false);
-
-            //modelBuilder.Entity<User>()
-            //    .Property(u => u.FranceTravailNumber)
-            //    .IsRequired(false);
-
-            //modelBuilder.Entity<User>()
-            //    .Property(u => u.SocialSecurityNumber)
-            //    .IsRequired(false);
-
-
-
-            // Configuration de la clé primaire composite pour Attend
+            //-------------- Configuration de la clé primaire composite pour Attend----------------------
             modelBuilder.Entity<Attend>()
                  .HasKey(a => new { a.StudentId, a.ClasseId }); //// La clé primaire composite est StudentId + ClasseId
 
@@ -73,22 +72,54 @@ namespace AdminMnsV1.Data
 
 
 
+            // Configuration de la relations entre Candidature - User
+            modelBuilder.Entity<Candidature>()
+                .HasOne(c => c.User) // Une candidature a un utilisateur
+                .WithMany(u => u.Candidatures)// Un utilisateur peut avoir plusieurs candidatures
+                .HasForeignKey(c => c.UserId) // La clé étrangère est UserId
+                .OnDelete(DeleteBehavior.Cascade); // Si l'utilisateur est supprimé, toutes ses candidatures le seront aussi
 
-            //modelBuilder.Entity<Class>()
-            //    .HasMany(c => c.Students)
-            //    .WithMany(s => s.Classes)
-            //   .UsingEntity<Attend>(
-            //        j => j
-            //            .HasOne(pt => pt.Student)
-            //            .WithMany(t => t.Attends)
-            //            .HasForeignKey(pt => pt.StudentId),
-            //        j => j
-            //            .HasOne(pt => pt.Class)
-            //            .WithMany(p => p.Attends)
-            //            .HasForeignKey(pt => pt.ClasseId),
-            //        j => {
-            //            j.HasKey(t => new { t.StudentId, t.ClasseId });
-            //        });
+            // Configuration de la relation Candhasidature - SchoolClass
+            modelBuilder.Entity<Candidature>()
+                 .HasOne(c => c.Class)
+                 .WithMany()
+                 .HasForeignKey(c => c.ClassId)
+                 .IsRequired(false) // La classe est optionnelle
+                 .OnDelete(DeleteBehavior.SetNull); // Si la classe est supprimée, les candidatures ne seront pas supprimées
+
+            // Configuration de la relation Candidature - CandidatureStatus
+            modelBuilder.Entity<Candidature>()
+               .HasOne(c => c.CandidatureStatus)
+                .WithMany(cs => cs.Candidatures)
+                .HasForeignKey(c => c.candidatureStatutId)
+                .OnDelete(DeleteBehavior.Restrict); // Si le statut de candidature est supprimé, toutes les candidatures associées le seront aussi
+
+
+            // Configuration de la relation Document - DocumentType
+            modelBuilder.Entity<Documents>()
+                .HasOne(d => d.DocumentType)
+                .WithMany(dt => dt.Documents) // DocumentType doit avoir public ICollection<Document> Documents
+                .HasForeignKey(d => d.DocumentTypeId)
+                .OnDelete(DeleteBehavior.Restrict); // Empêche la suppression d'un type si des documents y sont liés
+
+
+            // Configuration de la relation Document - User (StudentUser)
+            modelBuilder.Entity<Documents>()
+                .HasOne(d => d.StudentUser) // Navigation property vers l'User (qui est le Student)
+                .WithMany(u => u.Documents) // User doit avoir public ICollection<Document> Documents
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.Cascade); // Si l'User est supprimé, ses documents sont supprimés
+
+            // Configuration de la relation Document - User (Administrator)
+            modelBuilder.Entity<Documents>()
+                .HasOne(d => d.Admin) // Navigation property vers l'User (qui est l'Admin validateur)
+                .WithMany() // L'entité User n'a pas forcément une collection "ValidatedDocuments" si tu ne l'as pas ajoutée. C'est OK.
+                .HasForeignKey(d => d.AdminId)
+                .IsRequired(false) // Permet à AdministratorId d'être NULL
+                .OnDelete(DeleteBehavior.SetNull); // Si l'admin est supprimé, l'ID devient NULL
+
+
+
 
         }
     }

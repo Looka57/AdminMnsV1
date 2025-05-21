@@ -1,4 +1,4 @@
-﻿namespace AdminMnsV1.Models
+﻿namespace AdminMnsV1.Models.Candidature
 {
     public class CandidatureStudent
     {

@@ -8,6 +8,7 @@ using AdminMnsV1.Services.Interfaces;
 using AdminMnsV1.Interfaces;
 using AdminMnsV1.Repositories.Implementation;
 using AdminMnsV1.Services.Implementation;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 
 
@@ -69,7 +70,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Home/Login";          // Votre page de connexion
     options.LogoutPath = "/Home/Logout";        // Votre page de déconnexion
     options.AccessDeniedPath = "/Home/AccessDenied"; // Votre page d'accès refusé erreur 404
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Durée de vie du cookie
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(180); // Durée de vie du cookie
     options.SlidingExpiration = true;          // Renouvelle le cookie à chaque requête s'il est à mi-vie
 });
 
@@ -113,7 +114,7 @@ using (var scope = app.Services.CreateScope())
 
     //     // ---LE CODE SUIVANT  POUR CRÉER L'UTILISATEUR ADMIN PAR DÉFAUT ---
     //    string adminEmail = "admin@mns.com"; // L'email de votre administrateur
-    //    string adminPassword = "VotreMotDePasseAdmin123!"; // <--- TRÈS IMPORTANT : CHANGEZ CE MOT DE PASSE POUR LA PRODUCTION !!!
+    //    string adminPassword = "VotreMotDePasseAdmin123!"; //
     //    string adminRole = "Admin";
 
     //    // Vérifie si l'utilisateur admin existe déjà
@@ -125,6 +126,7 @@ using (var scope = app.Services.CreateScope())
     //            Email = adminEmail,
     //            EmailConfirmed = true, // Indique que l'email est déjà confirmé
     //            Status = "Null"
+
     //        };
 
     //        // Tente de créer l'utilisateur
