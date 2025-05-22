@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdminMnsV1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250521144422_AddTableDocumentCandidature")]
-    partial class AddTableDocumentCandidature
+    [Migration("20250521174042_InitialFullSchema")]
+    partial class InitialFullSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,8 +42,11 @@ namespace AdminMnsV1.Migrations
 
             modelBuilder.Entity("AdminMnsV1.Models.Candidature.Candidature", b =>
                 {
-                    b.Property<string>("CandidatureId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("CandidatureId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CandidatureId"));
 
                     b.Property<DateTime>("CandidatureCreationDate")
                         .HasColumnType("datetime2");
@@ -139,8 +142,11 @@ namespace AdminMnsV1.Migrations
 
             modelBuilder.Entity("AdminMnsV1.Models.Documents.Documents", b =>
                 {
-                    b.Property<string>("DocumentId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("DocumentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DocumentId"));
 
                     b.Property<string>("AdminId")
                         .HasColumnType("nvarchar(450)");
@@ -472,7 +478,7 @@ namespace AdminMnsV1.Migrations
                     b.HasOne("AdminMnsV1.Models.Classes.SchoolClass", "Class")
                         .WithMany()
                         .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("AdminMnsV1.Models.User", "User")
                         .WithMany("Candidatures")
@@ -505,7 +511,7 @@ namespace AdminMnsV1.Migrations
                     b.HasOne("AdminMnsV1.Models.User", "Admin")
                         .WithMany()
                         .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("AdminMnsV1.Models.DocumentTypes.DocumentType", "DocumentType")
                         .WithMany("Documents")

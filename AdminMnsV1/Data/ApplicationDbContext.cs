@@ -85,7 +85,7 @@ namespace AdminMnsV1.Data
                  .WithMany()
                  .HasForeignKey(c => c.ClassId)
                  .IsRequired(false) // La classe est optionnelle
-                 .OnDelete(DeleteBehavior.SetNull); // Si la classe est supprimée, les candidatures ne seront pas supprimées
+                 .OnDelete(DeleteBehavior.NoAction); // Si la classe est supprimée, lsi tu veux empêcher la suppression de la classe tant qu'elle a des candidatures)
 
             // Configuration de la relation Candidature - CandidatureStatus
             modelBuilder.Entity<Candidature>()
@@ -116,7 +116,10 @@ namespace AdminMnsV1.Data
                 .WithMany() // L'entité User n'a pas forcément une collection "ValidatedDocuments" si tu ne l'as pas ajoutée. C'est OK.
                 .HasForeignKey(d => d.AdminId)
                 .IsRequired(false) // Permet à AdministratorId d'être NULL
-                .OnDelete(DeleteBehavior.SetNull); // Si l'admin est supprimé, l'ID devient NULL
+                .OnDelete(DeleteBehavior.NoAction); // Si l'admin est supprimé  si tu tentes de supprimer un utilisateur qui est référencé comme AdminId dans un document,
+                                                    // la suppression de cet utilisateur sera BLOQUÉE par la base de données.
+                                                    // Tu devras d'abord mettre manuellement AdminId à NULL dans les documents concernés,
+                                                    // ou supprimer les documents, avant de pouvoir supprimer l'administrateur.
 
 
 

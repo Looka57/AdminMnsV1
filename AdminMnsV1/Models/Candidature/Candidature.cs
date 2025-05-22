@@ -7,7 +7,7 @@ namespace AdminMnsV1.Models.Candidature
     public class Candidature
     {
         [Key]
-        public string CandidatureId { get; set; } // Clé primaire
+        public int CandidatureId { get; set; } // Clé primaire
 
         [Required]
         public DateTime CandidatureCreationDate { get; set; }
@@ -34,6 +34,8 @@ namespace AdminMnsV1.Models.Candidature
         [ForeignKey("candidatureStatutId")]
         public CandidatureStatus CandidatureStatus { get; set; }
 
+        // Relation de navigation pour les documents liés à cette candidature
+        public virtual ICollection<Documents.Documents>? Documents { get; set; }
 
 
     }

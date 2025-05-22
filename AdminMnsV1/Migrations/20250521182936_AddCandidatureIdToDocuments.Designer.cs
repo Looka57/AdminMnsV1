@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdminMnsV1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250512182932_MakeStatusNotNullable")]
-    partial class MakeStatusNotNullable
+    [Migration("20250521182936_AddCandidatureIdToDocuments")]
+    partial class AddCandidatureIdToDocuments
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,7 +40,60 @@ namespace AdminMnsV1.Migrations
                     b.ToTable("Attends");
                 });
 
-            modelBuilder.Entity("AdminMnsV1.Models.Classes.Class", b =>
+            modelBuilder.Entity("AdminMnsV1.Models.Candidature.Candidature", b =>
+                {
+                    b.Property<int>("CandidatureId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CandidatureId"));
+
+                    b.Property<DateTime>("CandidatureCreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CandidatureValidationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ClassId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("candidatureStatutId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CandidatureId");
+
+                    b.HasIndex("ClassId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("candidatureStatutId");
+
+                    b.ToTable("Candidatures");
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.CandidatureStatus", b =>
+                {
+                    b.Property<int>("CandidatureStatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CandidatureStatusId"));
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("CandidatureStatusId");
+
+                    b.ToTable("CandidatureStatus");
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.Classes.SchoolClass", b =>
                 {
                     b.Property<int>("ClasseId")
                         .ValueGeneratedOnAdd()
@@ -55,15 +108,93 @@ namespace AdminMnsV1.Migrations
                         .HasColumnType("date");
 
                     b.Property<string>("NameClass")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("ClasseId");
 
-                    b.ToTable("Classs");
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("SchoolClass");
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.DocumentTypes.DocumentType", b =>
+                {
+                    b.Property<int>("DocumentTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DocumentTypeId"));
+
+                    b.Property<string>("NameDocumentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("DocumentTypeId");
+
+                    b.ToTable("DocumentTypes");
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.Documents.Documents", b =>
+                {
+                    b.Property<int>("DocumentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DocumentId"));
+
+                    b.Property<string>("AdminId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("CandidatureId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DocumentPath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("DocumentTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("ValidationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("documentDateStatutValidate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("documentDepositDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("documentName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("documentStatut")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("DocumentId");
+
+                    b.HasIndex("AdminId");
+
+                    b.HasIndex("CandidatureId");
+
+                    b.HasIndex("DocumentTypeId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Documents");
                 });
 
             modelBuilder.Entity("AdminMnsV1.Models.User", b =>
@@ -330,7 +461,7 @@ namespace AdminMnsV1.Migrations
 
             modelBuilder.Entity("AdminMnsV1.Models.Attend", b =>
                 {
-                    b.HasOne("AdminMnsV1.Models.Classes.Class", "Class")
+                    b.HasOne("AdminMnsV1.Models.Classes.SchoolClass", "Class")
                         .WithMany("Attends")
                         .HasForeignKey("ClasseId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -345,6 +476,73 @@ namespace AdminMnsV1.Migrations
                     b.Navigation("Class");
 
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.Candidature.Candidature", b =>
+                {
+                    b.HasOne("AdminMnsV1.Models.Classes.SchoolClass", "Class")
+                        .WithMany()
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("AdminMnsV1.Models.User", "User")
+                        .WithMany("Candidatures")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AdminMnsV1.Models.CandidatureStatus", "CandidatureStatus")
+                        .WithMany("Candidatures")
+                        .HasForeignKey("candidatureStatutId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CandidatureStatus");
+
+                    b.Navigation("Class");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.Classes.SchoolClass", b =>
+                {
+                    b.HasOne("AdminMnsV1.Models.Students.Student", null)
+                        .WithMany("Classes")
+                        .HasForeignKey("StudentId");
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.Documents.Documents", b =>
+                {
+                    b.HasOne("AdminMnsV1.Models.User", "Admin")
+                        .WithMany()
+                        .HasForeignKey("AdminId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("AdminMnsV1.Models.Candidature.Candidature", "Candidature")
+                        .WithMany("Documents")
+                        .HasForeignKey("CandidatureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AdminMnsV1.Models.DocumentTypes.DocumentType", "DocumentType")
+                        .WithMany("Documents")
+                        .HasForeignKey("DocumentTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AdminMnsV1.Models.User", "StudentUser")
+                        .WithMany("Documents")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Admin");
+
+                    b.Navigation("Candidature");
+
+                    b.Navigation("DocumentType");
+
+                    b.Navigation("StudentUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -398,14 +596,38 @@ namespace AdminMnsV1.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("AdminMnsV1.Models.Classes.Class", b =>
+            modelBuilder.Entity("AdminMnsV1.Models.Candidature.Candidature", b =>
+                {
+                    b.Navigation("Documents");
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.CandidatureStatus", b =>
+                {
+                    b.Navigation("Candidatures");
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.Classes.SchoolClass", b =>
                 {
                     b.Navigation("Attends");
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.DocumentTypes.DocumentType", b =>
+                {
+                    b.Navigation("Documents");
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.User", b =>
+                {
+                    b.Navigation("Candidatures");
+
+                    b.Navigation("Documents");
                 });
 
             modelBuilder.Entity("AdminMnsV1.Models.Students.Student", b =>
                 {
                     b.Navigation("Attends");
+
+                    b.Navigation("Classes");
                 });
 #pragma warning restore 612, 618
         }

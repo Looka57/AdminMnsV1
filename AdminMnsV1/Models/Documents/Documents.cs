@@ -7,7 +7,7 @@ namespace AdminMnsV1.Models.Documents
     public class Documents
     {
         [Key]
-        public string DocumentId { get; set; }
+        public int DocumentId { get; set; }
 
         [Required]
         public string documentName { get; set; }
@@ -42,5 +42,10 @@ namespace AdminMnsV1.Models.Documents
         [ForeignKey("AdminId")]
         public User? Admin { get; set; } // Navigation property vers l'admin qui a validé
         public DateTime? ValidationDate { get; set; } // Date de validation
+
+        // Ajoute la clé étrangère vers Candidature
+        public int CandidatureId { get; set; } // Ou int? si CandidatureId est int
+        [ForeignKey("CandidatureId")]
+        public virtual Candidature.Candidature? Candidature { get; set; }
     }
 }
