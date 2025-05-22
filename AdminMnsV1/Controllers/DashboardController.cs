@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;        // Pour les classes MVC comme Controller, IActionResult
 using Microsoft.AspNetCore.Authorization; // Pour l'attribut [Authorize]
 using AdminMnsV1.ViewModels;           // Pour utiliser DashboardViewModel
-using AdminMnsV1.Interfaces;           // NOUVEAU: Importez l'interface du service que nous allons utiliser
 using System.Threading.Tasks;         // Pour les opérations asynchrones
 using System;
+using AdminMnsV1.Services.Interfaces;
 
 namespace AdminMnsV1.Controllers
 {

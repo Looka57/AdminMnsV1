@@ -1,12 +1,12 @@
 ﻿// Interfaces/IDashboardService.cs
 using System.Security.Claims; // Pour ClaimsPrincipal pour l'utilisateur connecté
 using AdminMnsV1.ViewModels; // Pour DashboardViewModel
-using System.Threading.Tasks; // Pour les opérations asynchrones (qui ne bloquent pas le programme)
+using System.Threading.Tasks;
 
 
 //Une interface en C# est comme un contrat ou un plan. Elle définit ce qu'une classe doit faire, sans dire comment elle doit le faire.
 
-namespace AdminMnsV1.Interfaces
+namespace AdminMnsV1.Services.Interfaces
 {
     public interface IDashboardService // Déclaration de l'interface publique
     {

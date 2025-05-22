@@ -1,6 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using AdminMnsV1.Models.DocumentTypes;
+using AdminMnsV1.Models.Candidature;
+using AdminMnsV1.Models;
+
 
 namespace AdminMnsV1.Models.Documents
 {

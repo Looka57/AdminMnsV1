@@ -5,10 +5,13 @@ using AdminMnsV1.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using AdminMnsV1.Repositories.Interfaces;
 using AdminMnsV1.Services.Interfaces;
-using AdminMnsV1.Interfaces;
 using AdminMnsV1.Repositories.Implementation;
 using AdminMnsV1.Services.Implementation;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using AdminMnsV1.Application.Services.Interfaces;
+using AdminMnsV1.Application.Services.Implementation;
+using AdminMnsV1.Data.Repositories.Implementation;
+using AdminMnsV1.Data.Repositories.Interfaces;
 
 
 
@@ -35,7 +38,10 @@ builder.Services.AddScoped<IClassRepository, ClassRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();      
 builder.Services.AddScoped<IClassService, ClassService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>(); 
 
+// Enregistrement des Services
+builder.Services.AddScoped<ICandidatureService, CandidatureService>();
 
 
 

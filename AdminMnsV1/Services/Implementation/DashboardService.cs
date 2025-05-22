@@ -1,6 +1,5 @@
 ﻿// Services/DashboardService.cs
 using AdminMnsV1.Data;         // Pour interagir avec la base de données (ApplicationDbContext)
-using AdminMnsV1.Interfaces;   // Pour implémenter notre interface IDashboardService
 using AdminMnsV1.Models;      // Pour utiliser des modèles comme User et CardModel
 using AdminMnsV1.ViewModels;  // Pour construire le DashboardViewModel
 using Microsoft.AspNetCore.Identity; // Pour utiliser UserManager (gestion des utilisateurs et de leurs rôles)
@@ -9,6 +8,7 @@ using System.Linq;            // Pour les requêtes LINQ (Count(), Where())
 using System.Security.Claims; // Pour ClaimsPrincipal
 using System.Threading.Tasks; // Pour les opérations asynchrones
 using System;
+using AdminMnsV1.Services.Interfaces;
 
 
 //Maintenant que nous avons défini le contrat avec l'interface, nous devons créer une classe qui va "réaliser" ce contrat. C'est la classe DashboardService qui implémente IDashboardService

@@ -81,7 +81,7 @@ namespace AdminMnsV1.Models.Students
 
 
         [Display(Name = "Status")]
-        public string Status { get; set; } = "Candidat"; // Valeur par défaut
+        public string Status { get; set; } = " "; // Valeur par défaut
 
         [Display(Name = "Photo de profil")]
         [DataType(DataType.Upload)]

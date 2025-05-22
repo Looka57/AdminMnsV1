@@ -1,4 +1,5 @@
 ﻿// Services/ClassService.cs
+using AdminMnsV1.Application.Services.Interfaces;
 using AdminMnsV1.Models; // Pour CardModel, Class
 using AdminMnsV1.Models.Classes; // Pour Class
 using AdminMnsV1.Models.Students; // Pour Student
@@ -102,6 +103,31 @@ namespace AdminMnsV1.Services.Implementation
             // Votre implémentation existante pour récupérer les CardModels
             // ... (potentiellement juste appeler GetClassListPageViewModelAsync et prendre ClassCards)
             return new List<CardModel>(); // Placeholder, à remplacer par votre logique existante
+        }
+
+        public Task<IEnumerable<SchoolClass>> GetAllClassesAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<SchoolClass?> GetClassByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> AddClassAsync(SchoolClass schoolClass)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UpdateClassAsync(SchoolClass schoolClass)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteClassAsync(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

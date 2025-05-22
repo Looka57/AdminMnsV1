@@ -1,14 +1,16 @@
-﻿// Services/Interfaces/IClassService.cs
-using AdminMnsV1.Models; // Pour CardModel
-using AdminMnsV1.Models.ViewModels; // IMPORTANT : Pour ClassListViewModel
+﻿// AdminMnsV1.Application.Services/Interfaces/IClassService.cs
+using AdminMnsV1.Models.Classes; // Assure-toi que c'est le bon chemin pour ton modèle SchoolClass
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace AdminMnsV1.Services.Interfaces
+namespace AdminMnsV1.Application.Services.Interfaces // Ou AdminMnsV1.Services.Interfaces
 {
     public interface IClassService
     {
-        Task<List<CardModel>> GetClassCardModelsAsync(); // Gardez si elle est toujours utilisée
-        Task<ClassListViewModel> GetClassListPageViewModelAsync(); // Nouvelle méthode
+        Task<IEnumerable<SchoolClass>> GetAllClassesAsync();
+        Task<SchoolClass?> GetClassByIdAsync(int id);
+        Task<bool> AddClassAsync(SchoolClass schoolClass);
+        Task<bool> UpdateClassAsync(SchoolClass schoolClass);
+        Task<bool> DeleteClassAsync(int id);
     }
 }

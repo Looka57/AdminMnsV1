@@ -9,6 +9,8 @@ using AdminMnsV1.Models.Candidature;
 using System.Reflection.Metadata;
 using AdminMnsV1.Models.DocumentTypes;
 using AdminMnsV1.Models.Documents;
+using Microsoft.CodeAnalysis.Diagnostics;
+
 
 namespace AdminMnsV1.Data
 {
@@ -23,6 +25,8 @@ namespace AdminMnsV1.Data
         public DbSet<Attend> Attends { get; set; } // Représente la table intermediaire "Attends"
         public DbSet<Student> Students { get; set; }   // Représente la table "Student"
         public DbSet<Candidature> Candidatures { get; set; } // Représente la table "Candidature"
+        public DbSet<CandidatureStatus> CandidatureStatuses { get; set; } // Represente la table CandidatureStatus
+
         public DbSet<Documents> Documents { get; set; } // Représente la table "Documents"
         public DbSet<DocumentType> DocumentTypes { get; set; } // Représente la table "DocumentType"
 
@@ -55,7 +59,7 @@ namespace AdminMnsV1.Data
                  .HasKey(a => new { a.StudentId, a.ClasseId }); //// La clé primaire composite est StudentId + ClasseId
 
 
-            // ***********Configuration des relations entre Attend, Student et Class******************
+            // ***********Configuration des relations entre ATTEND, STUDENT et CLASS******************
 
             // Configure la relation entre Attend et Student
             modelBuilder.Entity<Attend>()
@@ -72,14 +76,16 @@ namespace AdminMnsV1.Data
 
 
 
-            // Configuration de la relations entre Candidature - User
+            // ****************Configuration de la relations entre CANDIDATURE - USER - CLASS *********************
+
+            // Configuration de la relation Candidature - User
             modelBuilder.Entity<Candidature>()
                 .HasOne(c => c.User) // Une candidature a un utilisateur
                 .WithMany(u => u.Candidatures)// Un utilisateur peut avoir plusieurs candidatures
                 .HasForeignKey(c => c.UserId) // La clé étrangère est UserId
                 .OnDelete(DeleteBehavior.Cascade); // Si l'utilisateur est supprimé, toutes ses candidatures le seront aussi
 
-            // Configuration de la relation Candhasidature - SchoolClass
+            // Configuration de la relation Candidature - SchoolClass
             modelBuilder.Entity<Candidature>()
                  .HasOne(c => c.Class)
                  .WithMany()
@@ -91,8 +97,12 @@ namespace AdminMnsV1.Data
             modelBuilder.Entity<Candidature>()
                .HasOne(c => c.CandidatureStatus)
                 .WithMany(cs => cs.Candidatures)
-                .HasForeignKey(c => c.candidatureStatutId)
+                .HasForeignKey(c => c.CandidatureStatutId)
                 .OnDelete(DeleteBehavior.Restrict); // Si le statut de candidature est supprimé, toutes les candidatures associées le seront aussi
+
+
+
+            // ****************Configuration de la relations entre DOCUMENT - USER - CANDIDATURE *********************
 
 
             // Configuration de la relation Document - DocumentType
@@ -108,7 +118,9 @@ namespace AdminMnsV1.Data
                 .HasOne(d => d.StudentUser) // Navigation property vers l'User (qui est le Student)
                 .WithMany(u => u.Documents) // User doit avoir public ICollection<Document> Documents
                 .HasForeignKey(d => d.StudentId)
-                .OnDelete(DeleteBehavior.Cascade); // Si l'User est supprimé, ses documents sont supprimés
+                .OnDelete(DeleteBehavior.NoAction); // Si l'User est supprimé, ses documents sont supprimés
+            //Cela signifie que si un User(étudiant) est supprimé, la suppression sera bloquée
+            // si des documents directs lui sont encore liés.
 
             // Configuration de la relation Document - User (Administrator)
             modelBuilder.Entity<Documents>()
@@ -120,6 +132,24 @@ namespace AdminMnsV1.Data
                                                     // la suppression de cet utilisateur sera BLOQUÉE par la base de données.
                                                     // Tu devras d'abord mettre manuellement AdminId à NULL dans les documents concernés,
                                                     // ou supprimer les documents, avant de pouvoir supprimer l'administrateur.
+
+            // Configuration Relation Candidature - User (UserId)
+            modelBuilder.Entity<Candidature>()
+                .HasOne(c => c.User)
+                .WithMany(u => u.Candidatures) // Assure-toi que User a bien une ICollection<Candidature>
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade); // C'est souvent souhaitable ici : suppression user -> suppression candidatures
+
+            // Configuration Relation Documents - Candidature (CandidatureId) - La nouvelle FK
+            modelBuilder.Entity<Documents>()
+                .HasOne(d => d.Candidature)
+                .WithMany(c => c.Documents) // Assure-toi que Candidature a bien une ICollection<Documents>
+                .HasForeignKey(d => d.CandidatureId)
+                .IsRequired(false) // Si un document peut exister sans candidature (si tu as mis CandidatureId en int?)
+                .OnDelete(DeleteBehavior.NoAction); // <-- METS CELA À NOACTION (ou Restrict)
+                                                    // C'est crucial ici pour briser le cycle.
+                                                    // Si tu veux supprimer les documents avec la candidature, tu devras le gérer manuellement
+                                                    // dans ton code applicatif (avant de supprimer la candidature, tu supprimes ses documents liés).
 
 
 
