@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdminMnsV1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250521174042_InitialFullSchema")]
-    partial class InitialFullSchema
+    [Migration("20250523094109_NewInitialSetup")]
+    partial class NewInitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,26 +51,29 @@ namespace AdminMnsV1.Migrations
                     b.Property<DateTime>("CandidatureCreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("CandidatureStatusId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CandidatureValidationDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("ClassId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Progress")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("candidatureStatutId")
-                        .HasColumnType("int");
-
                     b.HasKey("CandidatureId");
+
+                    b.HasIndex("CandidatureStatusId");
 
                     b.HasIndex("ClassId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("candidatureStatutId");
 
                     b.ToTable("Candidatures");
                 });
@@ -90,7 +93,7 @@ namespace AdminMnsV1.Migrations
 
                     b.HasKey("CandidatureStatusId");
 
-                    b.ToTable("CandidatureStatus");
+                    b.ToTable("CandidatureStatuses");
                 });
 
             modelBuilder.Entity("AdminMnsV1.Models.Classes.SchoolClass", b =>
@@ -140,6 +143,24 @@ namespace AdminMnsV1.Migrations
                     b.ToTable("DocumentTypes");
                 });
 
+            modelBuilder.Entity("AdminMnsV1.Models.Documents.DocumentStatus", b =>
+                {
+                    b.Property<int>("DocumentStatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DocumentStatusId"));
+
+                    b.Property<string>("DocumentStatusName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("DocumentStatusId");
+
+                    b.ToTable("DocumentStatuses");
+                });
+
             modelBuilder.Entity("AdminMnsV1.Models.Documents.Documents", b =>
                 {
                     b.Property<int>("DocumentId")
@@ -151,10 +172,23 @@ namespace AdminMnsV1.Migrations
                     b.Property<string>("AdminId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("CandidatureId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DocumentDepositDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DocumentName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DocumentPath")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("DocumentStatusId")
+                        .HasColumnType("int");
 
                     b.Property<int>("DocumentTypeId")
                         .HasColumnType("int");
@@ -166,24 +200,13 @@ namespace AdminMnsV1.Migrations
                     b.Property<DateTime?>("ValidationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("documentDateStatutValidate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("documentDepositDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("documentName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("documentStatut")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("DocumentId");
 
                     b.HasIndex("AdminId");
+
+                    b.HasIndex("CandidatureId");
+
+                    b.HasIndex("DocumentStatusId");
 
                     b.HasIndex("DocumentTypeId");
 
@@ -459,13 +482,13 @@ namespace AdminMnsV1.Migrations
                     b.HasOne("AdminMnsV1.Models.Classes.SchoolClass", "Class")
                         .WithMany("Attends")
                         .HasForeignKey("ClasseId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("AdminMnsV1.Models.Students.Student", "Student")
                         .WithMany("Attends")
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Class");
@@ -475,6 +498,12 @@ namespace AdminMnsV1.Migrations
 
             modelBuilder.Entity("AdminMnsV1.Models.Candidature.Candidature", b =>
                 {
+                    b.HasOne("AdminMnsV1.Models.CandidatureStatus", "CandidatureStatus")
+                        .WithMany("Candidatures")
+                        .HasForeignKey("CandidatureStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("AdminMnsV1.Models.Classes.SchoolClass", "Class")
                         .WithMany()
                         .HasForeignKey("ClassId")
@@ -483,12 +512,6 @@ namespace AdminMnsV1.Migrations
                     b.HasOne("AdminMnsV1.Models.User", "User")
                         .WithMany("Candidatures")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AdminMnsV1.Models.CandidatureStatus", "CandidatureStatus")
-                        .WithMany("Candidatures")
-                        .HasForeignKey("candidatureStatutId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -503,7 +526,8 @@ namespace AdminMnsV1.Migrations
                 {
                     b.HasOne("AdminMnsV1.Models.Students.Student", null)
                         .WithMany("Classes")
-                        .HasForeignKey("StudentId");
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("AdminMnsV1.Models.Documents.Documents", b =>
@@ -511,7 +535,18 @@ namespace AdminMnsV1.Migrations
                     b.HasOne("AdminMnsV1.Models.User", "Admin")
                         .WithMany()
                         .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("AdminMnsV1.Models.Candidature.Candidature", "Candidature")
+                        .WithMany("Documents")
+                        .HasForeignKey("CandidatureId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("AdminMnsV1.Models.Documents.DocumentStatus", "DocumentStatus")
+                        .WithMany("Documents")
+                        .HasForeignKey("DocumentStatusId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("AdminMnsV1.Models.DocumentTypes.DocumentType", "DocumentType")
                         .WithMany("Documents")
@@ -522,10 +557,14 @@ namespace AdminMnsV1.Migrations
                     b.HasOne("AdminMnsV1.Models.User", "StudentUser")
                         .WithMany("Documents")
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Admin");
+
+                    b.Navigation("Candidature");
+
+                    b.Navigation("DocumentStatus");
 
                     b.Navigation("DocumentType");
 
@@ -537,7 +576,7 @@ namespace AdminMnsV1.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -546,7 +585,7 @@ namespace AdminMnsV1.Migrations
                     b.HasOne("AdminMnsV1.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -555,7 +594,7 @@ namespace AdminMnsV1.Migrations
                     b.HasOne("AdminMnsV1.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -564,13 +603,13 @@ namespace AdminMnsV1.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("AdminMnsV1.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -579,8 +618,13 @@ namespace AdminMnsV1.Migrations
                     b.HasOne("AdminMnsV1.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.Candidature.Candidature", b =>
+                {
+                    b.Navigation("Documents");
                 });
 
             modelBuilder.Entity("AdminMnsV1.Models.CandidatureStatus", b =>
@@ -594,6 +638,11 @@ namespace AdminMnsV1.Migrations
                 });
 
             modelBuilder.Entity("AdminMnsV1.Models.DocumentTypes.DocumentType", b =>
+                {
+                    b.Navigation("Documents");
+                });
+
+            modelBuilder.Entity("AdminMnsV1.Models.Documents.DocumentStatus", b =>
                 {
                     b.Navigation("Documents");
                 });

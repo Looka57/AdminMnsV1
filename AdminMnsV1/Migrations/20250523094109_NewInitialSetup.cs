@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AdminMnsV1.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialFullSchema : Migration
+    public partial class NewInitialSetup : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -68,7 +68,7 @@ namespace AdminMnsV1.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CandidatureStatus",
+                name: "CandidatureStatuses",
                 columns: table => new
                 {
                     CandidatureStatusId = table.Column<int>(type: "int", nullable: false)
@@ -77,7 +77,20 @@ namespace AdminMnsV1.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CandidatureStatus", x => x.CandidatureStatusId);
+                    table.PrimaryKey("PK_CandidatureStatuses", x => x.CandidatureStatusId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentStatuses",
+                columns: table => new
+                {
+                    DocumentStatusId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DocumentStatusName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentStatuses", x => x.DocumentStatusId);
                 });
 
             migrationBuilder.CreateTable(
@@ -110,8 +123,7 @@ namespace AdminMnsV1.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -131,8 +143,7 @@ namespace AdminMnsV1.Migrations
                         name: "FK_AspNetUserClaims_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -151,8 +162,7 @@ namespace AdminMnsV1.Migrations
                         name: "FK_AspNetUserLogins_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -169,14 +179,12 @@ namespace AdminMnsV1.Migrations
                         name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -195,8 +203,7 @@ namespace AdminMnsV1.Migrations
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -222,44 +229,6 @@ namespace AdminMnsV1.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Documents",
-                columns: table => new
-                {
-                    DocumentId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    documentName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    documentDepositDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    documentStatut = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    documentDateStatutValidate = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DocumentPath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    DocumentTypeId = table.Column<int>(type: "int", nullable: false),
-                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    AdminId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ValidationDate = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Documents", x => x.DocumentId);
-                    table.ForeignKey(
-                        name: "FK_Documents_AspNetUsers_AdminId",
-                        column: x => x.AdminId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Documents_AspNetUsers_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Documents_DocumentTypes_DocumentTypeId",
-                        column: x => x.DocumentTypeId,
-                        principalTable: "DocumentTypes",
-                        principalColumn: "DocumentTypeId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Attends",
                 columns: table => new
                 {
@@ -273,14 +242,12 @@ namespace AdminMnsV1.Migrations
                         name: "FK_Attends_AspNetUsers_StudentId",
                         column: x => x.StudentId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Attends_SchoolClass_ClasseId",
                         column: x => x.ClasseId,
                         principalTable: "SchoolClass",
-                        principalColumn: "ClasseId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ClasseId");
                 });
 
             migrationBuilder.CreateTable(
@@ -293,7 +260,8 @@ namespace AdminMnsV1.Migrations
                     CandidatureValidationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ClassId = table.Column<int>(type: "int", nullable: false),
-                    candidatureStatutId = table.Column<int>(type: "int", nullable: false)
+                    CandidatureStatusId = table.Column<int>(type: "int", nullable: false),
+                    Progress = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -303,11 +271,11 @@ namespace AdminMnsV1.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Candidatures_CandidatureStatus_candidatureStatutId",
-                        column: x => x.candidatureStatutId,
-                        principalTable: "CandidatureStatus",
+                        name: "FK_Candidatures_CandidatureStatuses_CandidatureStatusId",
+                        column: x => x.CandidatureStatusId,
+                        principalTable: "CandidatureStatuses",
                         principalColumn: "CandidatureStatusId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -315,6 +283,56 @@ namespace AdminMnsV1.Migrations
                         column: x => x.ClassId,
                         principalTable: "SchoolClass",
                         principalColumn: "ClasseId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Documents",
+                columns: table => new
+                {
+                    DocumentId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DocumentName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DocumentDepositDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DocumentStatusId = table.Column<int>(type: "int", nullable: false),
+                    DocumentPath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    DocumentTypeId = table.Column<int>(type: "int", nullable: false),
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AdminId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ValidationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CandidatureId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Documents", x => x.DocumentId);
+                    table.ForeignKey(
+                        name: "FK_Documents_AspNetUsers_AdminId",
+                        column: x => x.AdminId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Documents_AspNetUsers_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Documents_Candidatures_CandidatureId",
+                        column: x => x.CandidatureId,
+                        principalTable: "Candidatures",
+                        principalColumn: "CandidatureId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Documents_DocumentStatuses_DocumentStatusId",
+                        column: x => x.DocumentStatusId,
+                        principalTable: "DocumentStatuses",
+                        principalColumn: "DocumentStatusId");
+                    table.ForeignKey(
+                        name: "FK_Documents_DocumentTypes_DocumentTypeId",
+                        column: x => x.DocumentTypeId,
+                        principalTable: "DocumentTypes",
+                        principalColumn: "DocumentTypeId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -362,9 +380,9 @@ namespace AdminMnsV1.Migrations
                 column: "ClasseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Candidatures_candidatureStatutId",
+                name: "IX_Candidatures_CandidatureStatusId",
                 table: "Candidatures",
-                column: "candidatureStatutId");
+                column: "CandidatureStatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Candidatures_ClassId",
@@ -380,6 +398,16 @@ namespace AdminMnsV1.Migrations
                 name: "IX_Documents_AdminId",
                 table: "Documents",
                 column: "AdminId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Documents_CandidatureId",
+                table: "Documents",
+                column: "CandidatureId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Documents_DocumentStatusId",
+                table: "Documents",
+                column: "DocumentStatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Documents_DocumentTypeId",
@@ -419,22 +447,25 @@ namespace AdminMnsV1.Migrations
                 name: "Attends");
 
             migrationBuilder.DropTable(
-                name: "Candidatures");
-
-            migrationBuilder.DropTable(
                 name: "Documents");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "CandidatureStatus");
+                name: "Candidatures");
 
             migrationBuilder.DropTable(
-                name: "SchoolClass");
+                name: "DocumentStatuses");
 
             migrationBuilder.DropTable(
                 name: "DocumentTypes");
+
+            migrationBuilder.DropTable(
+                name: "CandidatureStatuses");
+
+            migrationBuilder.DropTable(
+                name: "SchoolClass");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
