@@ -7,6 +7,8 @@ namespace AdminMnsV1.Repositories.Interfaces
     {
         Task<IEnumerable<Documents>> GetDocumentsByCandidatureIdAsync(int candidatureId);
         Task<Documents> GetDocumentWithDetailsAsync(int documentId); // Pour inclure DocumentType, Candidature, User etc.
+        Task<int?> GetDocumentStatusIdByName(string statusName);
+
     }
-    
+
 }

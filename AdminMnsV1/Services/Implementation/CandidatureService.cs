@@ -9,7 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore; // Pour les includes
+using Microsoft.EntityFrameworkCore;
+using AdminMnsV1.Data.Repositories.Interfaces; // Pour les includes
 
 namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT : CORRESPOND AU USING DANS PROGRAM.CS
 {
@@ -38,7 +39,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
         public async Task<bool> CreateCandidatureAsync(CreateCandidatureViewModel model)
         {
             // 1. Vérifier si l'utilisateur existe déjà ou le créer
-            var user = await _userRepository.FindAsync(u => u.Email == model.Email).FirstOrDefault();
+            var user = (await _userRepository.FindAsync(u => u.Email == model.Email)).FirstOrDefault();
             if (user == null)
             {
                 user = new User
@@ -54,7 +55,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             }
 
             // 2. Récupérer le statut "En cours"
-            var enCoursStatus = await _candidatureStatusRepository.FindAsync(s => s.Label == "En cours").FirstOrDefault();
+            var enCoursStatus =( await _candidatureStatusRepository.FindAsync(s => s.Label == "En cours")).FirstOrDefault();
             if (enCoursStatus == null)
             {
                 throw new InvalidOperationException("Le statut 'En cours' n'existe pas dans la base de données.");
@@ -63,7 +64,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             // 3. Créer la candidature
             var candidature = new Candidature
             {
-                UserId = user.UserId, // L'ID de l'utilisateur créé ou trouvé
+                UserId = user.Id, // L'ID de l'utilisateur créé ou trouvé
                 ClassId = model.ClassId,
                 CandidatureCreationDate = DateTime.Now,
                 CandidatureStatusId = enCoursStatus.CandidatureStatusId, // Statut initial "En cours"
@@ -77,26 +78,29 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                 // 4. Créer les documents initialement requis avec le statut "Demandé"
                 if (model.RequiredDocumentTypeIds != null && model.RequiredDocumentTypeIds.Any())
                 {
+                    // Récupère l'ID du statut "Demandé" pour les documents
+                    var demandedDocumentStatusId = await _documentRepository.GetDocumentStatusIdByName("Demandé");
+                    if (demandedDocumentStatusId == null)
+                    {
+                        throw new InvalidOperationException("Le statut de document 'Demandé' n'existe pas dans la base de données.");
+                    }
+
                     foreach (var docTypeId in model.RequiredDocumentTypeIds)
                     {
-                        var documentType = await _documentTypeRepository.GetByIdAsync(docTypeId); // Obtenir le type de document réel
+                        var documentType = await _documentTypeRepository.GetByIdAsync(docTypeId);
                         if (documentType != null)
                         {
-                            var demandedStatusDocument = await _documentRepository.GetDocumentStatusIdByName("Demandé"); // Obtenir le statut "Demandé"
-                            if (demandedStatusDocument == null)
-                            {
-                                throw new InvalidOperationException("Le statut de document 'Demandé' n'existe pas.");
-                            }
-
-                            var document = new Document
+                            var document = new Documents
                             {
                                 CandidatureId = candidature.CandidatureId,
                                 DocumentTypeId = docTypeId,
-                                StudentId = user.UserId, // L'ID de l'utilisateur/étudiant
-                                documentStatut = "Demandé", // Statut initial
-                                DocumentPath = "N/A" // Pas de fichier initialement
+                                StudentId = user.Id,
+                                DocumentStatusId = (int)demandedDocumentStatusId, // CORRIGÉ : Utilise l'ID du statut, enlève .Value
+                                DocumentPath = "N/A", // Pas de fichier initialement
+                                DocumentName = "Document Initial", // Ajout d'un nom de document par défaut
+                                DocumentDepositDate = DateTime.Now // Ajout d'une date de dépôt par défaut
                             };
-                            _documentRepository.Add(document); // Utilise 'Add'
+                            _documentRepository.Add(document);
                         }
                     }
                     await _documentRepository.SaveChangesAsync();
@@ -118,7 +122,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
 
         public async Task<int?> GetCandidatureStatusIdByName(string statusName)
         {
-            var status = await _candidatureStatusRepository.FindAsync(s => s.Label == statusName).FirstOrDefault();
+            var status =(await _candidatureStatusRepository.FindAsync(s => s.Label == statusName)).FirstOrDefault();
             return status?.CandidatureStatusId;
         }
 

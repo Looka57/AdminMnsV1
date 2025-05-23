@@ -13,16 +13,20 @@ namespace AdminMnsV1.Models.Documents
         public int DocumentId { get; set; }
 
         [Required]
-        public string documentName { get; set; }
+        public string DocumentName { get; set; }
 
         [Required]
-        public DateTime documentDepositDate { get; set; }
+        public DateTime DocumentDepositDate { get; set; }
 
-        [Required]
-        public string documentStatut { get; set; }
+        //[Required]
+        //public string documentStatut { get; set; }
 
-        [Required]
-        public string documentDateStatutValidate { get; set; }
+        //[Required]
+        //public string documentDateStatutValidate { get; set; }
+
+        public int DocumentStatusId { get; set; } // Clé étrangère vers l'ID du statut du document
+        [ForeignKey("DocumentStatusId")]
+        public virtual DocumentStatus DocumentStatus { get; set; } 
 
         [Required]
         [StringLength(500)] // Adapte la longueur si les chemins sont très longs

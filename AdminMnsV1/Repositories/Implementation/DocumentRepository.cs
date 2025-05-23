@@ -29,5 +29,12 @@ namespace AdminMnsV1.Repositories.Implementation
                  .Include(d => d.StudentUser) // Si tu as besoin d'infos sur l'étudiant propriétaire
                  .FirstOrDefaultAsync(d => d.DocumentId == documentId);
             }
+
+        public async Task<int?> GetDocumentStatusIdByName(string statusName)
+        {
+            // Assure-toi que ton ApplicationDbContext a un DbSet<DocumentStatus>
+            var status = await _context.DocumentStatuses.FirstOrDefaultAsync(s => s.DocumentStatusName == statusName);
+            return status?.DocumentStatusId;
         }
+    }
     }

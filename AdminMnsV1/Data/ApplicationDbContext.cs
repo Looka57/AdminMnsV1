@@ -29,6 +29,8 @@ namespace AdminMnsV1.Data
 
         public DbSet<Documents> Documents { get; set; } // Représente la table "Documents"
         public DbSet<DocumentType> DocumentTypes { get; set; } // Représente la table "DocumentType"
+        public DbSet<DocumentStatus> DocumentStatuses { get; set; } //  Représente la table "DocumentStatuses"
+
 
 
 
@@ -38,10 +40,13 @@ namespace AdminMnsV1.Data
             base.OnModelCreating(modelBuilder);
 
 
-        //    modelBuilder.Entity<User>()
-        //.HasDiscriminator<string>("Discriminator")
-        //.HasValue<User>("User")
-        //.HasValue<Administrator>("Administrator");
+
+            // Désactiver la cascade par défaut pour toutes les relations non définies explicitement
+            // Cela réduit le risque de cycles cachés.
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = DeleteBehavior.NoAction;
+            }
 
 
             modelBuilder.Entity<User>()
@@ -83,7 +88,7 @@ namespace AdminMnsV1.Data
                 .HasOne(c => c.User) // Une candidature a un utilisateur
                 .WithMany(u => u.Candidatures)// Un utilisateur peut avoir plusieurs candidatures
                 .HasForeignKey(c => c.UserId) // La clé étrangère est UserId
-                .OnDelete(DeleteBehavior.Cascade); // Si l'utilisateur est supprimé, toutes ses candidatures le seront aussi
+                .OnDelete(DeleteBehavior.Restrict); 
 
             // Configuration de la relation Candidature - SchoolClass
             modelBuilder.Entity<Candidature>()
@@ -97,7 +102,7 @@ namespace AdminMnsV1.Data
             modelBuilder.Entity<Candidature>()
                .HasOne(c => c.CandidatureStatus)
                 .WithMany(cs => cs.Candidatures)
-                .HasForeignKey(c => c.CandidatureStatutId)
+                .HasForeignKey(c => c.CandidatureStatusId)
                 .OnDelete(DeleteBehavior.Restrict); // Si le statut de candidature est supprimé, toutes les candidatures associées le seront aussi
 
 
@@ -118,7 +123,7 @@ namespace AdminMnsV1.Data
                 .HasOne(d => d.StudentUser) // Navigation property vers l'User (qui est le Student)
                 .WithMany(u => u.Documents) // User doit avoir public ICollection<Document> Documents
                 .HasForeignKey(d => d.StudentId)
-                .OnDelete(DeleteBehavior.NoAction); // Si l'User est supprimé, ses documents sont supprimés
+                .OnDelete(DeleteBehavior.Restrict); // Si l'User est supprimé, ses documents sont supprimés
             //Cela signifie que si un User(étudiant) est supprimé, la suppression sera bloquée
             // si des documents directs lui sont encore liés.
 
@@ -128,28 +133,22 @@ namespace AdminMnsV1.Data
                 .WithMany() // L'entité User n'a pas forcément une collection "ValidatedDocuments" si tu ne l'as pas ajoutée. C'est OK.
                 .HasForeignKey(d => d.AdminId)
                 .IsRequired(false) // Permet à AdministratorId d'être NULL
-                .OnDelete(DeleteBehavior.NoAction); // Si l'admin est supprimé  si tu tentes de supprimer un utilisateur qui est référencé comme AdminId dans un document,
-                                                    // la suppression de cet utilisateur sera BLOQUÉE par la base de données.
-                                                    // Tu devras d'abord mettre manuellement AdminId à NULL dans les documents concernés,
-                                                    // ou supprimer les documents, avant de pouvoir supprimer l'administrateur.
+                .OnDelete(DeleteBehavior.Restrict); 
 
             // Configuration Relation Candidature - User (UserId)
             modelBuilder.Entity<Candidature>()
                 .HasOne(c => c.User)
                 .WithMany(u => u.Candidatures) // Assure-toi que User a bien une ICollection<Candidature>
                 .HasForeignKey(c => c.UserId)
-                .OnDelete(DeleteBehavior.Cascade); // C'est souvent souhaitable ici : suppression user -> suppression candidatures
+                .OnDelete(DeleteBehavior.Restrict); // C'est souvent souhaitable ici : suppression user -> suppression candidatures
 
             // Configuration Relation Documents - Candidature (CandidatureId) - La nouvelle FK
             modelBuilder.Entity<Documents>()
                 .HasOne(d => d.Candidature)
                 .WithMany(c => c.Documents) // Assure-toi que Candidature a bien une ICollection<Documents>
                 .HasForeignKey(d => d.CandidatureId)
-                .IsRequired(false) // Si un document peut exister sans candidature (si tu as mis CandidatureId en int?)
-                .OnDelete(DeleteBehavior.NoAction); // <-- METS CELA À NOACTION (ou Restrict)
-                                                    // C'est crucial ici pour briser le cycle.
-                                                    // Si tu veux supprimer les documents avec la candidature, tu devras le gérer manuellement
-                                                    // dans ton code applicatif (avant de supprimer la candidature, tu supprimes ses documents liés).
+                .IsRequired(false) // Si un document peut exister sans candidature 
+                .OnDelete(DeleteBehavior.Restrict); 
 
 
 

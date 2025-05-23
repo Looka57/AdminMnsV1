@@ -30,7 +30,10 @@ namespace AdminMnsV1.Models.ViewModels
         [Required(ErrorMessage = "Veuillez sélectionner au moins un document.")]
         public List<int> SelectedDocumentTypeIds { get; set; } = new List<int>(); // Liste des IDs des types de documents sélectionnés
 
-        // Liste des types de documents disponibles pour le dropDown
-        public List<SelectListItem> AvailableDocumentTypes { get; set; } = new List<SelectListItem>();
+        // Elle contiendra les IDs des types de documents que l'utilisateur doit fournir pour cette candidature.
+        public List<int>? RequiredDocumentTypeIds { get; set; }
+
+        // Optionnel : Pour afficher les types de documents disponibles (si tu les laisses choisir)
+        public IEnumerable<SelectListItem>? AvailableDocumentTypes { get; set; }
     }
 }

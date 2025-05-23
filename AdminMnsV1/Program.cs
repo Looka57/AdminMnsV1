@@ -1,84 +1,89 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using AdminMnsV1.Data;
-using AdminMnsV1.Models;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using AdminMnsV1.Repositories.Interfaces;
-using AdminMnsV1.Services.Interfaces;
-using AdminMnsV1.Repositories.Implementation;
-using AdminMnsV1.Services.Implementation;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using AdminMnsV1.Models; // Spécifique pour le modèle User
+using AdminMnsV1.Models.Candidature; // Spécifique pour Candidature et CandidatureStatus
+using AdminMnsV1.Models.Documents; // Spécifique pour Document et DocumentType
+using AdminMnsV1.Models.Classes; // Spécifique pour SchoolClass
+using AdminMnsV1.Models.ViewModels; // Spécifique pour les ViewModels si tu en as
+using AdminMnsV1.Models.Experts; // Si tu as un modèle Expert
+using AdminMnsV1.Models.Students; // Si tu as un modèle Student
+
+// Usings pour les interfaces et implémentations de Repositories et Services (les chemins harmonisés)
+using AdminMnsV1.Data.Repositories.Interfaces;
+using AdminMnsV1.Data.Repositories.Implementation;
 using AdminMnsV1.Application.Services.Interfaces;
 using AdminMnsV1.Application.Services.Implementation;
-using AdminMnsV1.Data.Repositories.Implementation;
-using AdminMnsV1.Data.Repositories.Interfaces;
-
-
+using AdminMnsV1.Repositories.Interfaces;
+using AdminMnsV1.Services.Interfaces;
+using AdminMnsV1.Services.Implementation;
+using AdminMnsV1.Repositories.Implementation;
+using AdminMnsV1.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+// Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages(); // Nécessaire pour les pages Identity (même si non scaffoldées)
-// Ces lignes enregistrent les services nécessaires pour que MVC (Modèle-Vue-Contrôleur) et les pages Razor (utilisées par Identity) fonctionnent dans l' application.
+builder.Services.AddRazorPages();
 
 // Enregistrement du DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-//C'est la configuration de Entity Framework Core. Il utiliser SQL Server et se connecte à la base de données via la chaîne de connexion "DefaultConnection" (définie dans appsettings.json).
-//****ApplicationDbContext est votre pont vers la base de données.
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-//AddScoped signifie qu'une nouvelle instance du service sera créée pour chaque requête HTTP
-// Enregistrement des Repositories
-builder.Services.AddScoped<IStudentRepository, StudentRepository>(); // Interface vers Implémentation
-builder.Services.AddScoped<IClassRepository, ClassRepository>();    
-
-// Enregistrement des Services
-builder.Services.AddScoped<IStudentService, StudentService>();      
-builder.Services.AddScoped<IClassService, ClassService>();
-builder.Services.AddScoped<IDashboardService, DashboardService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>(); 
-
-// Enregistrement des Services
-builder.Services.AddScoped<ICandidatureService, CandidatureService>();
-
-
-
-//C'est la configuration clé d'ASP.NET Core Identity.
+// Configuration d'ASP.NET Core Identity
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
-    // Options de connexion
-    options.SignIn.RequireConfirmedAccount = false; // <<< MIS À FALSE TEMPORAIREMENT POUR LE DÉBOGAGE
-                                                    // Cela désactive la vérification de confirmation d'email
-
-    // Options de mot de passe
-    //Ce sont les règles de complexité pour les mots de passe des utilisateurs.
+    options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 8;
-
-    // Options de verrouillage du compte
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
 })
-    .AddEntityFrameworkStores<ApplicationDbContext>() //C'est la configuration clé d'ASP.NET Core Identity.
-                                                      //Identity stocke toutes ses données (utilisateurs, mots de passe hachés, rôles, revendications) dans ApplicationDbContext, et donc dans la base de données SQL Server.
-    .AddDefaultTokenProviders(); // Nécessaire pour la génération de tokens (réinitialisation mdp, confirmation email)
-
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
 // Configurez le cookie d'application Identity
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Home/Login";          // Votre page de connexion
-    options.LogoutPath = "/Home/Logout";        // Votre page de déconnexion
-    options.AccessDeniedPath = "/Home/AccessDenied"; // Votre page d'accès refusé erreur 404
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(180); // Durée de vie du cookie
-    options.SlidingExpiration = true;          // Renouvelle le cookie à chaque requête s'il est à mi-vie
+    options.LoginPath = "/Home/Login";
+    options.LogoutPath = "/Home/Logout";
+    options.AccessDeniedPath = "/Home/AccessDenied";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(180);
+    options.SlidingExpiration = true;
 });
+
+
+// ***********************************************************************************
+// ENREGISTREMENT DES REPOSITORIES ET SERVICES (AVEC LA LIGNE CRUCIALE DU GÉNÉRIQUE)
+// ***********************************************************************************
+
+// ENREGISTREMENT CRUCIAL DU REPOSITORY GÉNÉRIQUE
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+// Enregistrement des Repositories spécifiques
+// Assure-toi que TOUS les repositories spécifiques que tu as créés sont enregistrés ici
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<IClassRepository, ClassRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICandidatureRepository, CandidatureRepository>();
+builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
+builder.Services.AddScoped<IDocumentTypeRepository, DocumentTypeRepository>();
+// Si tu as d'autres repositories spécifiques (ex: ICandidatureStatusRepository), ajoute-les ici.
+// Sinon, IGenericRepository<CandidatureStatus> sera résolu par la ligne AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+// Enregistrement des Services
+// Assure-toi que TOUS les services que tu as créés sont enregistrés ici
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IClassService, ClassService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>(); // Si ce service existe
+builder.Services.AddScoped<ICandidatureService, CandidatureService>();
+builder.Services.AddScoped<IDocumentService, DocumentService>();
+builder.Services.AddScoped<IDocumentTypeService, DocumentTypeService>();
+// Si tu as d'autres services spécifiques (ex: ICandidatureStatusService), ajoute-les ici.
 
 
 var app = builder.Build();
@@ -91,20 +96,15 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); //Permet à application de servir des fichiers statiques comme les fichiers CSS (~/css/) et                  JavaScript (~/js/) qui sont listés dans le _Layout.cshtml.
+app.UseStaticFiles();
 
-app.UseRouting(); //Permet au middleware de routage d'identifier la bonne "endpoint" (le contrôleur et l'action) pour   une requête entrante.
+app.UseRouting();
 
-//*****C'est l'ordre le plus important pour Identity.******
 // Middleware d'authentification et d'autorisation DANS LE BON ORDRE
-app.UseAuthentication(); // Gère l'authentification des utilisateurs (à partir du cookie d'authentification, par        exemple).
-app.UseAuthorization();  // Gère l'autorisation des utilisateurs Vérifie si l'utilisateur identifié a la permission d'accéder à la ressource demandée. L'authentification doit toujours précéder l'autorisation.
+app.UseAuthentication();
+app.UseAuthorization();
 
-
-
-//************* création des rôles au démarrage de l'application ****************
-
-//est un excellent moyen de s'assurer que les rôles ("Admin", "Expert", "Student") existent dans la base de données au démarrage de l'application. C'est essentiel pour que User.IsInRole() fonctionne. 
+// Création des rôles et de l'utilisateur admin au démarrage
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -118,35 +118,29 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    //     // ---LE CODE SUIVANT  POUR CRÉER L'UTILISATEUR ADMIN PAR DÉFAUT ---
-    string adminEmail = "admin@mns.com"; // L'email de votre administrateur
-    string adminPassword = "VotreMotDePasseAdmin123!"; //
+    string adminEmail = "admin@mns.com";
+    string adminPassword = "VotreMotDePasseAdmin123!"; // CHANGE CE MOT DE PASSE EN PRODUCTION !
     string adminRole = "Admin";
 
-    // Vérifie si l'utilisateur admin existe déjà
     if (await userManager.FindByNameAsync(adminEmail) == null)
     {
-        var adminUser = new User // Utilisez votre modèle d'utilisateur 'User'
+        var adminUser = new User
         {
             UserName = adminEmail,
             Email = adminEmail,
-            EmailConfirmed = true, // Indique que l'email est déjà confirmé
-            Status = "Null"
-
+            EmailConfirmed = true,
+            Status = "Null" // Assure-toi que cette propriété existe dans ton modèle User
         };
 
-        // Tente de créer l'utilisateur
         var result = await userManager.CreateAsync(adminUser, adminPassword);
 
         if (result.Succeeded)
         {
-            // Si la création est réussie, assigne l'utilisateur au rôle Admin
             await userManager.AddToRoleAsync(adminUser, adminRole);
             Console.WriteLine($"Utilisateur '{adminEmail}' créé et assigné au rôle '{adminRole}'.");
         }
         else
         {
-            // Affiche les erreurs si la création a échoué
             Console.WriteLine($"Erreur lors de la création de l'utilisateur admin :");
             foreach (var error in result.Errors)
             {
@@ -160,11 +154,10 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.MapRazorPages(); // Permet aux pages Razor de fonctionner
+app.MapRazorPages();
 
-    // Définit la route par défaut de votre application, qui dirigera les requêtes vers Home/Login si aucun contrôleur/action n'est spécifié.
-    app.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Login}/{id?}");
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Login}/{id?}");
 
-    app.Run();
+app.Run();

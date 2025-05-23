@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using AdminMnsV1.Services.Interfaces; // Pour IClassService
 using AdminMnsV1.Models.ViewModels; // IMPORTANT : Pour ClassListViewModel
 using System.Threading.Tasks;
+using AdminMnsV1.Application.Services.Interfaces;
 
 namespace AdminMnsV1.Controllers
 {

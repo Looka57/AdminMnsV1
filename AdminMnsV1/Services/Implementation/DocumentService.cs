@@ -1,18 +1,22 @@
 ﻿using AdminMnsV1.Models.Documents;
-using AdminMnsV1.Repositories.Interfaces;
+using AdminMnsV1.Repositories.Interfaces; // Utilise le chemin correct pour les interfaces de repositories (corrigé ici aussi)
 using Microsoft.EntityFrameworkCore;
-using AdminMnsV1.Services.Interfaces; // L'interface IDocumentService
-using System.IO; // Pour Stream
+using AdminMnsV1.Application.Services.Interfaces; // Utilise le chemin correct pour les interfaces de services
+using System.IO;
 using System.Threading.Tasks;
+using System.Linq; // Pour Count(), Any(), All()
+using System;
+using AdminMnsV1.Services.Interfaces; // Pour Math.Round
+// J'ai vu AdminMnsV1.Services.Interfaces dans ton code, mais il n'est pas utilisé ici directement pour Math.Round.
+// Je l'ai gardé pour éviter des breaking changes si tu en as besoin ailleurs.
 
-namespace AdminMnsV1.Services.Implementation
+namespace AdminMnsV1.Application.Services.Implementation
 {
     public class DocumentService : IDocumentService
     {
-        private readonly IDocumentRepository _documentRepository;// Si besoin de CandidatureService pour mettre à jour la progression
-        private readonly ICandidatureRepository _candidatureRepository;  // Une dépendance pour stocker physiquement le fichier (par exemple, un service de stockage de                                                             fichiers)
-        private readonly string _uploadFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "documents"); // Chemin où stocker les fichiers
-
+        private readonly IDocumentRepository _documentRepository;
+        private readonly ICandidatureRepository _candidatureRepository;
+        private readonly string _uploadFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "documents");
 
         public DocumentService(IDocumentRepository documentRepository, ICandidatureRepository candidatureRepository)
         {
@@ -25,13 +29,12 @@ namespace AdminMnsV1.Services.Implementation
             }
         }
 
-
         public async Task<IEnumerable<Documents>> GetAllDocumentsAsync()
         {
             return await _documentRepository.GetAllAsync();
         }
 
-        public async Task<Documents> GetDocumentByIdAsync(int id)
+        public async Task<Documents?> GetDocumentByIdAsync(int id)
         {
             return await _documentRepository.GetByIdAsync(id);
         }
@@ -41,8 +44,6 @@ namespace AdminMnsV1.Services.Implementation
             return await _documentRepository.GetDocumentsByCandidatureIdAsync(candidatureId);
         }
 
-
-
         public async Task<bool> UpdateDocumentStatusAsync(int documentId, string newStatus)
         {
             var document = await _documentRepository.GetDocumentWithDetailsAsync(documentId);
@@ -51,7 +52,13 @@ namespace AdminMnsV1.Services.Implementation
                 return false;
             }
 
-            document.documentStatut = newStatus;
+            var newStatusId = await _documentRepository.GetDocumentStatusIdByName(newStatus);
+            if (newStatusId == null)
+            {
+                throw new InvalidOperationException($"Le statut de document '{newStatus}' n'existe pas dans la base de données.");
+            }
+
+            document.DocumentStatusId = (int)newStatusId; // CORRIGÉ : Cast direct après null check, enlève .Value
             _documentRepository.Update(document);
             var saved = await _documentRepository.SaveChangesAsync();
 
@@ -59,11 +66,9 @@ namespace AdminMnsV1.Services.Implementation
             {
                 var candidatureDocuments = await _documentRepository.GetDocumentsByCandidatureIdAsync(document.CandidatureId);
                 int totalDocuments = candidatureDocuments.Count();
-                int validatedDocuments = candidatureDocuments.Count(d => d.documentStatut == "Validé");
 
+                int validatedDocuments = candidatureDocuments.Count(d => d.DocumentStatus?.DocumentStatusName == "Validé");
 
-                // Recalculer la progression de la candidature après la mise à jour du statut d'un document
-                // Cela nécessitera d'accéder aux documents de la candidature
                 if (totalDocuments > 0)
                 {
                     document.Candidature.Progress = (int)Math.Round((double)validatedDocuments / totalDocuments * 100);
@@ -73,19 +78,28 @@ namespace AdminMnsV1.Services.Implementation
                     document.Candidature.Progress = 0;
                 }
 
+                // Récupère les IDs des statuts de candidature
+                int? valideCandidatureStatusIdNullable = await _candidatureRepository.GetCandidatureStatusIdByName("Validé");
+                int? refuseCandidatureStatusIdNullable = await _candidatureRepository.GetCandidatureStatusIdByName("Refusé");
+                int? enCoursCandidatureStatusIdNullable = await _candidatureRepository.GetCandidatureStatusIdByName("En cours");
+
+                // Utilise la propriété .Value de manière sécurisée ou le null-coalescing operator
+                int valideCandidatureStatusId = valideCandidatureStatusIdNullable ?? throw new InvalidOperationException("Statut 'Validé' de candidature introuvable.");
+                int refuseCandidatureStatusId = refuseCandidatureStatusIdNullable ?? throw new InvalidOperationException("Statut 'Refusé' de candidature introuvable.");
+                int enCoursCandidatureStatusId = enCoursCandidatureStatusIdNullable ?? throw new InvalidOperationException("Statut 'En cours' de candidature introuvable.");
+
+
                 if (validatedDocuments == totalDocuments && totalDocuments > 0)
                 {
-                    document.Candidature.CandidatureStatutId = (await _candidatureRepository.GetCandidatureStatusIdByName("Validé")).Value;
+                    document.Candidature.CandidatureStatusId = valideCandidatureStatusId;
                 }
-                else if (candidatureDocuments.Any(d => d.documentStatut == "Refusé"))
+                else if (candidatureDocuments.Any(d => d.DocumentStatus?.DocumentStatusName == "Refusé"))
                 {
-                    document.Candidature.CandidatureStatutId = (await _candidatureRepository.GetCandidatureStatusIdByName("Refusé")).Value;
+                    document.Candidature.CandidatureStatusId = refuseCandidatureStatusId;
                 }
-                else if (document.Candidature.CandidatureStatutId != (await _candidatureRepository.GetCandidatureStatusIdByName("En cours")).Value)
+                else
                 {
-                    // Si ce n'est pas "En cours", et qu'il n'y a pas de documents refusés, on peut le remettre en cours.
-                    // Attention : ce statut dépendra de ta logique métier.
-                    document.Candidature.CandidatureStatutId = (await _candidatureRepository.GetCandidatureStatusIdByName("En cours")).Value;
+                    document.Candidature.CandidatureStatusId = enCoursCandidatureStatusId;
                 }
 
                 _candidatureRepository.Update(document.Candidature);
@@ -96,23 +110,16 @@ namespace AdminMnsV1.Services.Implementation
 
         public async Task<bool> UploadDocumentAsync(int candidatureId, int documentTypeId, string studentId, Stream fileStream, string fileName)
         {
-
-            //Vérifier si le document existe déjà ou créer un nouvel enregistrement
             var documentToUpdate = (await _documentRepository.FindAsync(d =>
-            d.CandidatureId == candidatureId &&
-            d.DocumentTypeId == documentTypeId &&
-            d.StudentId == studentId))
-            .FirstOrDefault();
+                d.CandidatureId == candidatureId &&
+                d.DocumentTypeId == documentTypeId &&
+                d.StudentId == studentId)).FirstOrDefault();
 
             if (documentToUpdate == null)
             {
-                // Si le document n'existe pas ou n'est pas le bon type pour cet étudiant/candidature
-                // C'est ici que tu devras décider si un upload crée un nouveau document inattendu ou rejette.
-                // Pour l'exemple, on suppose qu'il doit exister un document en statut "Demandé" ou "Refusé" pour être uploadé.
                 return false;
             }
 
-            // Si le document existe déjà, on met à jour son statut et son fichier
             var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(fileName);
             var filePath = Path.Combine(_uploadFolderPath, uniqueFileName);
 
@@ -121,25 +128,27 @@ namespace AdminMnsV1.Services.Implementation
                 await fileStream.CopyToAsync(outputStream);
             }
 
-            // Mettre à jour les propriétés du document dans la base de données
             documentToUpdate.DocumentPath = "/documents/" + uniqueFileName;
-            documentToUpdate.documentDepositDate = DateTime.Now;
-            documentToUpdate.documentStatut = "Déposé"; // Statut initial après dépôt par le candidat
+            documentToUpdate.DocumentDepositDate = DateTime.Now;
 
+            var deposeStatusId = await _documentRepository.GetDocumentStatusIdByName("Déposé");
+            if (deposeStatusId == null)
+            {
+                throw new InvalidOperationException("Le statut de document 'Déposé' n'existe pas dans la base de données.");
+            }
+            documentToUpdate.DocumentStatusId = (int)deposeStatusId; // CORRIGÉ : Cast direct après null check, enlève .Value
 
             _documentRepository.Update(documentToUpdate);
-                var saved = await _documentRepository.SaveChangesAsync();
+            var saved = await _documentRepository.SaveChangesAsync();
 
-            // Après le dépôt, recalcule la progression de la candidature et met à jour son statut si nécessaire
             if (saved > 0)
             {
-                // Cette logique est la même que dans UpdateDocumentStatusAsync, tu pourrais la factoriser
                 var candidature = await _candidatureRepository.GetByIdAsync(candidatureId);
                 if (candidature != null)
                 {
                     var candidatureDocuments = await _documentRepository.GetDocumentsByCandidatureIdAsync(candidatureId);
                     int totalDocuments = candidatureDocuments.Count();
-                    int validatedDocuments = candidatureDocuments.Count(d => d.documentStatut == "Validé");
+                    int validatedDocuments = candidatureDocuments.Count(d => d.DocumentStatus?.DocumentStatusName == "Validé");
 
                     if (totalDocuments > 0)
                     {
@@ -150,32 +159,33 @@ namespace AdminMnsV1.Services.Implementation
                         candidature.Progress = 0;
                     }
 
-                    // Mettre à jour le statut global de la candidature
-                    // Cette partie doit être robuste et correspondre à ta logique métier exacte
-                    if (candidatureDocuments.Any(d => d.documentStatut == "Refusé"))
+                    int? valideCandidatureStatusIdNullable = await _candidatureRepository.GetCandidatureStatusIdByName("Validé");
+                    int? refuseCandidatureStatusIdNullable = await _candidatureRepository.GetCandidatureStatusIdByName("Refusé");
+                    int? enCoursCandidatureStatusIdNullable = await _candidatureRepository.GetCandidatureStatusIdByName("En cours");
+
+                    int valideCandidatureStatusId = valideCandidatureStatusIdNullable ?? throw new InvalidOperationException("Statut 'Validé' de candidature introuvable.");
+                    int refuseCandidatureStatusId = refuseCandidatureStatusIdNullable ?? throw new InvalidOperationException("Statut 'Refusé' de candidature introuvable.");
+                    int enCoursCandidatureStatusId = enCoursCandidatureStatusIdNullable ?? throw new InvalidOperationException("Statut 'En cours' de candidature introuvable.");
+
+
+                    if (candidatureDocuments.Any(d => d.DocumentStatus?.DocumentStatusName == "Refusé"))
                     {
-                        candidature.CandidatureStatutId = (await _candidatureRepository.GetCandidatureStatusIdByName("Refusé")).Value;
+                        candidature.CandidatureStatusId = refuseCandidatureStatusId;
                     }
-                    else if (candidatureDocuments.All(d => d.documentStatut == "Validé"))
+                    else if (candidatureDocuments.All(d => d.DocumentStatus?.DocumentStatusName == "Validé"))
                     {
-                        candidature.CandidatureStatutId = (await _candidatureRepository.GetCandidatureStatusIdByName("Validé")).Value;
+                        candidature.CandidatureStatusId = valideCandidatureStatusId;
                     }
                     else
                     {
-                        candidature.CandidatureStatutId = (await _candidatureRepository.GetCandidatureStatusIdByName("En cours")).Value;
+                        candidature.CandidatureStatusId = enCoursCandidatureStatusId;
                     }
 
                     _candidatureRepository.Update(candidature);
                     await _candidatureRepository.SaveChangesAsync();
                 }
             }
-
             return saved > 0;
-
-
-
-
-
         }
     }
 }

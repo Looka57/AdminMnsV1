@@ -30,9 +30,10 @@ namespace AdminMnsV1.Models.Candidature
         public SchoolClass? Class { get; set; }
 
         //Clé étrangère vers CandidatureStatus
-        public int CandidatureStatutId { get; set; }
-        [ForeignKey("candidatureStatutId")]
+        public int CandidatureStatusId { get; set; } 
+        [ForeignKey("CandidatureStatusId")] // 
         public CandidatureStatus CandidatureStatus { get; set; }
+
 
         // Relation de navigation pour les documents liés à cette candidature
         public virtual ICollection<Documents.Documents>? Documents { get; set; }
