@@ -39,7 +39,7 @@ namespace AdminMnsV1.Repositories.Implementation
         }
 
         // Attention, tu avais AddRang au lieu de AddRange
-        public void AddRange(IEnumerable<T> entities) // <-- Correction ici
+        public void AddRange(IEnumerable<T> entities) 
         {
             _dbSet.AddRange(entities);
         }

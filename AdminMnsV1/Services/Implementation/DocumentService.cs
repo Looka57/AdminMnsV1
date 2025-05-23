@@ -44,6 +44,61 @@ namespace AdminMnsV1.Application.Services.Implementation
             return await _documentRepository.GetDocumentsByCandidatureIdAsync(candidatureId);
         }
 
+        // NOUVELLE MÉTHODE POUR LA CRÉATION DE DOCUMENT AVEC UPLOAD DE FICHIER
+
+        public async Task<(bool Success, string ErrorMessage)> CreateDocumentAsync(Documents document, IFormFile file, string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return (false, "L'ID de l'utilisateur n'est pas fourni.");
+            }
+            document.StudentId = userId;
+
+            if (document.DocumentDepositDate == default(DateTime))
+            {
+                document.DocumentDepositDate = DateTime.Now;
+            }
+
+
+            if (file == null || file.Length == 0)
+            {
+                return (false, "Aucun fichier n'a été fourni.");
+            }
+
+            var uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+            var filePath = Path.Combine(_uploadFolderPath, uniqueFileName);
+
+            try
+            {
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+
+                document.DocumentPath = "/document" + uniqueFileName; //Chemin relatif pour l'accès web
+                _documentRepository.Add(document);
+                await _documentRepository.SaveChangesAsync();
+
+                if (document.CandidatureId > 0) // Vérifie si le document est lié à une candidature
+                {
+                    await UpdateCandidatureProgressAndStatus(document.CandidatureId);
+                }
+
+                return (true, null);
+
+            }
+            catch (Exception ex)
+            {
+                // En cas d'erreur de base de données, nettoyer le fichier uploadé si nécessaire
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                }
+                return (false, $"Erreur lors de la création du document : {ex.Message}");
+            }
+        }
+
+
         public async Task<bool> UpdateDocumentStatusAsync(int documentId, string newStatus)
         {
             var document = await _documentRepository.GetDocumentWithDetailsAsync(documentId);
@@ -187,5 +242,87 @@ namespace AdminMnsV1.Application.Services.Implementation
             }
             return saved > 0;
         }
+        public async Task UpdateDocumentAsync(Documents document)
+        {
+            _documentRepository.Update(document);
+            await _documentRepository.SaveChangesAsync();
+
+            if (document.CandidatureId > 0) // Si 0 n'est pas un ID de candidature valide
+            {
+                await UpdateCandidatureProgressAndStatus(document.CandidatureId); // Accès direct à l'int
+            }
+        }
+
+        public async Task DeleteDocumentAsync(int id)
+        {
+            var documentToDelete = await _documentRepository.GetByIdAsync(id); // Utilise GetByIdAsync du générique
+            if (documentToDelete != null)
+            {
+                _documentRepository.Remove(documentToDelete); // Utilise Remove() du GenericRepository
+                await _documentRepository.SaveChangesAsync(); // Sauvegarde les changements après la suppression
+                // Si la suppression d'un document impacte la candidature, recalcule la progression
+                if (documentToDelete.CandidatureId > 0)
+                {
+                    await UpdateCandidatureProgressAndStatus(documentToDelete.CandidatureId);
+                }
+            }
+        }
+
+        public async Task<bool> DocumentExistsAsync(int id)
+        {
+            return await _documentRepository.GetByIdAsync(id) != null; // Utilise GetByIdAsync du générique
+        }
+
+        // -------------------------------------------------
+
+        // Méthode utilitaire privée pour mettre à jour la progression et le statut de la candidature
+        private async Task UpdateCandidatureProgressAndStatus(int candidatureId)
+        {
+            var candidature = await _candidatureRepository.GetByIdAsync(candidatureId);
+            if (candidature == null)
+            {
+                return;
+            }
+
+            var candidatureDocuments = await _documentRepository.GetDocumentsByCandidatureIdAsync(candidatureId);
+            int totalDocuments = candidatureDocuments.Count();
+            int validatedDocuments = candidatureDocuments.Count(d => d.DocumentStatus?.DocumentStatusName == "Validé");
+            int refusedDocuments = candidatureDocuments.Count(d => d.DocumentStatus?.DocumentStatusName == "Refusé");
+
+            if (totalDocuments > 0)
+            {
+                candidature.Progress = (int)Math.Round((double)validatedDocuments / totalDocuments * 100);
+            }
+            else
+            {
+                candidature.Progress = 0;
+            }
+
+            int valideCandidatureStatusId = (await _candidatureRepository.GetCandidatureStatusIdByName("Validé"))
+                                             ?? throw new InvalidOperationException("Statut 'Validé' de candidature introuvable.");
+            int refuseCandidatureStatusId = (await _candidatureRepository.GetCandidatureStatusIdByName("Refusé"))
+                                             ?? throw new InvalidOperationException("Statut 'Refusé' de candidature introuvable.");
+            int enCoursCandidatureStatusId = (await _candidatureRepository.GetCandidatureStatusIdByName("En cours"))
+                                              ?? throw new InvalidOperationException("Statut 'En cours' de candidature introuvable.");
+
+            if (refusedDocuments > 0)
+            {
+                candidature.CandidatureStatusId = refuseCandidatureStatusId;
+            }
+            else if (validatedDocuments == totalDocuments && totalDocuments > 0)
+            {
+                candidature.CandidatureStatusId = valideCandidatureStatusId;
+            }
+            else
+            {
+                candidature.CandidatureStatusId = enCoursCandidatureStatusId;
+            }
+
+            _candidatureRepository.Update(candidature);
+            await _candidatureRepository.SaveChangesAsync();
+        }
+
+
+
     }
 }
