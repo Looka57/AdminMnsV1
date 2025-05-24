@@ -1,15 +1,16 @@
-﻿// Repositories/Interfaces/IClassRepository.cs
-using AdminMnsV1.Models.Classes;
-using System.Collections.Generic;
+﻿using AdminMnsV1.Models.Classes;
+using System.Collections.Generic; // IMPORTANT : utiliser System.Collections.Generic pour IEnumerable<T>
 using System.Threading.Tasks;
 
 namespace AdminMnsV1.Repositories.Interfaces
 {
-    public interface IClassRepository
+    // IClassRepository hérite de notre IGenericRepository pour toutes les opérations de base
+    public interface IClassRepository : IGenericRepository<SchoolClass>
     {
-        Task<List<SchoolClass>> GetAllClassesAsync();
-        Task<SchoolClass?> GetClassByIdAsync(int id);
-        // Nouvelle méthode pour obtenir les classes avec le nombre d'étudiants
-        Task<List<object>> GetClassesWithStudentCountsAsync(); // On utilise object ici pour la flexibilité initiale
+        // Méthode spécifique aux classes, avec le bon type de retour générique
+        Task<IEnumerable<SchoolClass>> GetAllClassesAsync();
+
+        // Si cette méthode est spécifique à IClassRepository, elle reste ici
+        Task<IEnumerable<object>> GetClassesWithStudentCountsAsync();
     }
 }

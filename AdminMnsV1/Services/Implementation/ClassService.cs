@@ -15,7 +15,8 @@ namespace AdminMnsV1.Services.Implementation
     public class ClassService : IClassService
     {
         private readonly IClassRepository _classRepository;
-        private readonly IStudentRepository _studentRepository; // Injectez le StudentRepository
+        private readonly IStudentRepository _studentRepository; 
+
 
         public ClassService(IClassRepository classRepository, IStudentRepository studentRepository)
         {
@@ -97,6 +98,19 @@ namespace AdminMnsV1.Services.Implementation
             };
         }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
         // Gardez cette méthode si elle est utilisée ailleurs, sinon vous pouvez la supprimer
         public async Task<List<CardModel>> GetClassCardModelsAsync()
         {
@@ -105,11 +119,13 @@ namespace AdminMnsV1.Services.Implementation
             return new List<CardModel>(); // Placeholder, à remplacer par votre logique existante
         }
 
-        public Task<IEnumerable<SchoolClass>> GetAllClassesAsync()
-        {
-            throw new NotImplementedException();
-        }
 
+
+
+        public async Task<IEnumerable<SchoolClass>> GetAllClassesAsync() // Ajout de 'async'
+        {
+            return await _classRepository.GetAllAsync();
+        }
         public Task<SchoolClass?> GetClassByIdAsync(int id)
         {
             throw new NotImplementedException();

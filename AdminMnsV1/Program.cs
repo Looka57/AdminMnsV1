@@ -83,6 +83,8 @@ builder.Services.AddScoped<IDashboardService, DashboardService>(); // Si ce serv
 builder.Services.AddScoped<ICandidatureService, CandidatureService>();
 builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IDocumentTypeService, DocumentTypeService>();
+builder.Services.AddScoped<ICandidatureService, CandidatureService>();
+
 // Si tu as d'autres services spécifiques (ex: ICandidatureStatusService), ajoute-les ici.
 
 

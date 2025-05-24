@@ -2,11 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using AdminMnsV1.Data;
 using AdminMnsV1.Models.Documents;
-using AdminMnsV1.Application.Services.Interfaces; // Utilisation de l'interface du service
+using AdminMnsV1.Application.Services.Interfaces; 
 using Microsoft.AspNetCore.Identity;
 using AdminMnsV1.Models; // Pour User
 using Microsoft.AspNetCore.Mvc.Rendering;
-using AdminMnsV1.Services.Interfaces; // Pour SelectList
+using AdminMnsV1.Services.Interfaces; 
 
 namespace AdminMnsV1.Controllers
 {

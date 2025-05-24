@@ -10,7 +10,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using AdminMnsV1.Data.Repositories.Interfaces; // Pour les includes
+using AdminMnsV1.Data.Repositories.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering; // Pour les includes
+using AdminMnsV1.Models.Classes;
+using AdminMnsV1.Repositories.Implementation;
 
 namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT : CORRESPOND AU USING DANS PROGRAM.CS
 {
@@ -21,20 +24,59 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
         private readonly IDocumentRepository _documentRepository; // Pour créer les documents initiaux
         private readonly IDocumentTypeRepository _documentTypeRepository; // Pour obtenir les types de documents
         private readonly IGenericRepository<CandidatureStatus> _candidatureStatusRepository; // Pour obtenir les statuts
+        private readonly IGenericRepository<SchoolClass> _classRepository; // Pour obtenir les classes
 
         public CandidatureService(
             ICandidatureRepository candidatureRepository,
             IUserRepository userRepository,
             IDocumentRepository documentRepository,
             IDocumentTypeRepository documentTypeRepository,
-            IGenericRepository<CandidatureStatus> candidatureStatusRepository) // Injecte le repository de statuts
+            IGenericRepository<CandidatureStatus> candidatureStatusRepository,
+            IGenericRepository<SchoolClass> classRepository) 
         {
             _candidatureRepository = candidatureRepository;
             _userRepository = userRepository;
             _documentRepository = documentRepository;
             _documentTypeRepository = documentTypeRepository;
             _candidatureStatusRepository = candidatureStatusRepository;
+            _classRepository = classRepository; 
         }
+
+
+        public async Task<CreateCandidatureViewModel>PrepareCreateCandidatureViewModelAsync()
+        {
+            var classes = await _classRepository.GetAllAsync(); // Récupère toutes les classes
+            var documentsTypes = await _documentTypeRepository.GetAllAsync(); // Récupère tous les types de documents
+
+            var viewModel = new CreateCandidatureViewModel
+            {
+                AvailableClasses = classes.Select(c => new SelectListItem
+                {
+                    Value = c.ClasseId.ToString(),
+                    Text = c.NameClass
+                }).ToList(),
+                AllAvailableDocumentTypes = documentsTypes.ToList() // Passe tous les types de documents
+            };
+            return viewModel;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         public async Task<bool> CreateCandidatureAsync(CreateCandidatureViewModel model)
         {
