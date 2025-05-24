@@ -77,7 +77,7 @@
 
 					<div class="mb-3">
 						<label class="form-label">Documents requis pour ce dossier :</label>
-						<div id="documentTypesCheckboxes" class="border p-3 rounded">
+						<div id="documentTypesCheckboxes" class="border d-flex flex-wrap p-3 rounded">
 							@if (Model.AllAvailableDocumentTypes != null && Model.AllAvailableDocumentTypes.Any())
 							{
 								foreach (var docType in Model.AllAvailableDocumentTypes)
