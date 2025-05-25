@@ -28,6 +28,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
         private readonly IGenericRepository<CandidatureStatus> _candidatureStatusRepository; // Pour obtenir les statuts
         private readonly IGenericRepository<SchoolClass> _classRepository; // Pour obtenir les classes
         private readonly UserManager<User> _userManager; // Injection de UserManager
+        private readonly IEmailService _emailService;
 
 
         public CandidatureService(
@@ -37,9 +38,10 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             IDocumentTypeRepository documentTypeRepository,
             IGenericRepository<CandidatureStatus> candidatureStatusRepository,
             IGenericRepository<SchoolClass> classRepository,
-            UserManager<User> userManager)
-            
-            
+            UserManager<User> userManager,
+            IEmailService emailService) // Injection de IEmailService si nécessaire
+
+
 
         {
             _candidatureRepository = candidatureRepository;
@@ -49,11 +51,12 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             _candidatureStatusRepository = candidatureStatusRepository;
             _classRepository = classRepository;
             _userManager = userManager;
+            _emailService = emailService; // Injection de IEmailService
 
         }
 
 
-        public async Task<CreateCandidatureViewModel>PrepareCreateCandidatureViewModelAsync()
+        public async Task<CreateCandidatureViewModel> PrepareCreateCandidatureViewModelAsync()
         {
             var classes = await _classRepository.GetAllAsync(); // Récupère toutes les classes
             var documentsTypes = await _documentTypeRepository.GetAllAsync(); // Récupère tous les types de documents
@@ -92,7 +95,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                 };
                 _userRepository.Add(user);
                 await _userRepository.SaveChangesAsync(); // Sauvegarde l'utilisateur pour obtenir son ID
-              
+
             }
 
             // Attribuer le rôle ASP.NET Identity "Student"
@@ -110,7 +113,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             }
 
             // 2. Récupérer le statut "En cours"
-            var enCoursStatus =( await _candidatureStatusRepository.FindAsync(s => s.Label == "En cours")).FirstOrDefault();
+            var enCoursStatus = (await _candidatureStatusRepository.FindAsync(s => s.Label == "En cours")).FirstOrDefault();
             if (enCoursStatus == null)
             {
                 throw new InvalidOperationException("Le statut 'En cours' n'existe pas dans la base de données.");
@@ -133,13 +136,13 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
 
 
 
-            if (saved > 0)
-            {
-                // 4. Créer les documents initialement requis avec le statut "Demandé"
-                if (model.RequiredDocumentTypeIds != null && model.RequiredDocumentTypeIds.Any())
+            if (saved > 0) // Si la candidature a été sauvegardée avec succès
+            {
+                // 4. Créer les documents initialement requis avec le statut "Demandé"
+                if (model.RequiredDocumentTypeIds != null && model.RequiredDocumentTypeIds.Any())
                 {
-                    // Récupère l'ID du statut "Demandé" pour les documents
-                    var demandedDocumentStatusId = await _documentRepository.GetDocumentStatusIdByName("En cours");
+                    // Récupère l'ID du statut "Demandé" pour les documents
+                    var demandedDocumentStatusId = await _documentRepository.GetDocumentStatusIdByName("En cours");
                     if (demandedDocumentStatusId == null)
                     {
                         throw new InvalidOperationException("Le statut de document 'En cours' n'existe pas dans la base de données.");
@@ -155,20 +158,51 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                                 CandidatureId = candidature.CandidatureId,
                                 DocumentTypeId = docTypeId,
                                 StudentId = user.Id,
-                                DocumentStatusId = (int)demandedDocumentStatusId, // CORRIGÉ : Utilise l'ID du statut, enlève .Value
-                                DocumentPath = "N/A", // Pas de fichier initialement
-                                DocumentName = $"Document pour {documentType.NameDocumentType}", // UTILISE LE NOM DU TYPE DE DOCUMENT
-                                DocumentDepositDate = DateTime.Now // Ajout d'une date de dépôt par défaut
+                                DocumentStatusId = (int)demandedDocumentStatusId,
+                                DocumentPath = "N/A",
+                                DocumentName = $"Document pour {documentType.NameDocumentType}",
+                                DocumentDepositDate = DateTime.Now
                             };
                             _documentRepository.Add(document);
                         }
                     }
 
-                    // STOCKER LE RÉSULTAT DE LA SAUVEGARDE DES DOCUMENTS ICI
-                    var savedDocumentsCount = await _documentRepository.SaveChangesAsync(); // <-- NOUVELLE LIGNE
-                    Console.WriteLine($"Tentative de sauvegarde de documents. Nombre de documents sauvegardés : {savedDocumentsCount}"); // POUR LE DÉBOGAGE
-                    await _documentRepository.SaveChangesAsync();
-                }
+                    
+                    try
+                    {
+                        var savedDocumentsCount = await _documentRepository.SaveChangesAsync();
+                        Console.WriteLine($"Tentative de sauvegarde de documents. Nombre de documents sauvegardés : {savedDocumentsCount}");
+
+                        Console.WriteLine($"Tentative d'envoi d'e-mail à : {model.Email}");
+
+                        // L'envoi de l'email ne doit se faire que si les documents ont été sauvegardés SANS ERREUR
+                        // ET C'EST ICI QU'IL DOIT ÊTRE APPELÉ APRÈS savedDocumentsCount
+                        var applicationLink = "https://localhost:7014/Home/Login"; // Remplacez 7014 par le port de votre application
+                        var subject = "Votre candidature a été pré-enregistrée !";
+                        var message = $"Bonjour {model.FirstName} {model.LastName},<br/><br/>" +
+                                      "Votre candidature a été pré-enregistrée avec succès. <br/>" +
+                                      "Veuillez vous connecter à l'application pour compléter votre profil et déposer vos documents.<br/><br/>" +
+                                      $"Lien vers l'application : <a href=\"{applicationLink}\">{applicationLink}</a><br/><br/>" +
+                                      "Cordialement,<br/>L'équipe AdminMnsV1";
+
+                        await _emailService.SendEmailAsync(model.Email, subject, message);
+                        Console.WriteLine($"Email envoyé à {model.Email} pour la candidature.");
+                    }
+                    catch (DbUpdateException ex) // Exception spécifique à Entity Framework Core pour les problèmes de DB
+                    {
+                        Console.WriteLine($"Erreur DbUpdateException lors de la sauvegarde des documents: {ex.Message}");
+                        if (ex.InnerException != null)
+                        {
+                            Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                        }
+                        throw; // Rejeter l'exception après l'avoir loguée pour ne pas masquer le problème
+                    }
+                    catch (Exception ex) // Capturer toute autre exception
+                    {
+                        Console.WriteLine($"Une erreur inattendue est survenue lors de la sauvegarde des documents: {ex.Message}");
+                        throw;
+                    }
+                } // Fin du if (model.RequiredDocumentTypeIds != null ...)
                 return true;
             }
             return false;
@@ -186,7 +220,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
 
         public async Task<int?> GetCandidatureStatusIdByName(string statusName)
         {
-            var status =(await _candidatureStatusRepository.FindAsync(s => s.Label == statusName)).FirstOrDefault();
+            var status = (await _candidatureStatusRepository.FindAsync(s => s.Label == statusName)).FirstOrDefault();
             return status?.CandidatureStatusId;
         }
 

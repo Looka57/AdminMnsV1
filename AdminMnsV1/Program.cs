@@ -12,15 +12,23 @@ using AdminMnsV1.Models.Students; // Si tu as un modèle Student
 // Usings pour les interfaces et implémentations de Repositories et Services (les chemins harmonisés)
 using AdminMnsV1.Data.Repositories.Interfaces;
 using AdminMnsV1.Data.Repositories.Implementation;
-using AdminMnsV1.Application.Services.Interfaces;
-using AdminMnsV1.Application.Services.Implementation;
+using AdminMnsV1.Application.Services.Interfaces;// Pour IEmailService
+using AdminMnsV1.Application.Services.Implementation;// Pour EmailService
 using AdminMnsV1.Repositories.Interfaces;
 using AdminMnsV1.Services.Interfaces;
 using AdminMnsV1.Services.Implementation;
 using AdminMnsV1.Repositories.Implementation;
 using AdminMnsV1.Data.Repositories;
+using AdminMnsV1.Settings; // Pour SmtpSettings
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Enregistrement des paramètres SMTP de appsettings.json
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+
+// Enregistrement du service d'E-mail pour l'injection de dépendances
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
