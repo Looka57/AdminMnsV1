@@ -14,6 +14,8 @@ using AdminMnsV1.Data.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering; // Pour les includes
 using AdminMnsV1.Models.Classes;
 using AdminMnsV1.Repositories.Implementation;
+using Microsoft.AspNetCore.Identity;
+using AdminMnsV1.Models.Students;
 
 namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT : CORRESPOND AU USING DANS PROGRAM.CS
 {
@@ -25,6 +27,8 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
         private readonly IDocumentTypeRepository _documentTypeRepository; // Pour obtenir les types de documents
         private readonly IGenericRepository<CandidatureStatus> _candidatureStatusRepository; // Pour obtenir les statuts
         private readonly IGenericRepository<SchoolClass> _classRepository; // Pour obtenir les classes
+        private readonly UserManager<User> _userManager; // Injection de UserManager
+
 
         public CandidatureService(
             ICandidatureRepository candidatureRepository,
@@ -32,14 +36,20 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             IDocumentRepository documentRepository,
             IDocumentTypeRepository documentTypeRepository,
             IGenericRepository<CandidatureStatus> candidatureStatusRepository,
-            IGenericRepository<SchoolClass> classRepository) 
+            IGenericRepository<SchoolClass> classRepository,
+            UserManager<User> userManager)
+            
+            
+
         {
             _candidatureRepository = candidatureRepository;
             _userRepository = userRepository;
             _documentRepository = documentRepository;
             _documentTypeRepository = documentTypeRepository;
             _candidatureStatusRepository = candidatureStatusRepository;
-            _classRepository = classRepository; 
+            _classRepository = classRepository;
+            _userManager = userManager;
+
         }
 
 
@@ -64,36 +74,39 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         public async Task<bool> CreateCandidatureAsync(CreateCandidatureViewModel model)
         {
             // 1. Vérifier si l'utilisateur existe déjà ou le créer
             var user = (await _userRepository.FindAsync(u => u.Email == model.Email)).FirstOrDefault();
             if (user == null)
             {
-                user = new User
+                user = new Student
                 {
                     Email = model.Email,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
-                    // Ajoute d'autres propriétés de l'utilisateur si nécessaire (ex: rôle, password si création complète)
-                    // Pour l'instant, nous ne gérons pas le mot de passe ici.
+                    PhoneNumber = model.PhoneNumber,
+                    BirthDate = (DateTime)model.BirthDate,
+                    Status = model.Statut, // Ceci reste pour votre statut interne "Candidat"
+                    UserName = model.Email // IMPORTANT : Renseigner UserName pour Identity
                 };
                 _userRepository.Add(user);
                 await _userRepository.SaveChangesAsync(); // Sauvegarde l'utilisateur pour obtenir son ID
+              
+            }
+
+            // Attribuer le rôle ASP.NET Identity "Student"
+            // Ceci est fait qu'un nouvel utilisateur soit créé ou qu'un utilisateur existant soit trouvé
+            // et n'ait pas encore le rôle "Student".
+            if (!(await _userManager.IsInRoleAsync(user, "Student"))) // Vérifie si l'utilisateur n'a PAS déjà le rôle "Student"
+            {
+                var result = await _userManager.AddToRoleAsync(user, "Student"); // NOUVEAU : Attribution directe du rôle "Student"
+                if (!result.Succeeded)
+                {
+                    // Gérer l'échec d'attribution de rôle (loguer l'erreur, lancer une exception, etc.)
+                    // C'est crucial pour la sécurité et la fonctionnalité d'authentification.
+                    throw new InvalidOperationException($"Échec d'attribution du rôle 'Student' à l'utilisateur : {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                }
             }
 
             // 2. Récupérer le statut "En cours"
@@ -103,6 +116,8 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                 throw new InvalidOperationException("Le statut 'En cours' n'existe pas dans la base de données.");
             }
 
+
+
             // 3. Créer la candidature
             var candidature = new Candidature
             {
@@ -110,10 +125,13 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                 ClassId = model.ClassId,
                 CandidatureCreationDate = DateTime.Now,
                 CandidatureStatusId = enCoursStatus.CandidatureStatusId, // Statut initial "En cours"
+
                 Progress = 0 // Initialement 0%
             };
             _candidatureRepository.Add(candidature);
             var saved = await _candidatureRepository.SaveChangesAsync();
+
+
 
             if (saved > 0)
             {
@@ -121,10 +139,10 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                 if (model.RequiredDocumentTypeIds != null && model.RequiredDocumentTypeIds.Any())
                 {
                     // Récupère l'ID du statut "Demandé" pour les documents
-                    var demandedDocumentStatusId = await _documentRepository.GetDocumentStatusIdByName("Demandé");
+                    var demandedDocumentStatusId = await _documentRepository.GetDocumentStatusIdByName("En cours");
                     if (demandedDocumentStatusId == null)
                     {
-                        throw new InvalidOperationException("Le statut de document 'Demandé' n'existe pas dans la base de données.");
+                        throw new InvalidOperationException("Le statut de document 'En cours' n'existe pas dans la base de données.");
                     }
 
                     foreach (var docTypeId in model.RequiredDocumentTypeIds)
@@ -139,12 +157,16 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                                 StudentId = user.Id,
                                 DocumentStatusId = (int)demandedDocumentStatusId, // CORRIGÉ : Utilise l'ID du statut, enlève .Value
                                 DocumentPath = "N/A", // Pas de fichier initialement
-                                DocumentName = "Document Initial", // Ajout d'un nom de document par défaut
+                                DocumentName = $"Document pour {documentType.NameDocumentType}", // UTILISE LE NOM DU TYPE DE DOCUMENT
                                 DocumentDepositDate = DateTime.Now // Ajout d'une date de dépôt par défaut
                             };
                             _documentRepository.Add(document);
                         }
                     }
+
+                    // STOCKER LE RÉSULTAT DE LA SAUVEGARDE DES DOCUMENTS ICI
+                    var savedDocumentsCount = await _documentRepository.SaveChangesAsync(); // <-- NOUVELLE LIGNE
+                    Console.WriteLine($"Tentative de sauvegarde de documents. Nombre de documents sauvegardés : {savedDocumentsCount}"); // POUR LE DÉBOGAGE
                     await _documentRepository.SaveChangesAsync();
                 }
                 return true;

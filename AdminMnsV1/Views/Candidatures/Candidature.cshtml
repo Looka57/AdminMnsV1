@@ -65,7 +65,11 @@
 						<input type="date" class="form-control" id="studentBirthDate" asp-for="BirthDate">
 						<span asp-validation-for="BirthDate" class="text-danger"></span>
 					</div>
-
+					<div class="mb-3">
+						<label for="statut" class="form-label">Statut</label>
+						<input type="text" class="form-control" id="statut" asp-for="Statut">
+						<span asp-validation-for="Statut" class="text-danger"></span>
+					</div>
 					<div class="mb-3">
 						<label for="classId" class="form-label">Sélectionner la Classe</label>
 						<select class="form-select" id="classId" asp-for="ClassId"
@@ -77,7 +81,7 @@
 
 					<div class="mb-3">
 						<label class="form-label">Documents requis pour ce dossier :</label>
-						<div id="documentTypesCheckboxes" class="border d-flex flex-wrap p-3 rounded">
+						<div id="documentTypesCheckboxes" class="border d-flex justify-content-center flex-wrap p-3 rounded">
 							@if (Model.AllAvailableDocumentTypes != null && Model.AllAvailableDocumentTypes.Any())
 							{
 								foreach (var docType in Model.AllAvailableDocumentTypes)
@@ -86,8 +90,8 @@
 										<input class="form-check-input" type="checkbox"
 											   value="@docType.DocumentTypeId"
 											   id="docType_@docType.DocumentTypeId"
-											   name="SelectedDocumentTypeIds"
-										@(Model.SelectedDocumentTypeIds != null && Model.SelectedDocumentTypeIds.Contains(docType.DocumentTypeId) ? "checked" : "")>
+											   name="RequiredDocumentTypeIds"
+										@(Model.RequiredDocumentTypeIds != null && Model.RequiredDocumentTypeIds.Contains(docType.DocumentTypeId) ? "checked" : "")>
 										<label class="form-check-label" for="docType_@docType.DocumentTypeId">
 											@docType.NameDocumentType
 										</label>

@@ -25,6 +25,11 @@ namespace AdminMnsV1.Models.ViewModels
         [Required(ErrorMessage ="Numero du candidat est requis")]
         public string PhoneNumber { get; set; }
 
+
+        [Display(Name = "Statut du candidat")]
+        [Required(ErrorMessage = "Statut du candidat est requis")]
+        public string Statut { get; set; } = "Candidat";
+
         [Display(Name = "Date de naissance")]
         [DataType(DataType.Date)] // Pour le type input="date"
         public DateTime? BirthDate { get; set; } 
@@ -42,14 +47,14 @@ namespace AdminMnsV1.Models.ViewModels
         // Liste des IDs des types de documents sélectionnés lors de la soumission.
         [Display(Name = "Documents requis pour le dossier")]
         [Required(ErrorMessage = "Veuillez sélectionner au moins un document.")]
-        public List<int> SelectedDocumentTypeIds { get; set; } = new List<int>(); // Liste des IDs des types de documents sélectionnés
+        public List<int> RequiredDocumentTypeIds { get; set; } = new List<int>(); // Liste des IDs des types de documents sélectionnés
 
         // Cette propriété contiendra tous les types de documents disponibles pour que la vue puisse les afficher
         // (y compris ceux qui ne sont pas "par défaut" pour une classe spécifique, si vous en avez)
         public List<DocumentType> AllAvailableDocumentTypes { get; set; } = new List<DocumentType>();
 
-        // Elle contiendra les IDs des types de documents que l'utilisateur doit fournir pour cette candidature.
-        public List<int>? RequiredDocumentTypeIds { get; set; }
+        //// Elle contiendra les IDs des types de documents que l'utilisateur doit fournir pour cette candidature.
+        //public List<int>? RequiredDocumentTypeIds { get; set; }
 
         // Optionnel : Pour afficher les types de documents disponibles (si tu les laisses choisir)
         public IEnumerable<SelectListItem>? AvailableDocumentTypes { get; set; }

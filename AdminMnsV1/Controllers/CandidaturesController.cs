@@ -49,7 +49,7 @@ namespace AdminMnsV1.Web.Controllers
                 }).ToList(),
                 AllAvailableDocumentTypes = documentTypes.ToList(),
                 // Initialise SelectedDocumentTypeIds pour éviter NullReferenceException dans la vue
-                SelectedDocumentTypeIds = new List<int>()
+                RequiredDocumentTypeIds = new List<int>()
             };
 
             // Si vous avez d'autres listes (ex: candidatures en cours, validées) à afficher
