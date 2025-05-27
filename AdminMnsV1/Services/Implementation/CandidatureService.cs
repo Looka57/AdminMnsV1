@@ -18,7 +18,9 @@ using Microsoft.AspNetCore.Identity;
 using AdminMnsV1.Models.Students;
 using System.Web;
 using System.Net; // Pour WebUtility.UrlEncode
-using System.Text.Encodings.Web; // Ajoutez cette ligne en haut de CandidatureService.cs
+using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text; // Ajoutez cette ligne en haut de CandidatureService.cs
 
 namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT : CORRESPOND AU USING DANS PROGRAM.CS
 {
@@ -104,7 +106,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
 
                 // --- C'est ici que l'on génère le token et affecte la variable resetPasswordUrl ---
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var encodedToken = UrlEncoder.Default.Encode(token); // C'est la méthode recommandée pour Identity tokens
+                var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token)); // Convertissez le token en octets avant l'encodage
                 // Affectez la variable déclarée plus haut
                 resetPasswordUrl = $"https://localhost:7014/Identity/Account/ResetPassword?userId={user.Id}&token={encodedToken}";
 
