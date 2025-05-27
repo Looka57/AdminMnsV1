@@ -67,26 +67,60 @@ namespace AdminMnsV1.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
             public string Code { get; set; }
+
+            // Ajoutez UserId ici si vous voulez le récupérer (bien que votre OnGet ne l'utilise pas encore)
+            // Mais la vraie cause de l'erreur est le 'code'
+            public string UserId { get; set; }
+
 
         }
 
-        public IActionResult OnGet(string code = null)
+        public IActionResult OnGet(string code = null, string userId = null)
         {
+            // Debugging: Écrivez les valeurs reçues
+            Console.WriteLine($"OnGet - Raw Code: {code}");
+            Console.WriteLine($"OnGet - Raw UserId: {userId}");
+
+
             if (code == null)
             {
                 return BadRequest("A code must be supplied for password reset.");
             }
-            else
+            try
             {
+                // Ici, nous faisons le décodage Base64Url
+                // Identity a tendance à encoder les tokens pour qu'ils soient URL-safe ET Base64Url
+                // C'est la raison pour laquelle WebEncoders.Base64UrlDecode est utilisé.
+                string decodedCode = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+
                 Input = new InputModel
                 {
-                    Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
+                    Code = decodedCode, // Utilisez le code décodé
+                    UserId = userId,     // Attribuez le userId reçu
+                    Email = ""           // L'email sera rempli par l'utilisateur sur le formulaire
                 };
-                return Page();
+                Console.WriteLine($"OnGet - Decoded Code for InputModel: {Input.Code}");
+                Console.WriteLine($"OnGet - UserId for InputModel: {Input.UserId}");
             }
+            catch (FormatException ex)
+            {
+                // Si le Base64UrlDecode échoue (par exemple, jeton corrompu ou mal encodé)
+                Console.WriteLine($"ERROR - Base64UrlDecode failed: {ex.Message}");
+                return BadRequest("Invalid password reset token.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ERROR - An unexpected error occurred in OnGet: {ex.Message}");
+                return BadRequest("An error occurred during password reset.");
+            }
+
+            return Page();
         }
+    
+
+          
+
 
         public async Task<IActionResult> OnPostAsync()
         {

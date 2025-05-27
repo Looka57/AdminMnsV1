@@ -19,7 +19,9 @@ using AdminMnsV1.Services.Interfaces;
 using AdminMnsV1.Services.Implementation;
 using AdminMnsV1.Repositories.Implementation;
 using AdminMnsV1.Data.Repositories;
-using AdminMnsV1.Settings; // Pour SmtpSettings
+using AdminMnsV1.Settings;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using AdminMnsV1.Infrastructure; // Pour SmtpSettings
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -93,7 +95,9 @@ builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IDocumentTypeService, DocumentTypeService>();
 builder.Services.AddScoped<ICandidatureService, CandidatureService>();
 
-// Si tu as d'autres services spécifiques (ex: ICandidatureStatusService), ajoute-les ici.
+//Oublie du password
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+
 
 
 var app = builder.Build();

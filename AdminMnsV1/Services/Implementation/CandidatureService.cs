@@ -16,6 +16,9 @@ using AdminMnsV1.Models.Classes;
 using AdminMnsV1.Repositories.Implementation;
 using Microsoft.AspNetCore.Identity;
 using AdminMnsV1.Models.Students;
+using System.Web;
+using System.Net; // Pour WebUtility.UrlEncode
+using System.Text.Encodings.Web; // Ajoutez cette ligne en haut de CandidatureService.cs
 
 namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT : CORRESPOND AU USING DANS PROGRAM.CS
 {
@@ -73,15 +76,14 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             return viewModel;
         }
 
-
-
-
-
         public async Task<bool> CreateCandidatureAsync(CreateCandidatureViewModel model)
         {
+            string resetPasswordUrl = null; // Initialisez-la à null
             // 1. Vérifier si l'utilisateur existe déjà ou le créer
             var user = (await _userRepository.FindAsync(u => u.Email == model.Email)).FirstOrDefault();
-            if (user == null)
+            bool isNewUser = (user == null); // Indicateur pour savoir si un nouvel utilisateur a été créé
+
+            if (isNewUser)
             {
                 user = new Student
                 {
@@ -93,56 +95,80 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                     Status = model.Statut, // Ceci reste pour votre statut interne "Candidat"
                     UserName = model.Email // IMPORTANT : Renseigner UserName pour Identity
                 };
-                _userRepository.Add(user);
-                await _userRepository.SaveChangesAsync(); // Sauvegarde l'utilisateur pour obtenir son ID
 
-            }
-
-            // Attribuer le rôle ASP.NET Identity "Student"
-            // Ceci est fait qu'un nouvel utilisateur soit créé ou qu'un utilisateur existant soit trouvé
-            // et n'ait pas encore le rôle "Student".
-            if (!(await _userManager.IsInRoleAsync(user, "Student"))) // Vérifie si l'utilisateur n'a PAS déjà le rôle "Student"
-            {
-                var result = await _userManager.AddToRoleAsync(user, "Student"); // NOUVEAU : Attribution directe du rôle "Student"
-                if (!result.Succeeded)
+                var identityResult = await _userManager.CreateAsync(user);
+                if (!identityResult.Succeeded)
                 {
-                    // Gérer l'échec d'attribution de rôle (loguer l'erreur, lancer une exception, etc.)
-                    // C'est crucial pour la sécurité et la fonctionnalité d'authentification.
-                    throw new InvalidOperationException($"Échec d'attribution du rôle 'Student' à l'utilisateur : {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                    throw new InvalidOperationException($"Échec de la création de l'utilisateur : {string.Join(", ", identityResult.Errors.Select(e => e.Description))}");
+                }
+
+                // --- C'est ici que l'on génère le token et affecte la variable resetPasswordUrl ---
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var encodedToken = UrlEncoder.Default.Encode(token); // C'est la méthode recommandée pour Identity tokens
+                // Affectez la variable déclarée plus haut
+                resetPasswordUrl = $"https://localhost:7014/Identity/Account/ResetPassword?userId={user.Id}&token={encodedToken}";
+
+                // Attribuer le rôle ASP.NET Identity "Student"
+                if (!(await _userManager.IsInRoleAsync(user, "Student")))
+                {
+                    var result = await _userManager.AddToRoleAsync(user, "Student");
+                    if (!result.Succeeded)
+                    {
+                        throw new InvalidOperationException($"Échec d'attribution du rôle 'Student' à l'utilisateur : {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                    }
+                }
+
+                // --- DÉPLACÉ ICI : ENVOI DE L'EMAIL DE RÉINITIALISATION DE MOT DE PASSE APRÈS LA CRÉATION DU COMPTE ---
+                var subject = "Votre candidature a été pré-enregistrée ! Créez votre mot de passe.";
+                var message = $"Bonjour {model.FirstName} {model.LastName},<br/><br/>" +
+                              "Votre candidature a été pré-enregistrée avec succès. <br/>" +
+                              $"Veuillez cliquer sur le lien ci-dessous pour définir votre mot de passe et vous connecter à l'application et y déposer vos documents :<br/><br/>" +
+                              
+                              $"<a href=\"{resetPasswordUrl}\">Définir mon mot de passe</a><br/><br/>" + // ICI resetPasswordUrl est accessible
+                              "Ce lien est valide pour une durée limitée.<br/><br/>" +
+                              "Cordialement,<br/>L'équipe AdminMnsV1";
+
+                try
+                {
+                    Console.WriteLine($"Tentative d'envoi d'e-mail à : {model.Email} avec lien de réinitialisation.");
+                    await _emailService.SendEmailAsync(model.Email, subject, message);
+                    Console.WriteLine($"Email de réinitialisation envoyé à {model.Email}.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Une erreur inattendue est survenue lors de l'envoi de l'e-mail de réinitialisation: {ex.Message}");
+                    throw;
                 }
             }
+            // else: Si l'utilisateur existe déjà, vous n'envoyez pas d'e-mail de création/réinitialisation ici.
 
             // 2. Récupérer le statut "En cours"
+            // ... (le reste du code est inchangé par rapport à ma suggestion précédente) ...
+
             var enCoursStatus = (await _candidatureStatusRepository.FindAsync(s => s.Label == "En cours")).FirstOrDefault();
             if (enCoursStatus == null)
             {
                 throw new InvalidOperationException("Le statut 'En cours' n'existe pas dans la base de données.");
             }
 
-
-
             // 3. Créer la candidature
             var candidature = new Candidature
             {
-                UserId = user.Id, // L'ID de l'utilisateur créé ou trouvé
+                UserId = user.Id,
                 ClassId = model.ClassId,
                 CandidatureCreationDate = DateTime.Now,
-                CandidatureStatusId = enCoursStatus.CandidatureStatusId, // Statut initial "En cours"
-
-                Progress = 0 // Initialement 0%
+                CandidatureStatusId = enCoursStatus.CandidatureStatusId,
+                Progress = 0
             };
             _candidatureRepository.Add(candidature);
             var saved = await _candidatureRepository.SaveChangesAsync();
 
-
-
-            if (saved > 0) // Si la candidature a été sauvegardée avec succès
-            {
-                // 4. Créer les documents initialement requis avec le statut "Demandé"
-                if (model.RequiredDocumentTypeIds != null && model.RequiredDocumentTypeIds.Any())
+            if (saved > 0)
+            {
+                // 4. Créer les documents initialement requis avec le statut "Demandé"
+                if (model.RequiredDocumentTypeIds != null && model.RequiredDocumentTypeIds.Any())
                 {
-                    // Récupère l'ID du statut "Demandé" pour les documents
-                    var demandedDocumentStatusId = await _documentRepository.GetDocumentStatusIdByName("En cours");
+                    var demandedDocumentStatusId = await _documentRepository.GetDocumentStatusIdByName("En cours");
                     if (demandedDocumentStatusId == null)
                     {
                         throw new InvalidOperationException("Le statut de document 'En cours' n'existe pas dans la base de données.");
@@ -167,47 +193,30 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                         }
                     }
 
-                    
                     try
                     {
                         var savedDocumentsCount = await _documentRepository.SaveChangesAsync();
                         Console.WriteLine($"Tentative de sauvegarde de documents. Nombre de documents sauvegardés : {savedDocumentsCount}");
-
-                        Console.WriteLine($"Tentative d'envoi d'e-mail à : {model.Email}");
-
-                        // L'envoi de l'email ne doit se faire que si les documents ont été sauvegardés SANS ERREUR
-                        // ET C'EST ICI QU'IL DOIT ÊTRE APPELÉ APRÈS savedDocumentsCount
-                        var applicationLink = "https://localhost:7014/Home/Login"; // Remplacez 7014 par le port de votre application
-                        var subject = "Votre candidature a été pré-enregistrée !";
-                        var message = $"Bonjour {model.FirstName} {model.LastName},<br/><br/>" +
-                                      "Votre candidature a été pré-enregistrée avec succès. <br/>" +
-                                      "Veuillez vous connecter à l'application pour compléter votre profil et déposer vos documents.<br/><br/>" +
-                                      $"Lien vers l'application : <a href=\"{applicationLink}\">{applicationLink}</a><br/><br/>" +
-                                      "Cordialement,<br/>L'équipe AdminMnsV1";
-
-                        await _emailService.SendEmailAsync(model.Email, subject, message);
-                        Console.WriteLine($"Email envoyé à {model.Email} pour la candidature.");
                     }
-                    catch (DbUpdateException ex) // Exception spécifique à Entity Framework Core pour les problèmes de DB
+                    catch (DbUpdateException ex)
                     {
                         Console.WriteLine($"Erreur DbUpdateException lors de la sauvegarde des documents: {ex.Message}");
                         if (ex.InnerException != null)
                         {
                             Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
                         }
-                        throw; // Rejeter l'exception après l'avoir loguée pour ne pas masquer le problème
+                        throw;
                     }
-                    catch (Exception ex) // Capturer toute autre exception
+                    catch (Exception ex)
                     {
                         Console.WriteLine($"Une erreur inattendue est survenue lors de la sauvegarde des documents: {ex.Message}");
                         throw;
                     }
-                } // Fin du if (model.RequiredDocumentTypeIds != null ...)
+                }
                 return true;
             }
             return false;
         }
-
         public async Task<IEnumerable<Candidature>> GetAllCandidaturesWithDetailsAsync()
         {
             return await _candidatureRepository.GetAllCandidaturesWithDetailsAsync();
