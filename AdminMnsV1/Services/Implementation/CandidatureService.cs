@@ -82,7 +82,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             // 1. Vérifier si l'utilisateur existe déjà ou le créer
             var user = (await _userRepository.FindAsync(u => u.Email == model.Email)).FirstOrDefault();
             bool isNewUser = (user == null); // Indicateur pour savoir si un nouvel utilisateur a été créé
-
+            
             if (isNewUser)
             {
                 user = new Student

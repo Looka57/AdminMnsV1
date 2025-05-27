@@ -76,14 +76,14 @@ namespace AdminMnsV1.Areas.Identity.Pages.Account
 
         }
 
-        public IActionResult OnGet(string code = null, string userId = null)
+        public IActionResult OnGet(string token = null, string userId = null)
         {
             // Debugging: Écrivez les valeurs reçues
-            Console.WriteLine($"OnGet - Raw Code: {code}");
+            Console.WriteLine($"OnGet - Raw Code: {token}");
             Console.WriteLine($"OnGet - Raw UserId: {userId}");
 
 
-            if (code == null)
+            if (token == null)
             {
                 return BadRequest("A code must be supplied for password reset.");
             }
@@ -92,7 +92,7 @@ namespace AdminMnsV1.Areas.Identity.Pages.Account
                 // Ici, nous faisons le décodage Base64Url
                 // Identity a tendance à encoder les tokens pour qu'ils soient URL-safe ET Base64Url
                 // C'est la raison pour laquelle WebEncoders.Base64UrlDecode est utilisé.
-                string decodedCode = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+                string decodedCode = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
 
                 Input = new InputModel
                 {
