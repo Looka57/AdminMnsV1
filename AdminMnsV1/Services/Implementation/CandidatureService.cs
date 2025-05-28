@@ -94,6 +94,8 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                     LastName = model.LastName,
                     PhoneNumber = model.PhoneNumber,
                     BirthDate = (DateTime)model.BirthDate,
+                    IsOnboardingCompleted = false, // TRÈS IMPORTANT : Doit être false au début
+                    CreationDate = DateTime.UtcNow,
                     Status = model.Statut, // Ceci reste pour votre statut interne "Candidat"
                     UserName = model.Email // IMPORTANT : Renseigner UserName pour Identity
                 };

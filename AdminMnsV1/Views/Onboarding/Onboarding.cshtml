@@ -1,0 +1,126 @@
+﻿@model AdminMnsV1.ViewModels.CandidatOnboardingViewModel
+
+@{
+    // Utilise un layout minimaliste pour forcer la complétion du formulaire
+    Layout = "/Areas/Identity/Pages/_AuthLayout.cshtml"; // Assure-toi que ce chemin est correct
+    ViewData["Title"] = "Compléter votre profil Candidat";
+}
+
+<div class="d-flex justify-content-center align-items-center min-vh-100 bg-light">
+    <div class="card p-4 shadow-lg" style="max-width: 800px; width: 100%;">
+        <h2 class="card-title text-center mb-4">Complétez votre profil Candidat</h2>
+        <p class="text-center text-muted mb-4">
+            Veuillez fournir les informations manquantes pour finaliser votre inscription et accéder à votre espace personnel.
+            Tous les champs marqués comme obligatoires doivent être remplis.
+        </p>
+
+        <form method="post" asp-controller="Onboarding" asp-action="Onboarding">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger text-center mb-3"></div>
+
+            <input type="hidden" asp-for="UserId" />
+
+            <h4 class="mb-3 mt-4">Informations de base (pré-remplies)</h4>
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="FirstName" class="form-label">Prénom</label>
+                        <input asp-for="FirstName" class="form-control" readonly />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="LastName" class="form-label">Nom</label>
+                        <input asp-for="LastName" class="form-control" readonly />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Email</label>
+                        <input asp-for="Email" class="form-control" readonly />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="BirthDate" class="form-label">Date de naissance</label>
+                        <input asp-for="BirthDate" class="form-control" type="date" readonly />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label">Téléphone</label>
+                        <input asp-for="PhoneNumber" class="form-control" type="text" />Le téléphone pourrait être modifiable *
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4" />
+
+            <h4 class="mb-3">Informations complémentaires requises</h4>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Sexe" class="form-label"></label>
+                        <select asp-for="Sexe" class="form-select" asp-items="Model.SexesOptions">
+                        </select>
+                        <span asp-validation-for="Sexe" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Nationality" class="form-label"></label>
+                        <input asp-for="Nationality" class="form-control" placeholder="Votre nationalité" />
+                        <span asp-validation-for="Nationality" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Address" class="form-label"></label>
+                <input asp-for="Address" class="form-control" placeholder="Votre adresse complète" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="City" class="form-label"></label>
+                    <input asp-for="City" class="form-control" placeholder="Votre ville" />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="SocialSecurityNumber" class="form-label"></label>
+                    <input asp-for="SocialSecurityNumber" class="form-control" placeholder="Votre numéro de sécurité sociale" />
+                    <span asp-validation-for="SocialSecurityNumber" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="FranceTravailNumber" class="form-label"></label>
+                    <input asp-for="FranceTravailNumber" class="form-control" placeholder="Votre numéro France Travail" />
+                    <span asp-validation-for="FranceTravailNumber" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="PhotoFile" class="form-label ">Photo de profil</label>
+                        <input asp-for="PhotoFile" class="form-control" type="file" accept="image/*" name="PhotoFile" /> @*permet à l'utilisateur de sélectionner des fichiers et suggère de n'accepter que les images.*@
+                        <span asp-validation-for="PhotoFile" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-4">Compléter et Accéder à mon Espace</button>
+        </form>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

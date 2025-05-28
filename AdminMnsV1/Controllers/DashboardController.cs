@@ -70,5 +70,10 @@ namespace AdminMnsV1.Controllers
                 return StatusCode(500, "Une erreur interne est survenue lors du chargement du tableau de bord du stagiaire.");
             }
         }
+
+        public IActionResult DashboardCandidat()
+        {
+            return View(); // Assure-toi que cette action existe
+        }
     }
 }

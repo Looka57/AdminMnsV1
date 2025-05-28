@@ -22,7 +22,7 @@ namespace AdminMnsV1.Models
         public string? Status { get; set; } // "Candidat" ou "Stagiaire"
         public bool IsDeleted { get; set; } = false; // Propriété pour gérer la suppression logique
 
-
+        public bool IsOnboardingCompleted { get; set; } = false;
 
         //STUDENT
         public string? Nationality { get; set; }

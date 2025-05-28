@@ -16,6 +16,8 @@ namespace AdminMnsV1.Services.Interfaces
 
         Task<DashboardViewModel> GetStudentDashboardDataAsync(ClaimsPrincipal userPrincipal);
         //C'est la même chose, mais pour le tableau de bord des stagiaires.
+
+
     }
 }
 

@@ -2,7 +2,20 @@
 @inject SignInManager<AdminMnsV1.Models.User> SignInManager // Assurez-vous que 'AdminMnsV1.Models.User' est le bon chemin vers votre classe User
 @inject UserManager<AdminMnsV1.Models.User> UserManager
 
+@{
+	async Task<AdminMnsV1.Models.User>
+		GetCurrentUserAsync() => await UserManager.GetUserAsync(User);
 
+	AdminMnsV1.Models.User currentUser = null;
+	string userStatus = null;
+
+	if (SignInManager.IsSignedIn(User))
+	{
+		// Appelle la fonction asynchrone pour récupérer l'utilisateur actuel
+		currentUser = await GetCurrentUserAsync();
+		userStatus = currentUser?.Status;
+	}
+}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -94,6 +107,39 @@
 							</li>
 						</ul>
 					}
+					else if (User.IsInRole("Student") && userStatus == "Candidat")
+					{
+						<ul>
+							<li>
+								<a asp-controller="Home" asp-action="Login">
+									<span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios/50/control-panel--v2.png" alt="control-panel--v2" /></span>
+									<span class="title">MNS</span>
+								</a>
+							</li>
+							<li>
+								<a asp-controller="Dashboard" asp-action="Dashboard">
+									<span class="icon">
+										<img width="40" height="40" src="https://img.icons8.com/ios/50/control-panel--v2.png" alt="control-panel--v2" />
+									</span><span class="title">Tableau</span>
+								</a>
+							</li>
+
+							<li>
+								<a asp-controller="Candidatures" asp-action="Candidature">
+									<span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/user-folder.png" alt="user-folder" /></span>
+									<span class="title">Dossiers</span>
+								</a>
+							</li>
+	
+							<li>
+								<a asp-controller="Profils" asp-action="Profil">
+									<span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/user--v1.png" alt="user--v1" /></span>
+									<span class="title">Profils</span>
+								</a>
+							</li>
+						</ul>
+					}
+
 					else if (User.IsInRole("Student"))
 					{
 						<ul>
@@ -127,39 +173,6 @@
 								<a asp-controller="Classes" asp-action="Class">
 									<span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/classroom.png" alt="classroom" /></span>
 									<span class="title">Classes</span>
-								</a>
-							</li>
-							<li>
-								<a asp-controller="Profils" asp-action="Profil">
-									<span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/user--v1.png" alt="user--v1" /></span>
-									<span class="title">Profils</span>
-								</a>
-							</li>
-						</ul>
-					}
-
-					else if(User.IsInRole("Candidat"))
-					{
-						<ul>
-							<li>
-								<a asp-controller="Home" asp-action="Login">
-									<span class="icon"><img width="40" height="40" src="https://img.icons8.com/ios/50/control-panel--v2.png" alt="control-panel--v2" /></span><span class="title">MNS</span>
-								</a>
-							</li>
-
-							<li>
-								<a asp-controller="Dashboard" asp-action="Dashboard">
-									<span class="icon">
-										<img width="40" height="40" src="https://img.icons8.com/ios/50/control-panel--v2.png" alt="control-panel--v2" />
-									</span>
-									<span class="title">Tableau</span>
-								</a>
-							</li>
-
-							<li>
-								<a asp-controller="Candidatures" asp-action="Candidature">
-									<span class="icon"><img width="40" height="40" src="https://img.icons8.com/glyph-neue/64/user-folder.png" alt="user-folder" /></span>
-									<span class="title">Dossiers</span>
 								</a>
 							</li>
 							<li>
