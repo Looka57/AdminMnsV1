@@ -32,8 +32,7 @@ namespace AdminMnsV1.Models.ViewModels
 
         [Display(Name = "Date de naissance")]
         [DataType(DataType.Date)] // Pour le type input="date"
-        public DateTime? BirthDate { get; set; } 
-
+        public DateTime? BirthDate { get; set; }
 
         [Display(Name = "Classe Ciblée")]
         [Required(ErrorMessage = "La classe ciblée est requise.")]

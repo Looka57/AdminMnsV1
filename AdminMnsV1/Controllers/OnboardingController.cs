@@ -1,27 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity; // Pour UserManager et SignInManager
+using Microsoft.AspNetCore.Identity;
 using AdminMnsV1.Models;
-using AdminMnsV1.ViewModels;
+using AdminMnsV1.Models.ViewModels; // Ou l'emplacement correct de CandidatOnboardingViewModel
 using System.Threading.Tasks;
-using System.IO; // Pour Path, Directory, FileStream
-using Microsoft.AspNetCore.Hosting; // Pour IWebHostEnvironment
+using AdminMnsV1.Interfaces.IServices;
+using AdminMnsV1.ViewModels; // Importez votre interface de service
 
 namespace AdminMnsV1.Controllers
 {
-    [Authorize(Roles = "Student")] // Seuls les utilisateurs ayant le rôle "Student" peuvent accéder à ce contrôleur
+    [Authorize(Roles = "Student")]
     public class OnboardingController : Controller
     {
         private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager; // Ajoutez la déclaration pour SignInManager
-        private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly SignInManager<User> _signInManager;
+        private readonly IOnboardingService _onboardingService; // <--- Nouvelle injection
 
-        // Modifiez le constructeur pour injecter SignInManager et IWebHostEnvironment
-        public OnboardingController(UserManager<User> userManager, SignInManager<User> signInManager, IWebHostEnvironment hostEnvironment)
+        public OnboardingController(UserManager<User> userManager, SignInManager<User> signInManager, IOnboardingService onboardingService) // <--- Modifiez le constructeur
         {
             _userManager = userManager;
-            _signInManager = signInManager; // Initialisez SignInManager
-            _hostEnvironment = hostEnvironment; // Initialisez IWebHostEnvironment
+            _signInManager = signInManager;
+            _onboardingService = onboardingService; // <--- Initialisation du service
         }
 
         [HttpGet]
@@ -29,15 +28,11 @@ namespace AdminMnsV1.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(User);
 
-            // Vérifie si l'utilisateur est bien un candidat et si l'onboarding est déjà complété
             if (currentUser == null || currentUser.Status != "Candidat" || currentUser.IsOnboardingCompleted)
             {
-                // Si l'utilisateur n'est pas un candidat ou a déjà complété l'onboarding,
-                // le rediriger vers son tableau de bord normal.
                 return RedirectToAction("DashboardCandidat", "Dashboard");
             }
 
-            // Prépare le ViewModel avec les données existantes pour le pré-remplissage
             var viewModel = new CandidatOnboardingViewModel
             {
                 UserId = currentUser.Id,
@@ -46,7 +41,6 @@ namespace AdminMnsV1.Controllers
                 LastName = currentUser.LastName,
                 PhoneNumber = currentUser.PhoneNumber,
                 BirthDate = currentUser.BirthDate,
-                // Pré-remplis les champs manquants si des données partielles existent déjà
                 Sexe = currentUser.Sexe,
                 Nationality = currentUser.Nationality,
                 Address = currentUser.Address,
@@ -54,7 +48,7 @@ namespace AdminMnsV1.Controllers
                 CandidatureCreationDate = currentUser.CreationDate,
                 SocialSecurityNumber = currentUser.SocialSecurityNumber,
                 FranceTravailNumber = currentUser.FranceTravailNumber,
-                ExistingPhotoPath = currentUser.Photo // Affecter le chemin de la photo existante à la nouvelle propriété
+                ExistingPhotoPath = currentUser.Photo
             };
 
             return View(viewModel);
@@ -71,89 +65,36 @@ namespace AdminMnsV1.Controllers
                 return RedirectToAction("DashboardCandidat", "Dashboard");
             }
 
-            // Correction ici : utilisez _signInManager.SignOutAsync() sans tenter de capturer la valeur
             if (model.UserId != currentUser.Id)
             {
-                await _signInManager.SignOutAsync(); // Déconnecte pour suspicion d'attaque CSRF ou manipulation
+                await _signInManager.SignOutAsync();
                 ModelState.AddModelError(string.Empty, "Erreur de sécurité lors de la soumission du formulaire.");
-                // Ré-assignez ExistingPhotoPath avant de retourner la vue en cas d'erreur
                 model.ExistingPhotoPath = currentUser.Photo;
                 return View(model);
             }
 
-            // Assurez-vous que les validations par rapport au PhotoFile ont du sens.
-            // Si la photo est requise pour le formulaire d'onboarding initial mais pas pour les mises à jour,
-            // vous pourriez avoir besoin d'une logique conditionnelle ici.
-
-            if (ModelState.IsValid)
+            // La validation de ModelState.IsValid doit rester ici pour les validations de base du ViewModel
+            if (!ModelState.IsValid)
             {
-                // Gérer le téléchargement de la photo
-                if (model.PhotoFile != null && model.PhotoFile.Length > 0)
-                {
-                    string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "images", "profile");
-                    if (!Directory.Exists(uploadsFolder))
-                    {
-                        Directory.CreateDirectory(uploadsFolder);
-                    }
-
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + model.PhotoFile.FileName;
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await model.PhotoFile.CopyToAsync(fileStream);
-                    }
-
-                    currentUser.Photo = "/images/profile/" + uniqueFileName;
-                }
-                else
-                {
-                    // Si aucune nouvelle photo n'est téléchargée ET qu'il n'y a PAS de photo existante
-                    // alors que le champ est requis (par [Required] sur PhotoFile dans le ViewModel)
-                    if (string.IsNullOrEmpty(currentUser.Photo) && model.PhotoFile == null)
-                    {
-                        ModelState.AddModelError("PhotoFile", "Une photo est requise.");
-                        // Ré-assignez ExistingPhotoPath avant de retourner la vue en cas d'erreur
-                        model.ExistingPhotoPath = currentUser.Photo;
-                        return View(model);
-                    }
-                    // Si PhotoFile est nul mais qu'il y a déjà une photo existante, ne faites rien.
-                    // currentUser.Photo conserve sa valeur actuelle.
-                }
-
-                // Mettre à jour les autres propriétés
-                currentUser.Sexe = model.Sexe;
-                currentUser.Nationality = model.Nationality;
-                currentUser.Address = model.Address;
-                currentUser.City = model.City;
-                currentUser.SocialSecurityNumber = model.SocialSecurityNumber;
-                currentUser.FranceTravailNumber = model.FranceTravailNumber;
-                // Note : CandidatureCreationDate ne devrait généralement pas être modifiée ici.
-                // Si elle l'est, assurez-vous que c'est intentionnel.
-                // currentUser.CreationDate = model.CandidatureCreationDate;
-
-                currentUser.IsOnboardingCompleted = true; // Marque l'onboarding comme complété
-
-                var updateResult = await _userManager.UpdateAsync(currentUser);
-
-                if (updateResult.Succeeded)
-                {
-                    // Redirige vers le tableau de bord du candidat après la complétion
-                    return RedirectToAction("DashboardCandidat", "Dashboard");
-                }
-                else
-                {
-                    foreach (var error in updateResult.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                }
+                // Si le modèle n'est pas valide, repopuler ExistingPhotoPath avant de retourner la vue
+                model.ExistingPhotoPath = currentUser.Photo;
+                return View(model);
             }
 
-            // Si ModelState n'est pas valide ou si la mise à jour a échoué, réaffiche le formulaire avec les erreurs
-            // Assurez-vous de toujours repopuler ExistingPhotoPath avant de retourner la vue
-            model.ExistingPhotoPath = currentUser.Photo;
-            return View(model);
+            // *** Appel au service pour toute la logique d'onboarding ***
+            var (succeeded, errorMessage) = await _onboardingService.ProcessOnboardingAsync(currentUser, model, model.PhotoFile);
+
+            if (succeeded)
+            {
+                return RedirectToAction("DashboardCandidat", "Dashboard");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, errorMessage);
+                // Repopuler ExistingPhotoPath en cas d'erreur du service
+                model.ExistingPhotoPath = currentUser.Photo;
+                return View(model);
+            }
         }
     }
 }

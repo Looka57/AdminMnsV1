@@ -13,5 +13,6 @@ namespace AdminMnsV1.Data.Repositories.Interfaces // <-- TRÈS IMPORTANT : VÉRI
         // par exemple, GetUserByEmailAsync ou GetUserWithRolesAsync
         Task<User?> GetUserByEmailAsync(string email);
         Task<IEnumerable<User>> GetAllUsersWithDetailsAsync(); // Exemple si tu veux inclure des relations
+        Task<bool> UpdateUserAsync(User user);
     }
 }

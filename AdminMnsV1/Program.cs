@@ -21,7 +21,8 @@ using AdminMnsV1.Repositories.Implementation;
 using AdminMnsV1.Data.Repositories;
 using AdminMnsV1.Settings;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using AdminMnsV1.Infrastructure; // Pour SmtpSettings
+using AdminMnsV1.Infrastructure;
+using AdminMnsV1.Interfaces.IServices; // Pour SmtpSettings
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -82,6 +83,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICandidatureRepository, CandidatureRepository>();
 builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
 builder.Services.AddScoped<IDocumentTypeRepository, DocumentTypeRepository>();
+builder.Services.AddScoped<IOnboardingService, OnboardingService>();
 // Si tu as d'autres repositories spécifiques (ex: ICandidatureStatusRepository), ajoute-les ici.
 // Sinon, IGenericRepository<CandidatureStatus> sera résolu par la ligne AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 

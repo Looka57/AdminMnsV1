@@ -34,6 +34,8 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
         private readonly IGenericRepository<SchoolClass> _classRepository; // Pour obtenir les classes
         private readonly UserManager<User> _userManager; // Injection de UserManager
         private readonly IEmailService _emailService;
+        private readonly IGenericRepository<Attend> _attendRepository;
+
 
 
         public CandidatureService(
@@ -44,10 +46,8 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             IGenericRepository<CandidatureStatus> candidatureStatusRepository,
             IGenericRepository<SchoolClass> classRepository,
             UserManager<User> userManager,
-            IEmailService emailService) // Injection de IEmailService si nécessaire
-
-
-
+            IEmailService emailService,
+            IGenericRepository<Attend> attendRepository) // <<< AJOUTEZ CETTE LIGNE
         {
             _candidatureRepository = candidatureRepository;
             _userRepository = userRepository;
@@ -56,8 +56,8 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             _candidatureStatusRepository = candidatureStatusRepository;
             _classRepository = classRepository;
             _userManager = userManager;
-            _emailService = emailService; // Injection de IEmailService
-
+            _emailService = emailService;
+            _attendRepository = attendRepository; // <<< AJOUTEZ CETTE LIGNE
         }
 
 
@@ -164,11 +164,22 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                 CandidatureStatusId = enCoursStatus.CandidatureStatusId,
                 Progress = 0
             };
+
             _candidatureRepository.Add(candidature);
             var saved = await _candidatureRepository.SaveChangesAsync();
 
             if (saved > 0)
             {
+
+                var attendEntry = new Attend
+                {
+                    StudentId = user.Id,
+                    ClasseId = model.ClassId // <<< Utilisez 'ClasseId' ici, en cohérence avec votre modèle Attend
+                };
+                _attendRepository.Add(attendEntry); // _studentClassRepository doit être pour l'entité Attend
+                await _attendRepository.SaveChangesAsync(); // Sauvegarde la liaison stagiaire-classe
+
+
                 // 4. Créer les documents initialement requis avec le statut "Demandé"
                 if (model.RequiredDocumentTypeIds != null && model.RequiredDocumentTypeIds.Any())
                 {

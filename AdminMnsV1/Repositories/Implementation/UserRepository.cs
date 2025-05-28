@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AdminMnsV1.Data.Repositories.Implementation // <-- TRÈS IMPORTANT : VÉRIFIEZ CE NAMESPACE
+namespace AdminMnsV1.Data.Repositories.Implementation 
 {
     public class UserRepository : GenericRepository<User>, IUserRepository
     {
@@ -28,6 +28,19 @@ namespace AdminMnsV1.Data.Repositories.Implementation // <-- TRÈS IMPORTANT : V
                 // .Include(u => u.Roles) // Décommente si tu as des rôles liés à l'utilisateur
                 // .Include(u => u.Candidatures) // Décommente si tu as des candidatures liées à l'utilisateur
                 .ToListAsync();
+        }
+
+        public async Task<bool> UpdateUserAsync(User user)
+        {
+            // La méthode Update() est héritée de GenericRepository
+            // Elle marque l'entité comme modifiée dans le DbContext
+            Update(user); // Appelle la méthode Update du GenericRepository
+
+            // La méthode SaveChangesAsync() est héritée de GenericRepository
+            // Elle persiste les changements dans la base de données
+            var savedChanges = await SaveChangesAsync(); // Appelle SaveChangesAsync du GenericRepository
+
+            return savedChanges > 0; // Retourne true si au moins une entité a été sauvegardée
         }
     }
 }

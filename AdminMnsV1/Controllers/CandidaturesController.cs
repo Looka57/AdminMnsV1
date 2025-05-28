@@ -65,6 +65,7 @@ namespace AdminMnsV1.Web.Controllers
         [ValidateAntiForgeryToken] // Pour la sécurité CSRF
         public async Task<IActionResult> CreateCandidature(CreateCandidatureViewModel model)
         {
+
             // Repopule les listes (classes, types de documents) AVANT de vérifier ModelState.IsValid,
             // car elles sont nécessaires pour réafficher le formulaire (le modal) en cas d'erreur de validation.
             var classes = await _classService.GetAllClassesAsync();
