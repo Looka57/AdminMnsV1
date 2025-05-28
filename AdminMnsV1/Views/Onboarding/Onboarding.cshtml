@@ -1,20 +1,20 @@
 ﻿@model AdminMnsV1.ViewModels.CandidatOnboardingViewModel
 
 @{
-    // Utilise un layout minimaliste pour forcer la complétion du formulaire
-    Layout = "/Areas/Identity/Pages/_AuthLayout.cshtml"; // Assure-toi que ce chemin est correct
+   
+    Layout = "_AuthLayout"; 
     ViewData["Title"] = "Compléter votre profil Candidat";
 }
 
 <div class="d-flex justify-content-center align-items-center min-vh-100 bg-light">
-    <div class="card p-4 shadow-lg" style="max-width: 800px; width: 100%;">
+    <div class="containerCompletCandidat">
         <h2 class="card-title text-center mb-4">Complétez votre profil Candidat</h2>
         <p class="text-center text-muted mb-4">
             Veuillez fournir les informations manquantes pour finaliser votre inscription et accéder à votre espace personnel.
             Tous les champs marqués comme obligatoires doivent être remplis.
         </p>
 
-        <form method="post" asp-controller="Onboarding" asp-action="Onboarding">
+        <form method="post" asp-controller="Onboarding" asp-action="Onboarding" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
             <div asp-validation-summary="All" class="text-danger text-center mb-3"></div>
 
@@ -113,7 +113,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100 mt-4">Compléter et Accéder à mon Espace</button>
+            <button type="submit" class="btn btn-outline-warning w-100 mt-4">Compléter et Accéder à mon Espace</button>
         </form>
     </div>
 </div>
