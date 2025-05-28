@@ -113,5 +113,33 @@ namespace AdminMnsV1.Services.Implementation
 
             return viewModel;
         }
+
+
+
+        // -------------Implémentation de la méthode du tableau de bord Candidat------------
+        public async Task<DashboardViewModel> GetCandidatDashboardDataAsync(ClaimsPrincipal userPrincipal)
+        {
+            var currentUser = await _userManager.GetUserAsync(userPrincipal);
+            if (currentUser == null)
+            {
+                throw new UnauthorizedAccessException("Utilisateur non trouvé ou non autorisé.");
+            }
+
+            var cards = new List<CardModel>
+            {
+                
+                new CardModel { Url = "../Candidatures/Candidature", Number = "1", Title = "Dossiers", IconUrl = "https://img.icons8.com/glyph-neue/64/user-folder.png", AltText = "user-folder" },
+                new CardModel { Url = "#", Number = "5", Title = "Notifications", IconUrl = "https://img.icons8.com/ios-filled/50/appointment-reminders--v1.png", AltText = "reminder" }
+            };
+
+            var viewModel = new DashboardViewModel
+            {
+                LoggedInUser = currentUser,
+                Cards = cards,
+                // Ajoutez ici les données spécifiques au tableau de bord du stagiaire si nécessaire
+            };
+
+            return viewModel;
+        }
     }
 }

@@ -20,7 +20,8 @@ using System.Web;
 using System.Net; // Pour WebUtility.UrlEncode
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.WebUtilities;
-using System.Text; // Ajoutez cette ligne en haut de CandidatureService.cs
+using System.Text;
+using AdminMnsV1.Data; // Ajoutez cette ligne en haut de CandidatureService.cs
 
 namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT : CORRESPOND AU USING DANS PROGRAM.CS
 {
@@ -35,6 +36,8 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
         private readonly UserManager<User> _userManager; // Injection de UserManager
         private readonly IEmailService _emailService;
         private readonly IGenericRepository<Attend> _attendRepository;
+        private readonly ApplicationDbContext _context;
+
 
 
 
@@ -47,7 +50,9 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             IGenericRepository<SchoolClass> classRepository,
             UserManager<User> userManager,
             IEmailService emailService,
-            IGenericRepository<Attend> attendRepository) // <<< AJOUTEZ CETTE LIGNE
+            IGenericRepository<Attend> attendRepository,
+            ApplicationDbContext context) // Ajout de ApplicationDbContext pour les opérations de base de données
+
         {
             _candidatureRepository = candidatureRepository;
             _userRepository = userRepository;
@@ -57,7 +62,8 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             _classRepository = classRepository;
             _userManager = userManager;
             _emailService = emailService;
-            _attendRepository = attendRepository; // <<< AJOUTEZ CETTE LIGNE
+            _attendRepository = attendRepository;
+            _context = context; 
         }
 
 
@@ -237,6 +243,14 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             return await _candidatureRepository.GetAllCandidaturesWithDetailsAsync();
         }
 
+        // Dans CandidatureService.cs
+public async Task<Candidature> GetCandidatureByUserIdAsync(string userId)
+{
+    return await _context.Candidatures
+                         .Include(c => c.CandidatureStatus) // <<< Cette ligne est CRUCIALE
+                         .FirstOrDefaultAsync(c => c.UserId == userId);
+}
+
         public async Task<Candidature?> GetCandidatureByIdWithDetailsAsync(int id)
         {
             return await _candidatureRepository.GetCandidatureByIdWithDetailsAsync(id);
@@ -248,10 +262,19 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             return status?.CandidatureStatusId;
         }
 
+        // Dans CandidatureService.cs
+        public async Task<CandidatureStatus> GetCandidatureStatusByIdAsync(int statusId)
+        {
+            // Assurez-vous que vous retournez un objet CandidatureStatus, pas juste un int
+            return await _context.CandidatureStatuses.FirstOrDefaultAsync(s => s.CandidatureStatusId == statusId);
+        }
+
         public async Task<bool> UpdateCandidatureAsync(Candidature candidature)
         {
             _candidatureRepository.Update(candidature);
             return await _candidatureRepository.SaveChangesAsync() > 0;
         }
+
+
     }
 }

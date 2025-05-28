@@ -6,4 +6,24 @@
 	ViewData["Title"] = "Tableau de Bord Candidat"; // Utilisez le ViewData défini dans le contrôleur
 }
 
-<h1>CANDIDAT</h1>
+<h1 class="mx-4 mt-5">Bienvenue @Model.LoggedInUser.FirstName @Model.LoggedInUser.LastName !</h1>
+<div class="cardBox">
+
+	<!-- =====================CARDS DASHBORARD=============================== -->
+	@foreach (var card in Model.Cards)
+	{
+		<div class="">
+			<a href="@card.Url" class="card-link">
+				<div class="cards border-0">
+					<div>
+						<div class="cardNumber">@card.Number</div>
+						<div class="cardName">@card.Title</div>
+					</div>
+					<div class="iconCard">
+						<img width="60" height="60" src="@card.IconUrl" alt="@card.AltText" />
+					</div>
+				</div>
+			</a>
+		</div>
+	}
+</div>
