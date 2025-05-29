@@ -1,4 +1,4 @@
-﻿using AdminMnsV1.Models.Candidature;
+﻿using AdminMnsV1.Models.CandidaturesModels;
 using AdminMnsV1.Models.Documents;
 using AdminMnsV1.Models.Classes;
 using AdminMnsV1.Models; // Pour User

@@ -1,7 +1,6 @@
 ﻿// AdminMnsV1.Application.Services/Implementation/CandidatureService.cs
 using AdminMnsV1.Application.Services.Interfaces; // Pour ICandidatureService, IDocumentService, etc.
 using AdminMnsV1.Repositories.Interfaces; // Pour ICandidatureRepository, IUserRepository, IDocumentRepository, IDocumentTypeRepository
-using AdminMnsV1.Models.Candidature;
 using AdminMnsV1.Models.Documents; // Pour Document et DocumentType
 using AdminMnsV1.Models; // Pour User
 using AdminMnsV1.Models.ViewModels; // Pour CreateCandidatureViewModel
@@ -21,7 +20,8 @@ using System.Net; // Pour WebUtility.UrlEncode
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
-using AdminMnsV1.Data; // Ajoutez cette ligne en haut de CandidatureService.cs
+using AdminMnsV1.Data;
+using AdminMnsV1.Models.CandidaturesModels; // Ajoutez cette ligne en haut de CandidatureService.cs
 
 namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT : CORRESPOND AU USING DANS PROGRAM.CS
 {

@@ -1,5 +1,6 @@
-﻿using AdminMnsV1.Models; 
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using AdminMnsV1.Models;
+using AdminMnsV1.Models.CandidaturesModels;
 
 //Le DashboardViewModel est un ViewModel. Son rôle est de servir de pont entre le Contrôleur et la Vue. Il contient toutes les données dont la Vue a besoin pour s'afficher, et uniquement ces données.
 
@@ -20,5 +21,19 @@ namespace AdminMnsV1.ViewModels
         public int TotalStudents { get; set; }
         public int NumberOfMen { get; set; }
         public int NumberOfWomen { get; set; }
+
+        // NOUVEAU : Listes de candidatures pour les accordéons
+        public IEnumerable<Candidature> CandidaturesEnCours { get; set; }
+        public IEnumerable<Candidature> CandidaturesValidees { get; set; }
+        public IEnumerable<Candidature> CandidaturesRefusees { get; set; }
+
+        // Initialisation par défaut pour éviter les nulls en Razor
+        public DashboardViewModel()
+        {
+            Cards = new List<CardModel>();
+            CandidaturesEnCours = new List<Candidature>();
+            CandidaturesValidees = new List<Candidature>();
+            CandidaturesRefusees = new List<Candidature>();
+        } 
     }
 }

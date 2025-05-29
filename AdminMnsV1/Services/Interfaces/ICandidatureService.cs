@@ -1,6 +1,6 @@
 ﻿// AdminMnsV1.Application.Services/Interfaces/ICandidatureService.cs
 using AdminMnsV1.Models;
-using AdminMnsV1.Models.Candidature; // Assure-toi que c'est le bon chemin pour ton modèle Candidature
+using AdminMnsV1.Models.CandidaturesModels;
 using AdminMnsV1.Models.ViewModels; // Pour CreateCandidatureViewModel (si dans ViewModels)
 using System.Collections.Generic;
 using System.Threading.Tasks;

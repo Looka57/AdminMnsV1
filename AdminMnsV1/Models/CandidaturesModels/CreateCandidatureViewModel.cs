@@ -57,5 +57,7 @@ namespace AdminMnsV1.Models.ViewModels
 
         // Optionnel : Pour afficher les types de documents disponibles (si tu les laisses choisir)
         public IEnumerable<SelectListItem>? AvailableDocumentTypes { get; set; }
+
+       
     }
 }

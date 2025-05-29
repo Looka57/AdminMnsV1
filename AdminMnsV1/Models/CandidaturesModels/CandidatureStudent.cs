@@ -1,8 +1,8 @@
-﻿using AdminMnsV1.Models.Candidature;
+﻿using AdminMnsV1.Models.CandidaturesModels;
 using AdminMnsV1.Models.Classes;
 using AdminMnsV1.Models;
 
-namespace AdminMnsV1.Models.Candidature
+namespace AdminMnsV1.Models.ViewModels
 
 {
     public class CandidatureStudent

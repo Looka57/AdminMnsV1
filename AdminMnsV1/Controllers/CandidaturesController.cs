@@ -1,13 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using AdminMnsV1.Application.Services.Interfaces; // Utilisez AdminMnsV1.Application.Services.Interfaces pour les services
-using AdminMnsV1.Models.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using System.Threading.Tasks; // Pour Task
-using Microsoft.AspNetCore.Mvc.Rendering; // Pour SelectListItem
-using System.Linq; // Pour .Select et .ToList()
-using System; // Pour InvalidOperationException et Exception
+﻿using System; // Pour InvalidOperationException et Exception
 using System.Collections.Generic;
-using AdminMnsV1.Services.Interfaces; // Pour List<int>
+using System.Linq; // Pour .Select et .ToList()
+using System.Threading.Tasks; // Pour Task
+using AdminMnsV1.Application.Services.Interfaces; // Utilisez AdminMnsV1.Application.Services.Interfaces pour les services
+using AdminMnsV1.Data; // Pour les opérations de base de données asynchrones
+using AdminMnsV1.Models; // Assurez-vous d'importer votre modèle Candidature ici
+using AdminMnsV1.Models.ViewModels;
+using AdminMnsV1.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering; // Pour SelectListItem
+// using AdminMnsV1.Services.Interfaces; // Cette ligne semble redondante si les interfaces sont déjà dans Application.Services.Interfaces
+using Microsoft.EntityFrameworkCore;
 
 namespace AdminMnsV1.Web.Controllers
 {
@@ -18,17 +22,21 @@ namespace AdminMnsV1.Web.Controllers
         private readonly IDocumentTypeService _documentTypeService;
         private readonly IClassService _classService;
         private readonly IDocumentService _documentService;
+        private readonly ApplicationDbContext _context; // Assurez-vous d'avoir injecté le DbContext si nécessaire
 
         public CandidaturesController(
             ICandidatureService candidatureService,
             IDocumentTypeService documentTypeService,
             IClassService classService,
-            IDocumentService documentService)
+            IDocumentService documentService,
+            ApplicationDbContext context
+            )
         {
             _candidatureService = candidatureService;
             _documentTypeService = documentTypeService;
             _classService = classService;
             _documentService = documentService;
+            _context = context;
         }
 
         // C'est l'action principale pour afficher la page des "Dossiers" (Candidature.cshtml)
@@ -40,34 +48,50 @@ namespace AdminMnsV1.Web.Controllers
             var classes = await _classService.GetAllClassesAsync();
             var documentTypes = await _documentTypeService.GetAllDocumentTypesAsync();
 
-            var viewModel = new CreateCandidatureViewModel
+            // Correction: Supprime la déclaration redondante et utilise le service pour récupérer toutes les candidatures avec détails.
+            var allCandidatures = await _candidatureService.GetAllCandidaturesWithDetailsAsync();
+
+            // 3. Filtre les candidatures par statut
+            // Assurez-vous que CandidatureStatus.Label est bien le chemin d'accès au label du statut.
+            var candidaturesEnCours = allCandidatures
+                .Where(c => c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
+
+            var candidaturesValidees = allCandidatures
+                .Where(c => c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
+
+            var candidaturesRefusees = allCandidatures
+                .Where(c => c.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
+
+            // 4. Crée le ViewModel combiné : CandidaturesOverviewViewModel
+            var viewModel = new CandidaturesOverviewViewModel
             {
+                // Propriétés pour la création de candidature (proviennent de l'ancien CreateCandidatureViewModel)
                 AvailableClasses = classes.Select(c => new SelectListItem
                 {
                     Value = c.ClasseId.ToString(),
                     Text = c.NameClass
                 }).ToList(),
                 AllAvailableDocumentTypes = documentTypes.ToList(),
-                // Initialise SelectedDocumentTypeIds pour éviter NullReferenceException dans la vue
-                RequiredDocumentTypeIds = new List<int>()
+                RequiredDocumentTypeIds = new List<int>(), // Initialisation
+
+                // Propriétés pour les listes de candidatures (pour les accordéons)
+                // Correction: Le type doit être IEnumerable<Candidature>, pas CandidatureStatus
+                CandidaturesEnCours = candidaturesEnCours,
+                CandidaturesValidees = candidaturesValidees,
+                CandidaturesRefusees = candidaturesRefusees
             };
 
-            // Si vous avez d'autres listes (ex: candidatures en cours, validées) à afficher
-            // dans les accordéons de Candidature.cshtml, vous devriez les charger ici
-            // et les ajouter à ce viewModel (ou à un viewModel plus complexe si nécessaire).
-            // Pour l'instant, on se concentre sur le fonctionnement du modal.
-
-            return View(viewModel); // Passe l'instance du ViewModel à la vue Candidature.cshtml
+            return View(viewModel);
         }
 
-        // Cette action est appelée quand le formulaire de création de candidature est soumis (POST)
         [HttpPost]
-        [ValidateAntiForgeryToken] // Pour la sécurité CSRF
-        public async Task<IActionResult> CreateCandidature(CreateCandidatureViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateCandidature(CandidaturesOverviewViewModel model)
         {
-
-            // Repopule les listes (classes, types de documents) AVANT de vérifier ModelState.IsValid,
-            // car elles sont nécessaires pour réafficher le formulaire (le modal) en cas d'erreur de validation.
+            // Repopule les listes pour le formulaire en cas d'erreur de validation.
             var classes = await _classService.GetAllClassesAsync();
             var documentTypes = await _documentTypeService.GetAllDocumentTypesAsync();
             model.AvailableClasses = classes.Select(c => new SelectListItem
@@ -77,29 +101,50 @@ namespace AdminMnsV1.Web.Controllers
             }).ToList();
             model.AllAvailableDocumentTypes = documentTypes.ToList();
 
+            // Populer aussi les listes d'accordéons en cas d'erreur de validation POST !
+            var allCandidatures = await _candidatureService.GetAllCandidaturesWithDetailsAsync();
+            model.CandidaturesEnCours = allCandidatures
+                .Where(c => c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
+            model.CandidaturesValidees = allCandidatures
+                .Where(c => c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
+            model.CandidaturesRefusees = allCandidatures
+                .Where(c => c.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
+
             if (!ModelState.IsValid)
             {
-                // Si la validation échoue, retourner la vue Candidature pour réafficher le modal avec les erreurs.
-                // Le modèle "model" contient les données soumises et les messages d'erreur.
                 return View("Candidature", model);
             }
 
             try
             {
-                // Appelle le service pour exécuter la logique métier de création de la candidature
-                var success = await _candidatureService.CreateCandidatureAsync(model);
+                // CRÉATION ET MAPPAGE DU CreateCandidatureViewModel ICI
+                var createCandidatureViewModel = new CreateCandidatureViewModel
+                {
+                    LastName = model.LastName,
+                    FirstName = model.FirstName,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    BirthDate = model.BirthDate,
+                    ClassId = model.ClassId,
+                    RequiredDocumentTypeIds = model.RequiredDocumentTypeIds ?? new List<int>()
+                    // N'ajoutez pas 'Statut' ici à moins que votre CreateCandidatureViewModel ne l'attende explicitement
+                    // Le statut initial (par ex. "En cours") devrait être défini dans le service
+                };
+
+                // Passer le ViewModel correctement mappé au service
+                var success = await _candidatureService.CreateCandidatureAsync(createCandidatureViewModel);
 
                 if (success)
                 {
                     TempData["SuccessMessage"] = "La candidature a été créée avec succès.";
-                    // Redirige vers l'action GET Candidature() pour recharger la page principale.
-                    // Cela permet de vider le formulaire et d'afficher le message de succès.
                     return RedirectToAction("Candidature");
                 }
                 else
                 {
                     TempData["ErrorMessage"] = "Une erreur s'est produite lors de la création de la candidature. Veuillez réessayer.";
-                    // Retourner la vue Candidature avec le modèle pour afficher l'erreur.
                     return View("Candidature", model);
                 }
             }
@@ -107,40 +152,40 @@ namespace AdminMnsV1.Web.Controllers
             {
                 ModelState.AddModelError("", "Erreur de configuration : " + ex.Message);
                 TempData["ErrorMessage"] = "Erreur de configuration : " + ex.Message;
-                // Retourner la vue Candidature avec le modèle pour afficher l'erreur.
                 return View("Candidature", model);
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Une erreur inattendue est survenue lors de la création du dossier.");
                 TempData["ErrorMessage"] = "Une erreur inattendue est survenue : " + ex.Message;
-                // Retourner la vue Candidature avec le modèle pour afficher l'erreur.
                 return View("Candidature", model);
             }
         }
+    }
+}
 
         // L'action 'Create()' (GET) qui affichait la vue 'Create.cshtml' n'est plus nécessaire.
         // Car le modal de création est maintenant intégré directement dans 'Candidature.cshtml',
         // et l'action 'Candidature()' (GET) gère son affichage initial.
         // Si vous aviez une vue 'Create.cshtml' distincte, elle est maintenant redondante.
-        /*
-        [HttpGet]
-        public async Task<IActionResult> Create()
-        {
-            var classes = await _classService.GetAllClassesAsync();
-            var documentsTypes = await _documentTypeService.GetAllDocumentTypesAsync();
 
-            var viewModel = new CreateCandidatureViewModel
-            {
-                AvailableClasses = classes.Select(c => new SelectListItem
-                {
-                    Value = c.ClasseId.ToString(),
-                    Text = c.NameClass
-                }).ToList(),
-                AllAvailableDocumentTypes = documentsTypes.ToList()
-            };
-            return View(viewModel);
-        }
-        */
-    }
-}
+
+       
+        //[HttpGet]
+        //public async Task<IActionResult> Create()
+        //{
+        //    var classes = await _classService.GetAllClassesAsync();
+        //    var documentsTypes = await _documentTypeService.GetAllDocumentTypesAsync();
+
+        //    var viewModel = new CreateCandidatureViewModel
+        //    {
+        //        AvailableClasses = classes.Select(c => new SelectListItem
+        //        {
+        //            Value = c.ClasseId.ToString(),
+        //            Text = c.NameClass
+        //        }).ToList(),
+        //        AllAvailableDocumentTypes = documentsTypes.ToList()
+        //    };
+        //    return View(viewModel);
+        //}
+       

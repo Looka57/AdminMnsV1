@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using AdminMnsV1.Data;
 using AdminMnsV1.Models; // Spécifique pour le modèle User
-using AdminMnsV1.Models.Candidature; // Spécifique pour Candidature et CandidatureStatus
+using AdminMnsV1.Models.CandidaturesModels; // Spécifique pour Candidature et CandidatureStatus
 using AdminMnsV1.Models.Documents; // Spécifique pour Document et DocumentType
 using AdminMnsV1.Models.Classes; // Spécifique pour SchoolClass
 using AdminMnsV1.Models.ViewModels; // Spécifique pour les ViewModels si tu en as

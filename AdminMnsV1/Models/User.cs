@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AdminMnsV1.Models.CandidaturesModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -44,7 +45,7 @@ namespace AdminMnsV1.Models
 
 
         // Collection des candidatures pour cet utilisateur
-        public virtual ICollection<Candidature.Candidature> Candidatures { get; set; } = new List<Candidature.Candidature>(); // J'ai utilisé Candidature.Candidature si Candidature est dans le namespace AdminMnsV1.Models.Candidature
+        public virtual ICollection<Candidature> Candidatures { get; set; } = new List<Candidature>(); // J'ai utilisé Candidature.Candidature si Candidature est dans le namespace AdminMnsV1.Models.Candidature
         //Ceci indique une relation un-à-plusieurs avec votre modèle Candidature. Un User peut avoir plusieurs Candidature (inscriptions/présences). virtual est utilisé par Entity Framework Core pour le chargement paresseux (Lazy Loading)
 
         // Collection des documents pour cet utilisateur (en tant qu'étudiant ou autre)

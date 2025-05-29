@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using AdminMnsV1.Models.DocumentTypes;
-using AdminMnsV1.Models.Candidature;
+using AdminMnsV1.Models.CandidaturesModels;
 using AdminMnsV1.Models;
 
 
@@ -53,6 +53,6 @@ namespace AdminMnsV1.Models.Documents
         // Ajoute la clé étrangère vers Candidature
         public int CandidatureId { get; set; } // Ou int? si CandidatureId est int
         [ForeignKey("CandidatureId")]
-        public virtual Candidature.Candidature? Candidature { get; set; }
+        public virtual Candidature? Candidature { get; set; }
     }
 }

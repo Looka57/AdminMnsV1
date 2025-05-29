@@ -5,11 +5,11 @@ using AdminMnsV1.Models.Students;
 using AdminMnsV1.Models.Experts;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using AdminMnsV1.Models.Classes;
-using AdminMnsV1.Models.Candidature;
 using System.Reflection.Metadata;
 using AdminMnsV1.Models.DocumentTypes;
 using AdminMnsV1.Models.Documents;
 using Microsoft.CodeAnalysis.Diagnostics;
+using AdminMnsV1.Models.CandidaturesModels;
 
 
 namespace AdminMnsV1.Data

@@ -1,21 +1,22 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using AdminMnsV1.Models.Classes;
+using System;
+using System.Collections.Generic; // Pour ICollection
 
-namespace AdminMnsV1.Models.Candidature
+namespace AdminMnsV1.Models.CandidaturesModels
+
 {
     public class Candidature
     {
         [Key]
         public int CandidatureId { get; set; } // Clé primaire
 
-        [Required]
-        public DateTime CandidatureCreationDate { get; set; }
+        
+        public DateTime? CandidatureCreationDate { get; set; }
 
-        [Required]
-        public DateTime CandidatureValidationDate { get; set; }
-
-
+        
+        public DateTime? CandidatureValidationDate { get; set; }
 
 
         //Cle etranger vers Student qui postule (User.Id)

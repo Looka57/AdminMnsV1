@@ -1,14 +1,18 @@
 ﻿// Services/DashboardService.cs
-using AdminMnsV1.Data;         // Pour interagir avec la base de données (ApplicationDbContext)
-using AdminMnsV1.Models;      // Pour utiliser des modèles comme User et CardModel
-using AdminMnsV1.ViewModels;  // Pour construire le DashboardViewModel
-using Microsoft.AspNetCore.Identity; // Pour utiliser UserManager (gestion des utilisateurs et de leurs rôles)
+using System;
 using System.Collections.Generic; // Pour utiliser List<>
 using System.Linq;            // Pour les requêtes LINQ (Count(), Where())
 using System.Security.Claims; // Pour ClaimsPrincipal
 using System.Threading.Tasks; // Pour les opérations asynchrones
-using System;
+using AdminMnsV1.Data;         // Pour interagir avec la base de données (ApplicationDbContext)
+using AdminMnsV1.Models;      // Pour utiliser des modèles comme User et CardModel
+using AdminMnsV1.Models.CandidaturesModels;
 using AdminMnsV1.Services.Interfaces;
+using AdminMnsV1.ViewModels;  // Pour construire le DashboardViewModel
+using Microsoft.AspNetCore.Identity; // Pour utiliser UserManager (gestion des utilisateurs et de leurs rôles)
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
+using Mono.TextTemplating;
 
 
 //Maintenant que nous avons défini le contrat avec l'interface, nous devons créer une classe qui va "réaliser" ce contrat. C'est la classe DashboardService qui implémente IDashboardService
@@ -54,6 +58,8 @@ namespace AdminMnsV1.Services.Implementation
             var studentCount = _context.Users // Filtre les utilisateurs par statut "Stagiaire" et non supprimés
                 .Where(u => u.Status == "Stagiaire" && !u.IsDeleted)
                 .Count();
+
+            //GRAPHIQUE
             var numberMen = _context.Users // Compte les hommes stagiaires
                 .Where(u => u.Status == "Stagiaire" && u.Sexe == "Male")
                 .Count();
@@ -61,14 +67,33 @@ namespace AdminMnsV1.Services.Implementation
                 .Where(u => u.Status == "Stagiaire" && u.Sexe == "Female")
                 .Count();
 
+            //Récupérer les candidatures par statut
+            var allCandidatures = await _context.Candidatures
+                .Include(c => c.CandidatureStatus) //Filtrer le statut
+                .Include(c => c.User) //nom et prenom
+                .Include(c => c.Class) // la classe
+                .ToListAsync();
+
+            var candidaturesEnCours = allCandidatures
+                .Where(c => c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
+
+            var candidaturesValider = allCandidatures
+                .Where(c => c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
+            var candidaturesRefuser = allCandidatures
+                .Where(c => c.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
+
 
 
             // Construire le ViewModel final qui sera envoyé à la vue
             // Le ViewModel regroupe toutes les données nécessaires à l'affichage du tableau de bord.
+            var totalDossierCount = allCandidatures.Count();
             var cards = new List<CardModel>
             {
                 new CardModel { Url = "../Classes/Class", Number = classCount.ToString(), Title = "Classes", IconUrl = "https://img.icons8.com/glyph-neue/64/classroom.png", AltText = "classroom" },
-                new CardModel { Url = "../Candidatures/Candidature", Number = "254", Title = "Dossiers", IconUrl = "https://img.icons8.com/glyph-neue/64/user-folder.png", AltText = "user-folder" },
+                new CardModel { Url = "../Candidatures/Candidature", Number = totalDossierCount.ToString(), Title = "Dossiers", IconUrl = "https://img.icons8.com/glyph-neue/64/user-folder.png", AltText = "user-folder" },
                 new CardModel { Url = "../Students/Student", Number = studentCount.ToString(), Title = "Stagiaires", IconUrl = "https://img.icons8.com/glyph-neue/64/student-male.png", AltText = "student-male" },
                 new CardModel { Url = "#", Number = "5", Title = "Notifications", IconUrl = "https://img.icons8.com/ios-filled/50/appointment-reminders--v1.png", AltText = "reminder" }
             };
@@ -82,11 +107,19 @@ namespace AdminMnsV1.Services.Implementation
                 TotalClasses = classCount, // Les statistiques pour les graphiques/autres affichages
                 TotalStudents = studentCount,
                 NumberOfMen = numberMen,
-                NumberOfWomen = numberWomen
+                NumberOfWomen = numberWomen,
+                CandidaturesEnCours = candidaturesEnCours,
+                CandidaturesValidees = candidaturesValider,
+                CandidaturesRefusees = candidaturesRefuser
             };
 
             return viewModel;
         }
+
+
+
+
+
 
         // -------------Implémentation de la méthode du tableau de bord Stagiaire------------
         public async Task<DashboardViewModel> GetStudentDashboardDataAsync(ClaimsPrincipal userPrincipal)

@@ -1,4 +1,6 @@
-﻿using AdminMnsV1.Models.Candidature;
+﻿using AdminMnsV1.Models.CandidaturesModels;
+using AdminMnsV1.Models;
+using AdminMnsV1.Models.CandidaturesModels;
 
 namespace AdminMnsV1.Repositories.Interfaces
 {
