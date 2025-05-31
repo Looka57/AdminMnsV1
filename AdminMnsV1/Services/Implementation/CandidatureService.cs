@@ -247,7 +247,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
 public async Task<Candidature> GetCandidatureByUserIdAsync(string userId)
 {
     return await _context.Candidatures
-                         .Include(c => c.CandidatureStatus) // <<< Cette ligne est CRUCIALE
+                         .Include(c => c.CandidatureStatus) 
                          .FirstOrDefaultAsync(c => c.UserId == userId);
 }
 

@@ -8,6 +8,7 @@ using AdminMnsV1.Models; // Assurez-vous d'importer votre modèle Candidature ic
 using AdminMnsV1.Models.ViewModels;
 using AdminMnsV1.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering; // Pour SelectListItem
 // using AdminMnsV1.Services.Interfaces; // Cette ligne semble redondante si les interfaces sont déjà dans Application.Services.Interfaces
@@ -23,15 +24,20 @@ namespace AdminMnsV1.Web.Controllers
         private readonly IClassService _classService;
         private readonly IDocumentService _documentService;
         private readonly ApplicationDbContext _context; // Assurez-vous d'avoir injecté le DbContext si nécessaire
+        private UserManager<User> _userManager;
 
         public CandidaturesController(
             ICandidatureService candidatureService,
             IDocumentTypeService documentTypeService,
             IClassService classService,
             IDocumentService documentService,
-            ApplicationDbContext context
+            ApplicationDbContext context,
+            UserManager<User> userManager
+
+
             )
         {
+            _userManager = userManager;
             _candidatureService = candidatureService;
             _documentTypeService = documentTypeService;
             _classService = classService;
@@ -54,15 +60,15 @@ namespace AdminMnsV1.Web.Controllers
             // 3. Filtre les candidatures par statut
             // Assurez-vous que CandidatureStatus.Label est bien le chemin d'accès au label du statut.
             var candidaturesEnCours = allCandidatures
-                .Where(c => c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
+                .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
 
             var candidaturesValidees = allCandidatures
-                .Where(c => c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true)
+                .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
 
             var candidaturesRefusees = allCandidatures
-                .Where(c => c.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true)
+               .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
 
             // 4. Crée le ViewModel combiné : CandidaturesOverviewViewModel
@@ -104,13 +110,13 @@ namespace AdminMnsV1.Web.Controllers
             // Populer aussi les listes d'accordéons en cas d'erreur de validation POST !
             var allCandidatures = await _candidatureService.GetAllCandidaturesWithDetailsAsync();
             model.CandidaturesEnCours = allCandidatures
-                .Where(c => c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
-                .ToList();
+          .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
+          .ToList();
             model.CandidaturesValidees = allCandidatures
-                .Where(c => c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true)
+                .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
             model.CandidaturesRefusees = allCandidatures
-                .Where(c => c.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true)
+                .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
 
             if (!ModelState.IsValid)
