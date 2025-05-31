@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering; // Pour SelectListItem
 // using AdminMnsV1.Services.Interfaces; // Cette ligne semble redondante si les interfaces sont déjà dans Application.Services.Interfaces
 using Microsoft.EntityFrameworkCore;
+using static AdminMnsV1.Models.ViewModels.CandidaturesOverviewViewModel;
 
 namespace AdminMnsV1.Web.Controllers
 {
@@ -71,6 +72,34 @@ namespace AdminMnsV1.Web.Controllers
                .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
 
+            // ---Calcul des statistiques par classe pour le graphique ---
+
+
+            var classStats = new List<ClassCandidatureStats>();
+            foreach (var classItem in classes)
+            {
+                var enCoursCount = allCandidatures
+                    .Count(c => c.ClassId == classItem.ClasseId &&
+                                c.User != null && c.User.IsDeleted == false &&
+                                c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true);
+
+                var valideesCount = allCandidatures
+                    .Count(c => c.ClassId == classItem.ClasseId &&
+                                c.User != null && c.User.IsDeleted == false &&
+                                c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true);
+                classStats.Add(new ClassCandidatureStats
+                {
+                    ClassName = classItem.NameClass,
+                    EnCoursCount = enCoursCount,
+                    ValideesCount = valideesCount
+                });
+            }
+
+
+
+
+
+
             // 4. Crée le ViewModel combiné : CandidaturesOverviewViewModel
             var viewModel = new CandidaturesOverviewViewModel
             {
@@ -118,6 +147,31 @@ namespace AdminMnsV1.Web.Controllers
             model.CandidaturesRefusees = allCandidatures
                 .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
+
+            // --- NOUVEAU : Recalculer les statistiques par classe pour le graphique en cas d'erreur de validation POST ---
+            var classStats = new List<ClassCandidatureStats>();
+            foreach (var classItem in classes)
+            {
+                var enCoursCount = allCandidatures
+                    .Count(c => c.ClassId == classItem.ClasseId &&
+                                c.User != null && c.User.IsDeleted == false &&
+                                c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true);
+
+                var valideesCount = allCandidatures
+                    .Count(c => c.ClassId == classItem.ClasseId &&
+                                c.User != null && c.User.IsDeleted == false &&
+                                c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true);
+
+                classStats.Add(new ClassCandidatureStats
+                {
+                    ClassName = classItem.NameClass,
+                    EnCoursCount = enCoursCount,
+                    ValideesCount = valideesCount
+                });
+            }
+            model.ClassStats = classStats;
+
+
 
             if (!ModelState.IsValid)
             {
@@ -170,28 +224,27 @@ namespace AdminMnsV1.Web.Controllers
     }
 }
 
-        // L'action 'Create()' (GET) qui affichait la vue 'Create.cshtml' n'est plus nécessaire.
-        // Car le modal de création est maintenant intégré directement dans 'Candidature.cshtml',
-        // et l'action 'Candidature()' (GET) gère son affichage initial.
-        // Si vous aviez une vue 'Create.cshtml' distincte, elle est maintenant redondante.
+// L'action 'Create()' (GET) qui affichait la vue 'Create.cshtml' n'est plus nécessaire.
+// Car le modal de création est maintenant intégré directement dans 'Candidature.cshtml',
+// et l'action 'Candidature()' (GET) gère son affichage initial.
+// Si vous aviez une vue 'Create.cshtml' distincte, elle est maintenant redondante.
 
 
-       
-        //[HttpGet]
-        //public async Task<IActionResult> Create()
-        //{
-        //    var classes = await _classService.GetAllClassesAsync();
-        //    var documentsTypes = await _documentTypeService.GetAllDocumentTypesAsync();
 
-        //    var viewModel = new CreateCandidatureViewModel
-        //    {
-        //        AvailableClasses = classes.Select(c => new SelectListItem
-        //        {
-        //            Value = c.ClasseId.ToString(),
-        //            Text = c.NameClass
-        //        }).ToList(),
-        //        AllAvailableDocumentTypes = documentsTypes.ToList()
-        //    };
-        //    return View(viewModel);
-        //}
-       
+//[HttpGet]
+//public async Task<IActionResult> Create()
+//{
+//    var classes = await _classService.GetAllClassesAsync();
+//    var documentsTypes = await _documentTypeService.GetAllDocumentTypesAsync();
+
+//    var viewModel = new CreateCandidatureViewModel
+//    {
+//        AvailableClasses = classes.Select(c => new SelectListItem
+//        {
+//            Value = c.ClasseId.ToString(),
+//            Text = c.NameClass
+//        }).ToList(),
+//        AllAvailableDocumentTypes = documentsTypes.ToList()
+//    };
+//    return View(viewModel);
+//}

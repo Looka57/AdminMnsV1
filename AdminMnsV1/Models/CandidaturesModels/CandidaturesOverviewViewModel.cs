@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using AdminMnsV1.Models.DocumentTypes; // Assurez-vous que DocumentType est dans ce namespace
 using Microsoft.AspNetCore.Mvc.Rendering; // Pour SelectListItem
-using CandidatureModel = AdminMnsV1.Models.CandidaturesModels.Candidature;
-
+using CandidatureModel = AdminMnsV1.Models.CandidaturesModels.Candidature; // Alias pour éviter les confusions si Candidature existe ailleurs
 
 
 namespace AdminMnsV1.Models.ViewModels
@@ -15,7 +14,7 @@ namespace AdminMnsV1.Models.ViewModels
         public string FirstName { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-       
+
         public DateTime? BirthDate { get; set; }
         public string Statut { get; set; } = "Candidat";
         public int ClassId { get; set; }
@@ -30,6 +29,10 @@ namespace AdminMnsV1.Models.ViewModels
         public IEnumerable<CandidatureModel> CandidaturesValidees { get; set; }
         public IEnumerable<CandidatureModel> CandidaturesRefusees { get; set; }
 
+        // --- CORRECTION ICI : LA PROPRIÉTÉ ClassStats EST MAINTENANT AU BON ENDROIT ---
+        public List<ClassCandidatureStats> ClassStats { get; set; } = new List<ClassCandidatureStats>();
+
+
         public CandidaturesOverviewViewModel()
         {
             // Initialisation des listes pour éviter les NullReferenceException en Razor
@@ -42,7 +45,20 @@ namespace AdminMnsV1.Models.ViewModels
             CandidaturesValidees = new List<CandidatureModel>();
             CandidaturesRefusees = new List<CandidatureModel>();
 
+            // Pas besoin d'initialiser ClassStats ici si vous avez déjà un 'new List<ClassCandidatureStats>()'
+            // directement dans la déclaration de la propriété ci-dessus.
+            // Si vous préférez l'initialiser ici, retirez l'initialisation de la déclaration de la propriété.
+            // ClassStats = new List<ClassCandidatureStats>(); // Optionnel si déjà initialisé plus haut
+        }
 
+
+        // --- CORRECTION ICI : LA CLASSE ClassCandidatureStats EST MAINTENANT AU BON ENDROIT ---
+        // Elle est une classe imbriquée de CandidaturesOverviewViewModel, ce qui est une pratique courante.
+        public class ClassCandidatureStats
+        {
+            public string ClassName { get; set; } = string.Empty;
+            public int EnCoursCount { get; set; }
+            public int ValideesCount { get; set; } // Nous utiliserons "Validée" pour "Dossiers clôturés"
         }
     }
 }
