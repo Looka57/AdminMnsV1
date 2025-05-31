@@ -21,7 +21,7 @@ namespace AdminMnsV1.ViewModels
         public string LastName { get; set; }
 
         [Display(Name = "Téléphone")]
-        public string PhoneNumber { get; set; } // Peut être mis à jour si nécessaire
+        public string Phone { get; set; } // Peut être mis à jour si nécessaire
 
         [Display(Name = "Date de naissance")]
         [DataType(DataType.Date)]

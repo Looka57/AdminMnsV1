@@ -59,8 +59,8 @@
 					</div>
 					<div class="mb-3">
 						<label for="studentPhoneNumber" class="form-label">Téléphone du Candidat</label>
-						<input type="tel" class="form-control" id="studentPhoneNumber" asp-for="PhoneNumber">
-						<span asp-validation-for="PhoneNumber" class="text-danger"></span>
+						<input type="tel" class="form-control" id="studentPhoneNumber" asp-for="Phone">
+						<span asp-validation-for="Phone" class="text-danger"></span>
 					</div>
 					<div class="mb-3">
 						<label for="studentBirthDate" class="form-label">Date de naissance</label>
@@ -121,63 +121,162 @@
 
 
 <div class="accordion" id="accordionPanelsStayOpenExample">
-	<div class="accordion-item">
-		<h2 class="accordion-header bob">
-			<button class="accordion-button" type="button" data-bs-toggle="collapse"
-					data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
-					aria-controls="panelsStayOpen-collapseOne">
-				Dossiers en cours (@Model.CandidaturesEnCours.Count())
-			</button>
-		</h2>
-		<div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
-			<div class="accordion-body">
-				<div class="tableProfessors">
-					<table class="table align-middle table-striped table-hover table-custom bg-secondary table-responsive">
-						<thead>
-							<tr>
-								<th scope="col">#</th>
-								<th scope="col">Nom</th>
-								<th scope="col">Prénom</th>
-								<th scope="col" class="d-none d-sm-table-cell">Classe</th>
-								<th scope="col" class="d-none d-md-table-cell">Date de Création</th>
-								<th scope="col">Action</th>
-							</tr>
-						</thead>
-						<tbody>
-							@if (Model.CandidaturesEnCours != null && Model.CandidaturesEnCours.Any())
-							{
-								@foreach (var candidature in Model.CandidaturesEnCours)
-								{
-									<tr>
-										<th scope="row">@candidature.CandidatureId</th>
-										<td>@candidature.User?.LastName</td>    @* Affiche le nom de famille de l'utilisateur lié *@
-										<td>@candidature.User?.FirstName</td>   @* Affiche le prénom de l'utilisateur lié *@
-										<td class="d-none d-sm-table-cell">@candidature.Class?.NameClass</td> @* Affiche le nom de la classe liée *@
-										<td class="d-none d-md-table-cell">@candidature.CandidatureCreationDate?.ToString("yyyy-MM-dd")</td>
-										<td>
-											<button class="btn btn-primary">
-												@* Assurez-vous que le contrôleur CandidaturesStudents existe et a une action CandidatureStudent qui prend un ID *@
-												<a href="@Url.Action("Details", "Candidatures", new { id = candidature.CandidatureId })">Voir</a>
-											</button>
-										</td>
-									</tr>
-								}
-							}
-							else
-							{
-								<tr>
-									<td colspan="6" class="text-center">Aucun dossier en cours trouvé.</td>
-								</tr>
-							}
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                Dossiers En Cours
+            </button>
+        </h2>
+        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+            <div class="accordion-body">
+                <div class="tableProfessors">
+                    <table class="table align-middle table-striped table-hover table-custom bg-secondary table-responsive">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Prénom</th>
+                                <th scope="col" class="d-none d-sm-table-cell">Classe</th>
+                                <th scope="col" class="d-none d-md-table-cell">Date de Création</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.CandidaturesEnCours != null && Model.CandidaturesEnCours.Any())
+                            {
+                                @foreach (var candidature in Model.CandidaturesEnCours)
+                                {
+                                    <tr>
+                                        <th scope="row">@candidature.CandidatureId</th>
+                                        <td>@candidature.User?.LastName</td>    @* Affiche le nom de famille de l'utilisateur lié *@
+                                        <td>@candidature.User?.FirstName</td>    @* Affiche le prénom de l'utilisateur lié *@
+                                        <td class="d-none d-sm-table-cell">@candidature.Class?.NameClass</td> @* Affiche le nom de la classe liée *@
+                                        <td class="d-none d-md-table-cell">@candidature.CandidatureCreationDate?.ToString("yyyy-MM-dd")</td>
+                                        <td>
+                                            <button class="btn btn-primary">
+                                                <a href="@Url.Action("Details", "Candidatures", new { id = candidature.CandidatureId })">Voir</a>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center">Aucun dossier en cours trouvé.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                Dossiers Validés
+            </button>
+        </h2>
+        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+            <div class="accordion-body">
+                <div class="tableProfessors">
+                    <table class="table align-middle table-striped table-hover table-custom bg-secondary table-responsive">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Prénom</th>
+                                <th scope="col" class="d-none d-sm-table-cell">Classe</th>
+                                <th scope="col" class="d-none d-md-table-cell">Date de Création</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.CandidaturesValidees != null && Model.CandidaturesValidees.Any())
+                            {
+                                @foreach (var candidature in Model.CandidaturesValidees)
+                                {
+                                    <tr>
+                                        <th scope="row">@candidature.CandidatureId</th>
+                                        <td>@candidature.User?.LastName</td>
+                                        <td>@candidature.User?.FirstName</td>
+                                        <td class="d-none d-sm-table-cell">@candidature.Class?.NameClass</td>
+                                        <td class="d-none d-md-table-cell">@candidature.CandidatureCreationDate?.ToString("yyyy-MM-dd")</td>
+                                        <td>
+                                            <button class="btn btn-primary">
+                                                <a href="@Url.Action("Details", "Candidatures", new { id = candidature.CandidatureId })">Voir</a>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center">Aucun dossier validé trouvé.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                Dossiers Refusés
+            </button>
+        </h2>
+        <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+            <div class="accordion-body">
+                <div class="tableProfessors">
+                    <table class="table align-middle table-striped table-hover table-custom bg-secondary table-responsive">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Prénom</th>
+                                <th scope="col" class="d-none d-sm-table-cell">Classe</th>
+                                <th scope="col" class="d-none d-md-table-cell">Date de Création</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.CandidaturesRefusees != null && Model.CandidaturesRefusees.Any())
+                            {
+                                @foreach (var candidature in Model.CandidaturesRefusees)
+                                {
+                                    <tr>
+                                        <th scope="row">@candidature.CandidatureId</th>
+                                        <td>@candidature.User?.LastName</td>
+                                        <td>@candidature.User?.FirstName</td>
+                                        <td class="d-none d-sm-table-cell">@candidature.Class?.NameClass</td>
+                                        <td class="d-none d-md-table-cell">@candidature.CandidatureCreationDate?.ToString("yyyy-MM-dd")</td>
+                                        <td>
+                                            <button class="btn btn-primary">
+                                                <a href="@Url.Action("Details", "Candidatures", new { id = candidature.CandidatureId })">Voir</a>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center">Aucun dossier refusé trouvé.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-
 @Html.Partial("~/Views/Shared/Components/_Footer.cshtml")
 
 @section Scripts {

@@ -98,7 +98,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                     Email = model.Email,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
-                    PhoneNumber = model.PhoneNumber,
+                    Phone = model.Phone,
                     BirthDate = (DateTime)model.BirthDate,
                     IsOnboardingCompleted = false, // TRÈS IMPORTANT : Doit être false au début
                     CreationDate = DateTime.UtcNow,

@@ -23,7 +23,7 @@ namespace AdminMnsV1.Models.ViewModels
 
         [Display(Name = "Téléphone du candidat")]
         [Required(ErrorMessage ="Numero du candidat est requis")]
-        public string PhoneNumber { get; set; }
+        public string Phone { get; set; }
 
 
         [Display(Name = "Statut du candidat")]

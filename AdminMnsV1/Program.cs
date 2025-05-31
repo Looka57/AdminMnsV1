@@ -134,7 +134,7 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    string adminEmail = "admin@mns.com";
+    string adminEmail = "   ";
     string adminPassword = "VotreMotDePasseAdmin123!"; // CHANGE CE MOT DE PASSE EN PRODUCTION !
     string adminRole = "Admin";
 

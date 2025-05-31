@@ -126,7 +126,7 @@ namespace AdminMnsV1.Web.Controllers
                     LastName = model.LastName,
                     FirstName = model.FirstName,
                     Email = model.Email,
-                    PhoneNumber = model.PhoneNumber,
+                    Phone = model.Phone,
                     BirthDate = model.BirthDate,
                     ClassId = model.ClassId,
                     RequiredDocumentTypeIds = model.RequiredDocumentTypeIds ?? new List<int>()

@@ -165,7 +165,7 @@ namespace AdminMnsV1.Services.Implementation
             user.Address = model.Address;
             user.City = model.City;
             user.Email = model.Email;
-            user.PhoneNumber = model.Phone; // Utilise PhoneNumber de IdentityUser
+            user.Phone = model.Phone; // Utilise PhoneNumber de IdentityUser
             user.UserName = model.Email; // Mettre à jour le UserName aussi si Email est changé
             user.Status = model.Role;
             user.SocialSecurityNumber = model.SocialSecurityNumber;

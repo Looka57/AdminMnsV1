@@ -14,7 +14,7 @@ namespace AdminMnsV1.Models.ViewModels
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public string Email { get; set; }
-        public string PhoneNumber { get; set; }
+        public string Phone { get; set; }
         public DateTime? BirthDate { get; set; }
         public string Statut { get; set; } // Attention: Le statut pour une nouvelle candidature devrait être défini par défaut côté service/logique métier, pas par l'utilisateur.
         public int ClassId { get; set; }

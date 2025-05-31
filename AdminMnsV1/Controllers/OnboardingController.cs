@@ -39,7 +39,7 @@ namespace AdminMnsV1.Controllers
                 Email = currentUser.Email,
                 FirstName = currentUser.FirstName,
                 LastName = currentUser.LastName,
-                PhoneNumber = currentUser.PhoneNumber,
+                Phone = currentUser.Phone,
                 BirthDate = currentUser.BirthDate,
                 Sexe = currentUser.Sexe,
                 Nationality = currentUser.Nationality,
