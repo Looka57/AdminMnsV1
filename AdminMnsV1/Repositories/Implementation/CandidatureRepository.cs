@@ -9,8 +9,10 @@ namespace AdminMnsV1.Data.Repositories
 {
     public class CandidatureRepository : GenericRepository<Candidature>, ICandidatureRepository
     {
+        private readonly ApplicationDbContext _context;
         public CandidatureRepository(ApplicationDbContext context) : base(context)
         {
+            _context = context;
         }
 
         public async Task<IEnumerable<Candidature>> GetAllCandidaturesWithDetailsAsync()
@@ -37,8 +39,6 @@ namespace AdminMnsV1.Data.Repositories
         public async Task<int?> GetCandidatureStatusIdByName(string statusName)
         {
             // Accès direct au DbSet des CandidatureStatus via le _context
-            // Assure-toi que ton ApplicationDbContext a un DbSet pour CandidatureStatus
-            // Ex: public DbSet<CandidatureStatus> CandidatureStatuses { get; set; }
             var status = await _context.CandidatureStatuses.FirstOrDefaultAsync(s => s.Label == statusName);
             return status?.CandidatureStatusId; // Retourne l'ID ou null si non trouvé
         }

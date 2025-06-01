@@ -11,6 +11,8 @@ namespace AdminMnsV1.Application.Services.Interfaces // <-- TRÈS IMPORTANT : CO
     {
         Task<bool> CreateCandidatureAsync(CreateCandidatureViewModel model);
         Task<IEnumerable<Candidature>> GetAllCandidaturesWithDetailsAsync();
+        Task<IEnumerable<CandidatureStudentViewModel>> GetAllCandidaturesForOverviewAsync();
+
         Task<Candidature?> GetCandidatureByIdWithDetailsAsync(int id);
         Task<int?> GetCandidatureStatusIdByName(string statusName);
 
@@ -18,7 +20,12 @@ namespace AdminMnsV1.Application.Services.Interfaces // <-- TRÈS IMPORTANT : CO
 
         Task<CandidatureStatus> GetCandidatureStatusByIdAsync(int statusId); 
         Task<bool> UpdateCandidatureAsync(Candidature candidature); // Si tu as une méthode de mise à jour
-        // Ajoute ici toutes les méthodes de logique métier que ton contrôleur ou d'autres services pourraient appeler pour les candidatures.
+        Task<CandidatureStudentViewModel> GetCandidatureDetailsAsync(int candidatureId);
 
+        Task<bool> UpdateCandidatureStatusAsync(int candidatureId, string newStatus);
+        Task<bool> UploadDocumentAsync(int candidatureId, IFormFile document);
+        Task<int> ValidateDocumentAsync(int documentId);
+        Task<int> RejectDocumentAsync(int documentId);
+        Task<bool> DeleteCandidatureAsync(int id);
     }
 }

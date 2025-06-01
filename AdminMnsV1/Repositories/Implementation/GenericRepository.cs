@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace AdminMnsV1.Repositories.Implementation
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
+
     {
         protected readonly ApplicationDbContext _context;
         protected readonly DbSet<T> _dbSet;
@@ -50,7 +51,7 @@ namespace AdminMnsV1.Repositories.Implementation
             _dbSet.Update(entity);
         }
 
-        public void Remove(T entity)
+        public void Delete(T entity)
         {
             _dbSet.Remove(entity);
         }

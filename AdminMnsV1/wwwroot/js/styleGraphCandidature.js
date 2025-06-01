@@ -65,10 +65,31 @@ document.addEventListener('DOMContentLoaded', function () {
         options: {
             responsive: true,
             scales: {
-                y: {
-                    beginAtZero: true,
-                },
+                y: { // C'est l'axe des valeurs numériques (les comptes de dossiers)
+                    beginAtZero: true, // Pour commencer l'axe à 0
+                    ticks: {
+                        // C'est ici que la magie opère !
+                        stepSize: 1, // Force l'intervalle entre les ticks à 1
+                        // Callback pour s'assurer que seuls les entiers sont affichés
+                        callback: function (value) {
+                            if (Number.isInteger(value)) {
+                                return value;
+                            }
+                            return null; // N'affiche pas les valeurs non entières
+                        }
+                    }
+                }
             },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                title: {
+                    display: true,
+                    text: 'Statut des Candidatures par Classe'
+                }
+            }
         },
     });
 });

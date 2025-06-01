@@ -41,6 +41,5 @@ namespace AdminMnsV1.Models.CandidaturesModels
 
         // Propriété de progression
         public int Progress { get; set; }
-
     }
 }

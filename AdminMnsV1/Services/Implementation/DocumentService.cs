@@ -258,7 +258,7 @@ namespace AdminMnsV1.Application.Services.Implementation
             var documentToDelete = await _documentRepository.GetByIdAsync(id); // Utilise GetByIdAsync du générique
             if (documentToDelete != null)
             {
-                _documentRepository.Remove(documentToDelete); // Utilise Remove() du GenericRepository
+                _documentRepository.Delete(documentToDelete); // Utilise Remove() du GenericRepository
                 await _documentRepository.SaveChangesAsync(); // Sauvegarde les changements après la suppression
                 // Si la suppression d'un document impacte la candidature, recalcule la progression
                 if (documentToDelete.CandidatureId > 0)

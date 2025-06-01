@@ -155,7 +155,7 @@
                                         <td class="d-none d-md-table-cell">@candidature.CandidatureCreationDate?.ToString("yyyy-MM-dd")</td>
                                         <td>
                                             <button class="btn btn-primary">
-                                                <a href="@Url.Action("Details", "Candidatures", new { id = candidature.CandidatureId })">Voir</a>
+                                                <a href="@Url.Action("CandidatureStudent", "CandidaturesStudents", new { id = candidature.CandidatureId })">Voir</a>
                                             </button>
                                         </td>
                                     </tr>
@@ -278,8 +278,15 @@
         </div>
     </div>
 </div>
-@Html.Partial("~/Views/Shared/Components/_Footer.cshtml")
+
+<script id="chart-data" type="application/json">
+    @Html.Raw(Json.Serialize(Model.ClassStats))
+</script>
+
 
 @section Scripts {
-	<partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/styleGraphCandidature.js"></script>
 }
+
+@Html.Partial("~/Views/Shared/Components/_Footer.cshtml")

@@ -10,6 +10,8 @@ namespace AdminMnsV1.Models.Documents
         [Key]
         public int DocumentStatusId { get; set; }
 
+
+
         [Required]
         [StringLength(50)]
         public string DocumentStatusName { get; set; } // Ex: "Demandé", "Reçu", "Validé", "Refusé"

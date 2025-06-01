@@ -8,7 +8,7 @@ namespace AdminMnsV1.Data.Repositories.Interfaces // <-- TRÈS IMPORTANT : VÉRI
 {
     public interface IDocumentTypeRepository : IGenericRepository<DocumentType> // Hérite de IGenericRepository
     {
-        // Tu peux ajouter ici des méthodes spécifiques aux types de documents si besoin,
-        // par exemple, GetDocumentTypeByNameAsync si elle n'est pas déjà dans le générique FindAsync
+       
+
     }
 }

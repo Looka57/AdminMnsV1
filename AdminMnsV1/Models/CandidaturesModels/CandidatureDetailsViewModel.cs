@@ -10,7 +10,7 @@ namespace AdminMnsV1.Models.ViewModels
     {
         public int CandidatureId { get; set; }
         public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string LastName { get; set; } 
         public string Email { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
@@ -28,15 +28,17 @@ namespace AdminMnsV1.Models.ViewModels
         public int AdminValidationProgress { get; set; }   // % de documents validés par l'admin
     }
 
-    public class DocumentViewModel
-    {
-        public int DocumentId { get; set; }
-        public string DocumentTypeName { get; set; }
-        public DateTime? DocumentDepositDate { get; set; }
-        public string DocumentStatut { get; set; } // "Demandé", "Déposé", "Vérifié", "Validé", "Refusé"
-        public string DocumentPath { get; set; } // Le lien pour vérifier le document
+    //public class DocumentViewModel
+    //{
+    //    public int DocumentId { get; set; }
+    //    public string DocumentTypeName { get; set; }
+    //    public DateTime? DocumentDepositDate { get; set; }
+    //    public string DocumentStatut { get; set; } // "Demandé", "Déposé", "Vérifié", "Validé", "Refusé"
+    //    public string DocumentPath { get; set; } // Le lien pour vérifier le document
 
-        // Ajoutez une propriété pour l'ID du type de document si nécessaire pour les actions
-        public int DocumentTypeId { get; set; }
-    }
+    //    // Ajoutez une propriété pour l'ID du type de document si nécessaire pour les actions
+    //    public int DocumentTypeId { get; set; }
+    //    public object UploadDate { get; internal set; }
+    //    public bool IsVerified { get; internal set; }
+    //}
 }

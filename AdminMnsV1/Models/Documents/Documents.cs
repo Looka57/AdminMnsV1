@@ -13,7 +13,11 @@ namespace AdminMnsV1.Models.Documents
         public int DocumentId { get; set; }
 
         [Required]
-        public string DocumentName { get; set; }
+        public string DocumentName { get; set; } 
+
+        // Dans votre classe public class Documents
+        [Display(Name = "Vérifié")] // Ceci est optionnel, mais utile pour l'affichage dans les vues
+        public bool IsVerified { get; set; }
 
         [Required]
         public DateTime DocumentDepositDate { get; set; }

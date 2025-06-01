@@ -14,6 +14,12 @@ namespace AdminMnsV1.Data.Repositories.Implementation
     {
         public DocumentTypeRepository(ApplicationDbContext context) : base(context)
         {
+            
+        }
+
+        public async Task<IEnumerable<DocumentType>> GetAllDocumentTypesAsync()
+        {
+            return await _context.DocumentTypes.ToListAsync();
         }
 
         // Si tu as des méthodes spécifiques à implémenter de IDocumentTypeRepository, mets-les ici.

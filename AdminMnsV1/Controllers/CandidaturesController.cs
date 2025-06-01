@@ -1,30 +1,29 @@
-﻿using System; // Pour InvalidOperationException et Exception
+﻿using System;
 using System.Collections.Generic;
-using System.Linq; // Pour .Select et .ToList()
-using System.Threading.Tasks; // Pour Task
-using AdminMnsV1.Application.Services.Interfaces; // Utilisez AdminMnsV1.Application.Services.Interfaces pour les services
-using AdminMnsV1.Data; // Pour les opérations de base de données asynchrones
+using System.Linq;
+using System.Threading.Tasks;
+using AdminMnsV1.Application.Services.Interfaces;
+using AdminMnsV1.Data;
 using AdminMnsV1.Models; // Assurez-vous d'importer votre modèle Candidature ici
 using AdminMnsV1.Models.ViewModels;
-using AdminMnsV1.Services.Interfaces;
+using AdminMnsV1.Services.Interfaces; // Cette ligne semble redondante si les interfaces sont déjà dans Application.Services.Interfaces
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering; // Pour SelectListItem
-// using AdminMnsV1.Services.Interfaces; // Cette ligne semble redondante si les interfaces sont déjà dans Application.Services.Interfaces
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using static AdminMnsV1.Models.ViewModels.CandidaturesOverviewViewModel;
 
 namespace AdminMnsV1.Web.Controllers
 {
-    [Authorize] // Applique si tu veux que seuls les utilisateurs connectés puissent accéder
+    [Authorize]
     public class CandidaturesController : Controller
     {
         private readonly ICandidatureService _candidatureService;
         private readonly IDocumentTypeService _documentTypeService;
         private readonly IClassService _classService;
         private readonly IDocumentService _documentService;
-        private readonly ApplicationDbContext _context; // Assurez-vous d'avoir injecté le DbContext si nécessaire
+        private readonly ApplicationDbContext _context;
         private UserManager<User> _userManager;
 
         public CandidaturesController(
@@ -34,8 +33,6 @@ namespace AdminMnsV1.Web.Controllers
             IDocumentService documentService,
             ApplicationDbContext context,
             UserManager<User> userManager
-
-
             )
         {
             _userManager = userManager;
@@ -46,20 +43,17 @@ namespace AdminMnsV1.Web.Controllers
             _context = context;
         }
 
-        // C'est l'action principale pour afficher la page des "Dossiers" (Candidature.cshtml)
-        // Elle doit fournir le CreateCandidatureViewModel pour le modal qui est intégré à cette page.
         [HttpGet]
         public async Task<IActionResult> Candidature()
         {
-            // Prépare les données nécessaires pour le modal de création (classes et types de documents)
             var classes = await _classService.GetAllClassesAsync();
             var documentTypes = await _documentTypeService.GetAllDocumentTypesAsync();
 
-            // Correction: Supprime la déclaration redondante et utilise le service pour récupérer toutes les candidatures avec détails.
+            // S'assurer que le service retourne les candidatures avec leurs statuts inclus (via .Include)
             var allCandidatures = await _candidatureService.GetAllCandidaturesWithDetailsAsync();
 
-            // 3. Filtre les candidatures par statut
-            // Assurez-vous que CandidatureStatus.Label est bien le chemin d'accès au label du statut.
+            // 3. Filtre les candidatures par statut pour les listes d'accordéons
+            // CORRECTION ICI : Utiliser c.CandidatureStatus?.Label
             var candidaturesEnCours = allCandidatures
                 .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
@@ -69,24 +63,30 @@ namespace AdminMnsV1.Web.Controllers
                 .ToList();
 
             var candidaturesRefusees = allCandidatures
-               .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true)
+               .Where(c => c.User != null && c.User.IsDeleted == false &&
+                           (c.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true ||
+                            c.CandidatureStatus?.Label?.Equals("Supprimé", StringComparison.OrdinalIgnoreCase) == true ||
+                            c.CandidatureStatus?.Label?.Equals("Invalidé", StringComparison.OrdinalIgnoreCase) == true)) // Correction pour inclure tous les statuts "terminés"
                 .ToList();
 
             // ---Calcul des statistiques par classe pour le graphique ---
-
-
             var classStats = new List<ClassCandidatureStats>();
             foreach (var classItem in classes)
             {
                 var enCoursCount = allCandidatures
                     .Count(c => c.ClassId == classItem.ClasseId &&
-                                c.User != null && c.User.IsDeleted == false &&
-                                c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true);
+                                 c.User != null && c.User.IsDeleted == false &&
+                                 c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true);
 
+                // IMPORTANT : Si "Validé" seul ne capture pas tous vos "dossiers clôturés",
+                // vous devrez ajouter d'autres libellés ici (ex: "Refusé", "Supprimé", "Invalidé").
+                // D'après votre description, il est probable que "Validé" soit juste un statut parmi d'autres qui indiquent un dossier "clôturé" pour le graphique.
+                // Si "Validé" est le seul statut qui compte comme "Validé/Clôturé" sur le graphique, alors c'est bon.
                 var valideesCount = allCandidatures
                     .Count(c => c.ClassId == classItem.ClasseId &&
-                                c.User != null && c.User.IsDeleted == false &&
-                                c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true);
+                                 c.User != null && c.User.IsDeleted == false &&
+                                 c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true);
+
                 classStats.Add(new ClassCandidatureStats
                 {
                     ClassName = classItem.NameClass,
@@ -95,15 +95,10 @@ namespace AdminMnsV1.Web.Controllers
                 });
             }
 
-
-
-
-
-
             // 4. Crée le ViewModel combiné : CandidaturesOverviewViewModel
             var viewModel = new CandidaturesOverviewViewModel
             {
-                // Propriétés pour la création de candidature (proviennent de l'ancien CreateCandidatureViewModel)
+                // Propriétés pour la création de candidature
                 AvailableClasses = classes.Select(c => new SelectListItem
                 {
                     Value = c.ClasseId.ToString(),
@@ -113,10 +108,13 @@ namespace AdminMnsV1.Web.Controllers
                 RequiredDocumentTypeIds = new List<int>(), // Initialisation
 
                 // Propriétés pour les listes de candidatures (pour les accordéons)
-                // Correction: Le type doit être IEnumerable<Candidature>, pas CandidatureStatus
-                CandidaturesEnCours = candidaturesEnCours,
+                // CES LIGNES ONT ÉTÉ CORRIGÉES
+                CandidaturesEnCours = candidaturesEnCours, // Utilisation des listes déjà filtrées
                 CandidaturesValidees = candidaturesValidees,
-                CandidaturesRefusees = candidaturesRefusees
+                CandidaturesRefusees = candidaturesRefusees,
+
+                // Assurez-vous que la propriété ClassStats est assignée ici pour le graphique
+                ClassStats = classStats
             };
 
             return View(viewModel);
@@ -137,30 +135,34 @@ namespace AdminMnsV1.Web.Controllers
             model.AllAvailableDocumentTypes = documentTypes.ToList();
 
             // Populer aussi les listes d'accordéons en cas d'erreur de validation POST !
+            // Ces parties sont déjà correctement corrigées dans votre code actuel
             var allCandidatures = await _candidatureService.GetAllCandidaturesWithDetailsAsync();
             model.CandidaturesEnCours = allCandidatures
-          .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
-          .ToList();
+            .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
+            .ToList();
             model.CandidaturesValidees = allCandidatures
                 .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
             model.CandidaturesRefusees = allCandidatures
-                .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true)
+                .Where(c => c.User != null && c.User.IsDeleted == false &&
+                            (c.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true ||
+                             c.CandidatureStatus?.Label?.Equals("Supprimé", StringComparison.OrdinalIgnoreCase) == true ||
+                             c.CandidatureStatus?.Label?.Equals("Invalidé", StringComparison.OrdinalIgnoreCase) == true))
                 .ToList();
 
-            // --- NOUVEAU : Recalculer les statistiques par classe pour le graphique en cas d'erreur de validation POST ---
+            // Recalculer les statistiques par classe pour le graphique en cas d'erreur de validation POST
             var classStats = new List<ClassCandidatureStats>();
             foreach (var classItem in classes)
             {
                 var enCoursCount = allCandidatures
                     .Count(c => c.ClassId == classItem.ClasseId &&
-                                c.User != null && c.User.IsDeleted == false &&
-                                c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true);
+                                 c.User != null && c.User.IsDeleted == false &&
+                                 c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true);
 
                 var valideesCount = allCandidatures
                     .Count(c => c.ClassId == classItem.ClasseId &&
-                                c.User != null && c.User.IsDeleted == false &&
-                                c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true);
+                                 c.User != null && c.User.IsDeleted == false &&
+                                 c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true);
 
                 classStats.Add(new ClassCandidatureStats
                 {
@@ -171,8 +173,6 @@ namespace AdminMnsV1.Web.Controllers
             }
             model.ClassStats = classStats;
 
-
-
             if (!ModelState.IsValid)
             {
                 return View("Candidature", model);
@@ -180,7 +180,6 @@ namespace AdminMnsV1.Web.Controllers
 
             try
             {
-                // CRÉATION ET MAPPAGE DU CreateCandidatureViewModel ICI
                 var createCandidatureViewModel = new CreateCandidatureViewModel
                 {
                     LastName = model.LastName,
@@ -190,11 +189,8 @@ namespace AdminMnsV1.Web.Controllers
                     BirthDate = model.BirthDate,
                     ClassId = model.ClassId,
                     RequiredDocumentTypeIds = model.RequiredDocumentTypeIds ?? new List<int>()
-                    // N'ajoutez pas 'Statut' ici à moins que votre CreateCandidatureViewModel ne l'attende explicitement
-                    // Le statut initial (par ex. "En cours") devrait être défini dans le service
                 };
 
-                // Passer le ViewModel correctement mappé au service
                 var success = await _candidatureService.CreateCandidatureAsync(createCandidatureViewModel);
 
                 if (success)
@@ -223,28 +219,3 @@ namespace AdminMnsV1.Web.Controllers
         }
     }
 }
-
-// L'action 'Create()' (GET) qui affichait la vue 'Create.cshtml' n'est plus nécessaire.
-// Car le modal de création est maintenant intégré directement dans 'Candidature.cshtml',
-// et l'action 'Candidature()' (GET) gère son affichage initial.
-// Si vous aviez une vue 'Create.cshtml' distincte, elle est maintenant redondante.
-
-
-
-//[HttpGet]
-//public async Task<IActionResult> Create()
-//{
-//    var classes = await _classService.GetAllClassesAsync();
-//    var documentsTypes = await _documentTypeService.GetAllDocumentTypesAsync();
-
-//    var viewModel = new CreateCandidatureViewModel
-//    {
-//        AvailableClasses = classes.Select(c => new SelectListItem
-//        {
-//            Value = c.ClasseId.ToString(),
-//            Text = c.NameClass
-//        }).ToList(),
-//        AllAvailableDocumentTypes = documentsTypes.ToList()
-//    };
-//    return View(viewModel);
-//}

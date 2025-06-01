@@ -53,7 +53,7 @@ namespace AdminMnsV1.Application.Services.Implementation // Ou AdminMnsV1.Servic
             var documentTypeToDelete = await _documentTypeRepository.GetByIdAsync(id);
             if (documentTypeToDelete == null) return false;
 
-            _documentTypeRepository.Remove(documentTypeToDelete);
+            _documentTypeRepository.Delete(documentTypeToDelete);
             return await _documentTypeRepository.SaveChangesAsync() > 0;
         }
     }

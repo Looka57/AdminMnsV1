@@ -1,27 +1,31 @@
 ﻿// AdminMnsV1.Application.Services/Implementation/CandidatureService.cs
-using AdminMnsV1.Application.Services.Interfaces; // Pour ICandidatureService, IDocumentService, etc.
-using AdminMnsV1.Repositories.Interfaces; // Pour ICandidatureRepository, IUserRepository, IDocumentRepository, IDocumentTypeRepository
-using AdminMnsV1.Models.Documents; // Pour Document et DocumentType
-using AdminMnsV1.Models; // Pour User
-using AdminMnsV1.Models.ViewModels; // Pour CreateCandidatureViewModel
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using AdminMnsV1.Data.Repositories.Interfaces;
-using Microsoft.AspNetCore.Mvc.Rendering; // Pour les includes
-using AdminMnsV1.Models.Classes;
-using AdminMnsV1.Repositories.Implementation;
-using Microsoft.AspNetCore.Identity;
-using AdminMnsV1.Models.Students;
-using System.Web;
 using System.Net; // Pour WebUtility.UrlEncode
-using System.Text.Encodings.Web;
-using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
+using System.Web;
+using AdminMnsV1.Application.Services.Interfaces; // Pour ICandidatureService, IDocumentService, etc.
 using AdminMnsV1.Data;
-using AdminMnsV1.Models.CandidaturesModels; // Ajoutez cette ligne en haut de CandidatureService.cs
+using AdminMnsV1.Data.Repositories.Implementation;
+using AdminMnsV1.Data.Repositories.Interfaces;
+using AdminMnsV1.Models; // Pour User
+using AdminMnsV1.Models.CandidaturesModels;
+using AdminMnsV1.Models.Classes;
+using AdminMnsV1.Models.Documents; // Pour Document et DocumentType
+using AdminMnsV1.Models.Students;
+using AdminMnsV1.Models.ViewModels; // Pour CreateCandidatureViewModel
+using AdminMnsV1.Repositories.Implementation;
+using AdminMnsV1.Repositories.Interfaces; // Pour ICandidatureRepository, IUserRepository, IDocumentRepository, IDocumentTypeRepository
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering; // Pour les includes
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
+
+// ...
+
 
 namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT : CORRESPOND AU USING DANS PROGRAM.CS
 {
@@ -37,6 +41,8 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
         private readonly IEmailService _emailService;
         private readonly IGenericRepository<Attend> _attendRepository;
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment; // Ajout de l'environnement web
+
 
 
 
@@ -51,7 +57,9 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             UserManager<User> userManager,
             IEmailService emailService,
             IGenericRepository<Attend> attendRepository,
-            ApplicationDbContext context) // Ajout de ApplicationDbContext pour les opérations de base de données
+            ApplicationDbContext context, // Ajout de ApplicationDbContext pour les opérations de base de données
+            IWebHostEnvironment webHostEnvironment) // Injection de IWebHostEnvironment
+
 
         {
             _candidatureRepository = candidatureRepository;
@@ -63,7 +71,9 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             _userManager = userManager;
             _emailService = emailService;
             _attendRepository = attendRepository;
-            _context = context; 
+            _context = context;
+            _webHostEnvironment = webHostEnvironment; // Initialisation
+
         }
 
 
@@ -275,6 +285,238 @@ public async Task<Candidature> GetCandidatureByUserIdAsync(string userId)
             return await _candidatureRepository.SaveChangesAsync() > 0;
         }
 
+
+        public async Task<CandidatureStudentViewModel> GetCandidatureDetailsAsync(int id)
+        {
+            // 1. Récupérer la candidature avec tous les détails nécessaires depuis le repository
+            var candidature = await _candidatureRepository.GetCandidatureByIdWithDetailsAsync(id);
+
+            // Si la candidature n'existe pas, retourne null
+            if (candidature == null)
+            {
+                return null;
+            }
+
+            // 2. Calculer la progression du dossier (nombre de documents soumis/vérifiés)
+            int totalRequiredDocs = candidature.Documents?.Count ?? 0;
+            int submittedDocs = candidature.Documents?.Count(d => !string.IsNullOrEmpty(d.DocumentPath)) ?? 0;
+            int verifiedDocs = candidature.Documents?.Count(d => d.IsVerified) ?? 0;
+
+            int studentProgress = totalRequiredDocs > 0 ? (int)((double)submittedDocs / totalRequiredDocs * 100) : 0;
+            int mnsProgress = totalRequiredDocs > 0 ? (int)((double)verifiedDocs / totalRequiredDocs * 100) : 0;
+
+            // 3. Mapper les données de l'entité Candidature vers le ViewModel CandidatureStudentViewModel
+            var viewModel = new CandidatureStudentViewModel
+            {
+                CandidatureId = candidature.CandidatureId,
+                CandidatureStatus = candidature.CandidatureStatus?.Label, // Assure-toi d'accéder au Label du statut
+                FirstName = candidature.User?.FirstName,
+                LastName = candidature.User?.LastName,
+                Email = candidature.User?.Email,
+                PhoneNumber = candidature.User?.Phone, // Utilise Phone au lieu de PhoneNumber si c'est le nom de la propriété
+                Address = candidature.User?.Address,
+                BirthDate = candidature.User?.BirthDate,
+                ClassName = candidature.Class.NameClass, // Utilise SchoolClass au lieu de Class
+                StudentValidationProgress = studentProgress,
+                MnsValidationProgress = mnsProgress,
+                StudentImage = "/images/default_student.png", // Chemin par défaut
+
+                // 4. Mapper les documents requis
+                RequiredDocuments = candidature.Documents.Select(cd => new DocumentViewModel
+                {
+                    DocumentId = cd.DocumentId,
+                    DocumentTypeName = cd.DocumentType.NameDocumentType,
+                    UploadDate = cd.DocumentDepositDate, // Utilise DocumentDepositDate
+                    DocumentPath = cd.DocumentPath,
+                    IsVerified = cd.IsVerified
+                }).ToList() ?? new List<DocumentViewModel>(),
+
+                // 5.  Notifications (exemple - à adapter si tu as une entité Notification)
+                //Notifications = new List<NotificationViewModel>() // À implémenter si tu as des notifications
+            };
+
+            return viewModel;
+        }
+
+        public async Task<IEnumerable<CandidatureStudentViewModel>> GetAllCandidaturesForOverviewAsync()
+        {
+            var allCandidatures = await _candidatureRepository.GetAllCandidaturesWithDetailsAsync(); // Supposons que cette méthode ramène Candidature avec User, Class, CandidatureStatus, Documents inclus
+
+            // Mapper les entités Candidature vers une liste de CandidatureStudentViewModel
+            var viewModels = allCandidatures
+                .Where(c => c.User != null && !c.User.IsDeleted) // Filtrez les utilisateurs non supprimés
+                .Select(c => new CandidatureStudentViewModel
+                {
+                    CandidatureId = c.CandidatureId,
+                    FirstName = c.User?.FirstName,
+                    LastName = c.User?.LastName,
+                    Email = c.User?.Email,
+                    PhoneNumber = c.User?.PhoneNumber,
+                    Address = c.User?.Address,
+                    BirthDate = c.User?.BirthDate,
+                    ClassName = c.Class?.NameClass,
+                    CandidatureStatus = c.CandidatureStatus?.Label,
+                    //StudentImage = c.User?.StudentImage, // Si vous avez cette propriété
+
+                    // Le calcul des progressions peut être complexe ici,
+                    // Si _documentTypeRepository.GetAllDocumentTypesAsync() est nécessaire,
+                    // il faudrait le charger une seule fois avant la boucle ou le passer en paramètre.
+                    // Pour simplifier temporairement:
+                    StudentValidationProgress = 0, // À implémenter correctement
+                    MnsValidationProgress = 0,     // À implémenter correctement
+
+                    RequiredDocuments = c.Documents?.Select(d => new DocumentViewModel
+                    {
+                        DocumentId = d.DocumentId,
+                        DocumentName = d.DocumentName,
+                        DocumentTypeName = d.DocumentType?.NameDocumentType, 
+                        DocumentPath = d.DocumentPath,
+                        IsVerified = d.IsVerified // Assurez-vous toujours que cette propriété existe
+                    }).ToList() ?? new List<DocumentViewModel>()
+
+                }).ToList();
+
+            // Note sur la progression: Pour calculer correctement StudentValidationProgress et MnsValidationProgress
+            // ici, vous devrez peut-être récupérer le nombre total de types de documents requis
+            // une seule fois avant la boucle .Select(), car appeler .Result.Count() à l'intérieur
+            // d'un Select() peut être inefficace ou poser des problèmes.
+
+            var totalRequiredDocumentTypesCount = _documentTypeRepository.GetAllAsync().Result.Count(); // Ou mieux, gérez-le de manière async.
+            foreach (var vm in viewModels)
+            {
+                if (totalRequiredDocumentTypesCount > 0)
+                {
+                    vm.StudentValidationProgress = (int)(((double)vm.RequiredDocuments.Count(d => !string.IsNullOrEmpty(d.DocumentPath)) / totalRequiredDocumentTypesCount) * 100);
+                    vm.MnsValidationProgress = (int)(((double)vm.RequiredDocuments.Count(d => d.IsVerified) / totalRequiredDocumentTypesCount) * 100);
+                }
+                else
+                {
+                    vm.StudentValidationProgress = 0;
+                    vm.MnsValidationProgress = 0;
+                }
+            }
+
+
+            return viewModels;
+        }
+
+        public async Task<bool> UploadDocumentAsync(int candidatureId, IFormFile document)
+        {
+            var candidature = await _candidatureRepository.GetCandidatureByIdWithDetailsAsync(candidatureId);
+            if (candidature == null) return false;
+
+            // Logique pour identifier le document à uploader.
+            // Ceci est un exemple : tu devras peut-être passer un DocumentTypeId ou un DocumentId dans le formulaire.
+            // Pour l'exemple, nous allons chercher un document qui n'a pas encore de chemin.
+            var targetDocument = candidature.Documents.FirstOrDefault(d => string.IsNullOrEmpty(d.DocumentPath));
+
+            if (targetDocument == null)
+            {
+                // Aucun document à mettre à jour, ou tous les documents requis ont déjà un chemin
+                return false;
+            }
+
+            var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "documents");
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            var uniqueFileName = Guid.NewGuid().ToString() + "_" + document.FileName;
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            try
+            {
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await document.CopyToAsync(fileStream);
+                }
+
+                targetDocument.DocumentPath = "/documents/" + uniqueFileName; // Chemin relatif pour la DB
+                targetDocument.DocumentDepositDate = DateTime.Now;
+                targetDocument.IsVerified = false; // Par défaut, un nouveau document n'est pas vérifié
+
+                _documentRepository.Update(targetDocument); // Met à jour l'état du document dans le contexte
+                await _documentRepository.SaveChangesAsync(); // Enregistre les changements en base de données
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erreur lors de l'upload du document : {ex.Message}");
+                // Gérer l'erreur, peut-être logguer ou renvoyer un statut spécifique
+                return false;
+            }
+        }
+        public async Task<int> ValidateDocumentAsync(int documentId)
+        {
+            var documentToUpdate = await _documentRepository.GetByIdAsync(documentId);
+            if (documentToUpdate == null) return 0; // Document non trouvé
+
+            documentToUpdate.IsVerified = true;
+            _documentRepository.Update(documentToUpdate);
+            await _documentRepository.SaveChangesAsync();
+
+            // Retourne l'ID de la candidature associée au document pour la redirection ou le rafraîchissement
+            return documentToUpdate.CandidatureId;
+        }
+        public async Task<bool> DeleteCandidatureAsync(int id)
+        {
+            var candidature = await _candidatureRepository.GetByIdAsync(id);
+            if (candidature == null) return false;
+
+            // Optionnel : supprimer les fichiers physiques associés aux documents de la candidature
+            if (candidature.Documents != null)
+            {
+                foreach (var doc in candidature.Documents.Where(d => !string.IsNullOrEmpty(d.DocumentPath)))
+                {
+                    var filePath = Path.Combine(_webHostEnvironment.WebRootPath, doc.DocumentPath.TrimStart('/'));
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+                }
+            }
+
+            _candidatureRepository.Delete(candidature);
+            return await _candidatureRepository.SaveChangesAsync() > 0;
+        }
+
+
+        public async Task<bool> UpdateCandidatureStatusAsync(int candidatureId, string newStatusName)
+        {
+            var candidature = await _candidatureRepository.GetByIdAsync(candidatureId);
+            if (candidature == null) return false;
+
+            var newStatus = (await _candidatureStatusRepository.FindAsync(s => s.Label == newStatusName)).FirstOrDefault();
+            if (newStatus == null) return false;
+
+            candidature.CandidatureStatusId = newStatus.CandidatureStatusId;
+            // Si tu as une propriété string 'Statut' dans Candidature, mets-la à jour aussi si besoin:
+            // candidature.Statut = newStatusName;
+
+            _candidatureRepository.Update(candidature);
+            return await _candidatureRepository.SaveChangesAsync() > 0;
+        }
+
+
+
+        public async Task<int> RejectDocumentAsync(int documentId)
+        {
+            var documentToUpdate = await _documentRepository.GetByIdAsync(documentId);
+            if (documentToUpdate == null) return 0; // Document non trouvé
+
+            documentToUpdate.IsVerified = false; // Marque comme non vérifié ou rejeté
+            // Optionnel : tu peux réinitialiser le chemin si l'étudiant doit le soumettre à nouveau
+            // documentToUpdate.DocumentPath = null;
+            // documentToUpdate.DocumentDepositDate = null;
+
+            _documentRepository.Update(documentToUpdate);
+            await _documentRepository.SaveChangesAsync();
+
+            // Retourne l'ID de la candidature associée au document
+            return documentToUpdate.CandidatureId;
+        }
 
     }
 }
