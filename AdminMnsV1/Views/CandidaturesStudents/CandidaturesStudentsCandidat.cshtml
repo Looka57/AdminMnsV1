@@ -1,1 +1,181 @@
-﻿<h1>Candidature</h1>
+﻿@model AdminMnsV1.Models.CandidaturesModels.CandidatureStudentViewModel
+
+@{
+    ViewData["Title"] = ViewData["Title"] ?? "Mon Dossier de Candidature";
+}
+
+<h1 class="mb-4">@ViewData["Title"]</h1>
+
+<div class="cardStudent">
+    <div class="row g-4 mb-5">
+        <div class="col-md-4 col-sm-12">
+            <div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
+                @* Image de profil de l'étudiant *@
+                <img src="@(Model.StudentImage)" alt="@(Model.FirstName) @(Model.LastName)" class="student-image">
+                <h4>@(Model.FirstName ?? "N/A") @(Model.LastName ?? "N/A")</h4>
+                <span>Classe : @(Model.ClassName ?? "N/A")</span>
+                <span>Adresse: @(Model.Address ?? "N/A")</span>
+                @* Assurez-vous d'avoir une propriété pour le code postal dans votre ViewModel si vous voulez l'afficher *@
+                @* <span>Code postal: @(Model.PostalCode ?? "N/A")</span> *@
+                <span>Téléphone: @(Model.PhoneNumber ?? "N/A")</span>
+                <span>Mail: @(Model.Email ?? "N/A")</span>
+                <span>Date de naissance : @(Model.BirthDate.HasValue? Model.BirthDate.Value.ToShortDateString() : "Non spécifié")</span>
+            </div>
+            <div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
+                <div class="student-info-enCours">
+                    <h4>@Model.CandidatureStatus</h4> @* Affiche le statut réel de la candidature *@
+                    <img width="80" height="80" src="https://img.icons8.com/dotty/80/rotate.png" alt="rotate" />
+                </div>
+            </div>
+            <div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
+                <div class="student-info">
+                    <h4>Promotion: CDA 2025/2026</h4> @* Vous pouvez dynamiser cette partie si Model.Promotion existe *@
+                    <p class="text-justify">
+                        Lorem ipsum dolor, sit adipisicing elit. Adipisci quis epe
+                        voluptatem obcaecati, vel, met nesciunt consequatur placecccccccccat reprehenderit.
+                        amet consectetuccccccccr adipisicing elit.otam minima nostrum nihil illum laborum
+                        rerum reiciendis facilis cum. Officiisccccc
+                        expli dohhhhr quaerat maxime dignissimos ab sit possimus repudiandae obcaecati.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8 col-sm-12">
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="row g-5">
+                        <div class="col-md-5 col-sm-12 p-3 mx-4 border rounded-3 bg-light">
+                            <h4 class="mb-4">Progression du dossier</h4>
+                            <div class="progress" style="height: 50px;">
+                                <div class="progress-bar" role="progressbar" style="width: @(Model.StudentValidationProgress)%"
+                                     aria-valuemin="0" aria-valuemax="100" aria-valuenow="@(Model.StudentValidationProgress)">
+                                    @(Model.StudentValidationProgress)%
+                                </div>
+                            </div>
+                            <p>Validation élève</p>
+                            <div class="progress mt-5 " style="height: 50px;">
+                                <div class="progress-bar progress-bar-striped bg-warning" role="progressbar"
+                                     style="width: @(Model.MnsValidationProgress)%" aria-valuemin="0" aria-valuemax="100"
+                                     aria-valuenow="@(Model.MnsValidationProgress)">
+                                    @(Model.MnsValidationProgress)%
+                                </div>
+                            </div>
+                            <p>Validation MNS</p>
+                        </div>
+                        <div class="col-md-6 col-sm-12 p-3 border rounded-3 boxNotif"
+                             style="background-color: var(--orange);">
+                            <h4>Notifications</h4>
+                            <table class="table rounded-3">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Pièces</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @* Ici, vous pourriez itérer sur une liste de notifications si vous en avez dans votre ViewModel *@
+                                    @* Pour l'instant, je laisse les exemples statiques, à adapter si nécessaire *@
+                                    <tr>
+                                        <th scope="row">1</th>
+                                        <td>Ce qui vient là</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">2</th>
+                                        <td>C.C</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">3</th>
+                                        <td colspan="2">Dossier</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">4</th>
+                                        <td colspan="2">Autre</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3 g-3 border rounded-3 bg-light">
+                <h4>Pièces à fournir</h4>
+                <div class="table-responsive">
+                    <table class="table align-middle table-striped table-hover table-custom bg-secondary">
+                        <thead>
+                            <tr>
+                                <th scope="col">Pièce</th>
+                                <th scope="col" class="d-none d-md-table-cell">Date</th>
+                                <th scope="col">Téléchargement</th>
+                                <th scope="col">Validation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RequiredDocuments != null && Model.RequiredDocuments.Any())
+                            {
+                                @foreach (var doc in Model.RequiredDocuments)
+                                {
+                                    <tr>
+                                        <td>@doc.DocumentTypeName</td> @* Utilise le type de document comme nom de pièce *@
+                                        <td class="d-none d-md-table-cell">@doc.UploadDate</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(doc.DocumentPath))
+                                            {
+                                                <a href="@doc.DocumentPath" class="btn btn-info btn-sm" target="_blank">
+                                                    <i class="bi bi-file-earmark-text"></i> Voir
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Non téléchargé</span>
+                                            }
+                                            @* Formulaire d'upload/remplacement pour chaque document *@
+                                            <form asp-action="UploadDocument" asp-controller="CandidaturesStudents" method="post" enctype="multipart/form-data" class="d-inline-block ml-2">
+                                                <input type="hidden" name="candidatureId" value="@Model.CandidatureId" />
+                                                <input type="hidden" name="documentType" value="@doc.DocumentTypeName" /> @* Utile pour identifier quel type de document est uploadé *@
+                                                <input type="file" name="document" class="btn btn-warning btn-sm" style="display:inline-block;" />
+                                                <button type="submit" class="btn btn-primary btn-sm">Uploader</button>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            @if (doc.IsVerified)
+                                            {
+                                                <span class="badge badge-success">Validé</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-warning">En attente</span>
+                                                @* Boutons Valider/Rejeter si l'utilisateur est un administrateur/MNS *@
+                                                @* <form asp-action="ValidateDocument" asp-controller="CandidaturesStudents" method="post" class="d-inline-block">
+                                                    <input type="hidden" name="documentId" value="@doc.DocumentId" />
+                                                    <button type="submit" class="btn btn-success btn-sm">Valider</button>
+                                                </form>
+                                                <form asp-action="RejectDocument" asp-controller="CandidaturesStudents" method="post" class="d-inline-block">
+                                                    <input type="hidden" name="documentId" value="@doc.DocumentId" />
+                                                    <button type="submit" class="btn btn-danger btn-sm">Rejeter</button>
+                                                </form> *@
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5">Aucun document n'a été trouvé pour cette candidature.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

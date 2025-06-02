@@ -255,7 +255,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
         public async Task<Candidature> GetCandidatureByUserIdAsync(string userId)
         {
             return await _context.Candidatures
-                                 .Include(c => c.CandidatureStatus)
+                                 .Include(c => c.CandidatureStatuses)
                                  .FirstOrDefaultAsync(c => c.UserId == userId);
         }
 
@@ -523,8 +523,9 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             var candidature = await _context.Candidatures
                 .Include(c => c.User)
                 .Include(c => c.Class)
+                .Include(c => c.CandidatureStatuses)
                 .Include(c => c.Documents)
-                    .ThenInclude(d => d.DocumentType)
+                .ThenInclude(d => d.DocumentType)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
 
@@ -536,7 +537,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             var viewModel = new CandidatureStudentViewModel
             {
                 CandidatureId = candidature.CandidatureId,
-                CandidatureStatus = candidature.CandidatureStatus.ToString(), // Ou CandidatureStutus, unifier les noms
+                CandidatureStatus = candidature.CandidatureStatuses.Label, // Ou CandidatureStutus, unifier les noms
 
                 FirstName = candidature.User?.FirstName ?? "N/A",
                 LastName = candidature.User?.LastName ?? "N/A",

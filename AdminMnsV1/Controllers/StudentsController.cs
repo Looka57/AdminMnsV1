@@ -115,31 +115,6 @@ namespace AdminMnsV1.Controllers
 
 
 
-        //Afficher le dossier du candidat connecté
-
-        public async Task<IActionResult> MyDossier()
-        {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return RedirectToPage("Home/Login");
-            }
-
-            // Récupère le dossier de candidature de l'utilisateur via le CandidatureService
-
-            var candidatureViewModel = await _candidatureService.GetCandidatureDetailsByUserIdAsync(userId); 
-
-            if (candidatureViewModel == null)
-            {
-                TempData["ErrorMessage"] = "Aucun dossier de candidature trouvé pour votre compte.";
-                // Vous pouvez créer une vue DossierNotFound.cshtml pour ce cas
-                return View("~/Views/Students/DossierNotFound.cshtml"); // Redirige vers une page d'erreur
-            }
-
-            return View("~/Views/CandidaturesStudents/CandidaturesStudentsCandidat.cshtml", candidatureViewModel); // Assurez-vous que cette vue est créée (étape 3)
-
-        }
 
     }
 }

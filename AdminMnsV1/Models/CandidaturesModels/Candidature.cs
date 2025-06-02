@@ -33,7 +33,7 @@ namespace AdminMnsV1.Models.CandidaturesModels
         //Clé étrangère vers CandidatureStatus
         public int CandidatureStatusId { get; set; } 
         [ForeignKey("CandidatureStatusId")] // 
-        public CandidatureStatus CandidatureStatus { get; set; }
+        public CandidatureStatus CandidatureStatuses { get; set; }
 
 
         // Relation de navigation pour les documents liés à cette candidature

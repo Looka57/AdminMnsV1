@@ -102,7 +102,7 @@ namespace AdminMnsV1.Controllers
                 if (candidature != null)
                 {
                     // Si le label est "En cours" (ou "Candidat" si vous avez les deux statuts distincts)
-                    if (candidature.CandidatureStatus?.Label == "En cours" || candidature.CandidatureStatus?.Label == "Candidat")
+                    if (candidature.CandidatureStatuses?.Label == "En cours" || candidature.CandidatureStatuses?.Label == "Candidat")
                     {
                         viewModel = await _dashboardService.GetCandidatDashboardDataAsync(User); // Ceci doit donner 2 cartes
                     }

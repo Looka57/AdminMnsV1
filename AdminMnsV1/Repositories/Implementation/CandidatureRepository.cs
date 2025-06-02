@@ -20,7 +20,7 @@ namespace AdminMnsV1.Data.Repositories
             return await _dbSet
                 .Include(c => c.User)
                 .Include(c => c.Class)
-                .Include(c => c.CandidatureStatus)
+                .Include(c => c.CandidatureStatuses)
                 .ToListAsync();
         }
 
@@ -29,7 +29,7 @@ namespace AdminMnsV1.Data.Repositories
             return await _dbSet
                 .Include(c => c.User)
                 .Include(c => c.Class)
-                .Include(c => c.CandidatureStatus)
+                .Include(c => c.CandidatureStatuses)
                 .Include(c => c.Documents)
                 .ThenInclude(d => d.DocumentType)
                 .FirstOrDefaultAsync(c => c.CandidatureId == id);

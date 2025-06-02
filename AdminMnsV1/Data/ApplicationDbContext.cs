@@ -100,7 +100,7 @@ namespace AdminMnsV1.Data
 
             // Configuration de la relation Candidature - CandidatureStatus
             modelBuilder.Entity<Candidature>()
-               .HasOne(c => c.CandidatureStatus)
+               .HasOne(c => c.CandidatureStatuses)
                 .WithMany(cs => cs.Candidatures)
                 .HasForeignKey(c => c.CandidatureStatusId)
                 .OnDelete(DeleteBehavior.Restrict); // Si le statut de candidature est supprimé, toutes les candidatures associées le seront aussi

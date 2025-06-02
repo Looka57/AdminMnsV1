@@ -69,20 +69,20 @@ namespace AdminMnsV1.Services.Implementation
 
             //Récupérer les candidatures par statut
             var allCandidatures = await _context.Candidatures
-                .Include(c => c.CandidatureStatus) //Filtrer le statut
+                .Include(c => c.CandidatureStatuses) //Filtrer le statut
                 .Include(c => c.User) //nom et prenom
                 .Include(c => c.Class) // la classe
                 .ToListAsync();
 
             var candidaturesEnCours = allCandidatures
-                .Where(c => c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
+                .Where(c => c.CandidatureStatuses?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
 
             var candidaturesValider = allCandidatures
-                .Where(c => c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true)
+                .Where(c => c.CandidatureStatuses?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
             var candidaturesRefuser = allCandidatures
-                .Where(c => c.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true)
+                .Where(c => c.CandidatureStatuses?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
 
 
