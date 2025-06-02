@@ -1,20 +1,33 @@
 ﻿// Controllers/StudentsController.cs
-using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using AdminMnsV1.Application.Services.Implementation;
+using AdminMnsV1.Application.Services.Interfaces;
+using AdminMnsV1.Models;
+using AdminMnsV1.Models.CandidaturesModels; // Pour CandidatureStudentViewModel
 using AdminMnsV1.Models.Students;
 using AdminMnsV1.Models.ViewModels;
+using AdminMnsV1.Services; // Pour CandidatureService
 using AdminMnsV1.Services.Interfaces; // Utilise l'interface du service
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Rendering; // Nécessaire si tu manipules SelectList directement dans le contrôleur (ici, pour les erreurs)
+using Microsoft.AspNetCore.Authorization; // Pour FindFirstValue
+using Microsoft.AspNetCore.Identity; // Pour UserManager
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AdminMnsV1.Controllers
 {
     public class StudentsController : Controller
     {
         private readonly IStudentService _studentService; // Injecte l'interface du service
+        private readonly UserManager<User> _userManager;
+        private readonly ICandidatureService _candidatureService; 
 
-        public StudentsController(IStudentService studentService)
+        public StudentsController(IStudentService studentService,UserManager<User> userManager, ICandidatureService candidatureService)
         {
             _studentService = studentService;
+            _userManager = userManager; 
+            _candidatureService = candidatureService; 
+
         }
 
         // Récupérer les stagiaires pour l'affichage
@@ -99,5 +112,34 @@ namespace AdminMnsV1.Controllers
                 return RedirectToAction(nameof(Student));
             }
         }
+
+
+
+        //Afficher le dossier du candidat connecté
+
+        public async Task<IActionResult> MyDossier()
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToPage("Home/Login");
+            }
+
+            // Récupère le dossier de candidature de l'utilisateur via le CandidatureService
+
+            var candidatureViewModel = await _candidatureService.GetCandidatureDetailsByUserIdAsync(userId); 
+
+            if (candidatureViewModel == null)
+            {
+                TempData["ErrorMessage"] = "Aucun dossier de candidature trouvé pour votre compte.";
+                // Vous pouvez créer une vue DossierNotFound.cshtml pour ce cas
+                return View("~/Views/Students/DossierNotFound.cshtml"); // Redirige vers une page d'erreur
+            }
+
+            return View("~/Views/CandidaturesStudents/CandidaturesStudentsCandidat.cshtml", candidatureViewModel); // Assurez-vous que cette vue est créée (étape 3)
+
+        }
+
     }
 }

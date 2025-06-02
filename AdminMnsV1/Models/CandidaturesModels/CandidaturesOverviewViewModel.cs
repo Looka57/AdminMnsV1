@@ -44,21 +44,15 @@ namespace AdminMnsV1.Models.ViewModels
             CandidaturesEnCours = new List<CandidatureModel>();
             CandidaturesValidees = new List<CandidatureModel>();
             CandidaturesRefusees = new List<CandidatureModel>();
-
-            // Pas besoin d'initialiser ClassStats ici si vous avez déjà un 'new List<ClassCandidatureStats>()'
-            // directement dans la déclaration de la propriété ci-dessus.
-            // Si vous préférez l'initialiser ici, retirez l'initialisation de la déclaration de la propriété.
-            // ClassStats = new List<ClassCandidatureStats>(); // Optionnel si déjà initialisé plus haut
         }
 
 
-        // --- CORRECTION ICI : LA CLASSE ClassCandidatureStats EST MAINTENANT AU BON ENDROIT ---
-        // Elle est une classe imbriquée de CandidaturesOverviewViewModel, ce qui est une pratique courante.
+    
         public class ClassCandidatureStats
         {
             public string ClassName { get; set; } = string.Empty;
             public int EnCoursCount { get; set; }
-            public int ValideesCount { get; set; } // Nous utiliserons "Validée" pour "Dossiers clôturés"
+            public int ValideesCount { get; set; } //  "Validée" pour "Dossiers clôturés"
         }
     }
 }

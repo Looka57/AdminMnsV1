@@ -23,6 +23,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering; // Pour les includes
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using AdminMnsV1.Application.Services.Interfaces; 
+
 
 // ...
 
@@ -42,10 +44,6 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
         private readonly IGenericRepository<Attend> _attendRepository;
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment; // Ajout de l'environnement web
-
-
-
-
 
         public CandidatureService(
             ICandidatureRepository candidatureRepository,
@@ -100,7 +98,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             // 1. Vérifier si l'utilisateur existe déjà ou le créer
             var user = (await _userRepository.FindAsync(u => u.Email == model.Email)).FirstOrDefault();
             bool isNewUser = (user == null); // Indicateur pour savoir si un nouvel utilisateur a été créé
-            
+
             if (isNewUser)
             {
                 user = new Student
@@ -143,7 +141,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                 var message = $"Bonjour {model.FirstName} {model.LastName},<br/><br/>" +
                               "Votre candidature a été pré-enregistrée avec succès. <br/>" +
                               $"Veuillez cliquer sur le lien ci-dessous pour définir votre mot de passe et vous connecter à l'application et y déposer vos documents :<br/><br/>" +
-                              
+
                               $"<a href=\"{resetPasswordUrl}\">Définir mon mot de passe</a><br/><br/>" + // ICI resetPasswordUrl est accessible
                               "Ce lien est valide pour une durée limitée.<br/><br/>" +
                               "Cordialement,<br/>L'équipe AdminMnsV1";
@@ -254,12 +252,12 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
         }
 
         // Dans CandidatureService.cs
-public async Task<Candidature> GetCandidatureByUserIdAsync(string userId)
-{
-    return await _context.Candidatures
-                         .Include(c => c.CandidatureStatus) 
-                         .FirstOrDefaultAsync(c => c.UserId == userId);
-}
+        public async Task<Candidature> GetCandidatureByUserIdAsync(string userId)
+        {
+            return await _context.Candidatures
+                                 .Include(c => c.CandidatureStatus)
+                                 .FirstOrDefaultAsync(c => c.UserId == userId);
+        }
 
         public async Task<Candidature?> GetCandidatureByIdWithDetailsAsync(int id)
         {
@@ -309,7 +307,7 @@ public async Task<Candidature> GetCandidatureByUserIdAsync(string userId)
             var viewModel = new CandidatureStudentViewModel
             {
                 CandidatureId = candidature.CandidatureId,
-                CandidatureStatus = candidature.CandidatureStatus?.Label, // Assure-toi d'accéder au Label du statut
+                //CandidatureStatus = candidature.CandidatureStatus?.Label, // Assure-toi d'accéder au Label du statut
                 FirstName = candidature.User?.FirstName,
                 LastName = candidature.User?.LastName,
                 Email = candidature.User?.Email,
@@ -319,7 +317,9 @@ public async Task<Candidature> GetCandidatureByUserIdAsync(string userId)
                 ClassName = candidature.Class.NameClass, // Utilise SchoolClass au lieu de Class
                 StudentValidationProgress = studentProgress,
                 MnsValidationProgress = mnsProgress,
-                StudentImage = "/images/default_student.png", // Chemin par défaut
+                StudentImage = string.IsNullOrEmpty(candidature.User?.Photo)
+                   ? "/images/logo/defaut.png" // Chemin par défaut si Photo est null ou vide
+                   : "/images/profiles/" + candidature.User.Photo, // Concaténation du chemin du dossier avec le nom du fichier
 
                 // 4. Mapper les documents requis
                 RequiredDocuments = candidature.Documents.Select(cd => new DocumentViewModel
@@ -355,7 +355,7 @@ public async Task<Candidature> GetCandidatureByUserIdAsync(string userId)
                     Address = c.User?.Address,
                     BirthDate = c.User?.BirthDate,
                     ClassName = c.Class?.NameClass,
-                    CandidatureStatus = c.CandidatureStatus?.Label,
+                    //CandidatureStatus = c.CandidatureStatus?.Label,
                     //StudentImage = c.User?.StudentImage, // Si vous avez cette propriété
 
                     // Le calcul des progressions peut être complexe ici,
@@ -369,7 +369,7 @@ public async Task<Candidature> GetCandidatureByUserIdAsync(string userId)
                     {
                         DocumentId = d.DocumentId,
                         DocumentName = d.DocumentName,
-                        DocumentTypeName = d.DocumentType?.NameDocumentType, 
+                        DocumentTypeName = d.DocumentType?.NameDocumentType,
                         DocumentPath = d.DocumentPath,
                         IsVerified = d.IsVerified // Assurez-vous toujours que cette propriété existe
                     }).ToList() ?? new List<DocumentViewModel>()
@@ -518,5 +518,53 @@ public async Task<Candidature> GetCandidatureByUserIdAsync(string userId)
             return documentToUpdate.CandidatureId;
         }
 
+        public async Task<CandidatureStudentViewModel> GetCandidatureDetailsByUserIdAsync(string userId)
+        {
+            var candidature = await _context.Candidatures
+                .Include(c => c.User)
+                .Include(c => c.Class)
+                .Include(c => c.Documents)
+                    .ThenInclude(d => d.DocumentType)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+
+            if (candidature == null)
+            {
+                return null;
+            }
+
+            var viewModel = new CandidatureStudentViewModel
+            {
+                CandidatureId = candidature.CandidatureId,
+                CandidatureStatus = candidature.CandidatureStatus.ToString(), // Ou CandidatureStutus, unifier les noms
+
+                FirstName = candidature.User?.FirstName ?? "N/A",
+                LastName = candidature.User?.LastName ?? "N/A",
+                Email = candidature.User?.Email ?? "N/A",
+                PhoneNumber = candidature.User?.PhoneNumber ?? "N/A",
+                Address = candidature.User?.Address ?? "N/A",
+                BirthDate = candidature.User?.BirthDate,
+                StudentImage = string.IsNullOrEmpty(candidature.User?.Photo)
+                               ? "/images/profiles/default_student.png"
+                               : "/images/profiles/" + candidature.User.Photo,
+
+                ClassName = candidature.Class?.NameClass ?? "N/A",
+
+                StudentValidationProgress = 50, // Calcul à implémenter
+                MnsValidationProgress = 30,     // Calcul à implémenter
+
+                RequiredDocuments = candidature.Documents?.Select(d => new DocumentViewModel
+                {
+                    DocumentId = d.DocumentId,
+                    DocumentName = d.DocumentName,
+                    DocumentTypeName = d.DocumentType?.NameDocumentType ?? "Non défini",
+                    UploadDate = d.DocumentDepositDate,
+                    DocumentPath = d.DocumentPath != null ? $"/uploads/documents/{d.DocumentPath}" : null, // **AJUSTEZ CE CHEMIN**
+                    IsVerified = d.IsVerified
+                }).ToList() ?? new List<DocumentViewModel>()
+            };
+
+            return viewModel;
+        }
     }
 }

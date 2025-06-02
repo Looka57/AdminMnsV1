@@ -27,6 +27,8 @@ using AdminMnsV1.Interfaces.IServices; // Pour SmtpSettings
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
 //Enregistrement des paramètres SMTP de appsettings.json
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
@@ -35,6 +37,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddRazorPages();
 
 // Enregistrement du DbContext
@@ -83,7 +86,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICandidatureRepository, CandidatureRepository>();
 builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
 builder.Services.AddScoped<IDocumentTypeRepository, DocumentTypeRepository>();
-builder.Services.AddScoped<IOnboardingService, OnboardingService>();
+
+
 // Si tu as d'autres repositories spécifiques (ex: ICandidatureStatusRepository), ajoute-les ici.
 // Sinon, IGenericRepository<CandidatureStatus> sera résolu par la ligne AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
@@ -92,10 +96,14 @@ builder.Services.AddScoped<IOnboardingService, OnboardingService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IClassService, ClassService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>(); // Si ce service existe
-builder.Services.AddScoped<ICandidatureService, CandidatureService>();
 builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IDocumentTypeService, DocumentTypeService>();
-builder.Services.AddScoped<ICandidatureService, CandidatureService>();
+builder.Services.AddScoped<IOnboardingService, OnboardingService>();
+
+builder.Services.AddScoped<
+    AdminMnsV1.Application.Services.Interfaces.ICandidatureService,
+    AdminMnsV1.Application.Services.Implementation.CandidatureService
+>();
 
 //Oublie du password
 builder.Services.AddScoped<IEmailSender, EmailSender>();

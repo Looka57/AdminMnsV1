@@ -22,6 +22,9 @@ namespace AdminMnsV1.Application.Services.Interfaces // <-- TRÈS IMPORTANT : CO
         Task<bool> UpdateCandidatureAsync(Candidature candidature); // Si tu as une méthode de mise à jour
         Task<CandidatureStudentViewModel> GetCandidatureDetailsAsync(int candidatureId);
 
+        Task<CandidatureStudentViewModel> GetCandidatureDetailsByUserIdAsync(string userId);
+
+
         Task<bool> UpdateCandidatureStatusAsync(int candidatureId, string newStatus);
         Task<bool> UploadDocumentAsync(int candidatureId, IFormFile document);
         Task<int> ValidateDocumentAsync(int documentId);

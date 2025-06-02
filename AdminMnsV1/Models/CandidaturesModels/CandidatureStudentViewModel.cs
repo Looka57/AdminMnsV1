@@ -8,6 +8,7 @@ namespace AdminMnsV1.Models.CandidaturesModels
         public int CandidatureId { get; set; }
         public string CandidatureStutus { get; set; }
 
+
         // Propriétés de l'étudiant (utilisateur lié à la candidature)
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -21,16 +22,18 @@ namespace AdminMnsV1.Models.CandidaturesModels
         // Propriétés liées à la classe
         public string ClassName { get; set; }
 
+
         // Propriétés pour la progression du dossier
         public int StudentValidationProgress { get; set; } // Pour la barre de progression côté étudiant
         public int MnsValidationProgress { get; set; } // Pour la barre de progression côté MNS (Admin)
+        public string CandidatureStatus { get; set; }
 
         // Liste des notifications (si vous en avez)
         //public List<NotificationViewModel> Notifications { get; set; } = new List<NotificationViewModel>();
 
         // Liste des documents requis et leur statut
         public List<DocumentViewModel> RequiredDocuments { get; set; } = new List<DocumentViewModel>();
-        public string? CandidatureStatus { get; internal set; }
+
 
         //// ViewModel pour les notifications individuelles
         //public class NotificationViewModel
@@ -42,13 +45,6 @@ namespace AdminMnsV1.Models.CandidaturesModels
 
 
         // ViewModel pour les documents individuels
-        //public class DocumentViewModel
-        //{
-        //    public int DocumentId { get; set; } // L'ID du CandidatureDocument ou du Document lui-même
-        //    public string DocumentTypeName { get; set; } // Ex: "Lettre de motivation", "RIB"
-        //    public DateTime? UploadDate { get; set; } // Date de téléchargement du document par l'étudiant
-        //    public string DocumentPath { get; set; } // Chemin d'accès au fichier sur le serveur (pour le bouton "Vérifier")
-        //    public bool IsVerified { get; set; } // Indique si le document a été validé par le MNS
-        //}
     }
 }
+      

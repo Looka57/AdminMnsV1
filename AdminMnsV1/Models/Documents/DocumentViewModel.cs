@@ -14,5 +14,15 @@ namespace AdminMnsV1.Models.ViewModels
         public int DocumentTypeId { get; set; } // ID du type de document
         public DateTime? UploadDate { get; set; } // Renommé de 'object' à 'DateTime?' pour être plus précis
         public bool IsVerified { get; set; }
+
+
+        //public class DocumentViewModel
+        //{
+        //    public int DocumentId { get; set; } // L'ID du CandidatureDocument ou du Document lui-même
+        //    public string DocumentTypeName { get; set; } // Ex: "Lettre de motivation", "RIB"
+        //    public DateTime? UploadDate { get; set; } // Date de téléchargement du document par l'étudiant
+        //    public string DocumentPath { get; set; } // Chemin d'accès au fichier sur le serveur (pour le bouton "Vérifier")
+        //    public bool IsVerified { get; set; } // Indique si le document a été validé par le MNS
+        //}
     }
 }

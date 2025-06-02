@@ -3,10 +3,10 @@
 @model AdminMnsV1.Models.CandidaturesModels.CandidatureStudentViewModel
 
 @{
-	ViewData["Title"] = "Dossier: " + Model.FirstName; // Ou un nom plus approprié pour la page
+	ViewData["Title"] = "Dossier: " + Model.FirstName + Model.LastName; // Ou un nom plus approprié pour la page
 }
 
-<h1 class="mx-4 mt-5">Dossier: @Model.FirstName</h1>
+<h1 class="mx-4 mt-5">Dossier: @Model.FirstName  @Model.LastName</h1>
 
 <div class="cardStudent">
 	<div class="row g-4 mb-5">
