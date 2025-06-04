@@ -145,7 +145,7 @@ namespace AdminMnsV1.Data
             // Configuration Relation Documents - Candidature (CandidatureId) - La nouvelle FK
             modelBuilder.Entity<Documents>()
                 .HasOne(d => d.Candidature)
-                .WithMany(c => c.Documents) // Assure-toi que Candidature a bien une ICollection<Documents>
+                .WithMany(c => c.DocumentTypes) // Assure-toi que Candidature a bien une ICollection<Documents>
                 .HasForeignKey(d => d.CandidatureId)
                 .IsRequired(false) // Si un document peut exister sans candidature 
                 .OnDelete(DeleteBehavior.Restrict); 

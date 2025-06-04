@@ -37,10 +37,13 @@ namespace AdminMnsV1.Models.CandidaturesModels
 
 
         // Relation de navigation pour les documents liés à cette candidature
-        public virtual ICollection<Documents.Documents>? Documents { get; set; }
+        public virtual ICollection<Documents.Documents>? DocumentTypes { get; set; }
 
         // Propriété de progression
         public int Progress { get; set; }
+        public int StudentValidationProgress { get;  set; }
+        public int MnsValidationProgress { get;  set; }
         //public string StudentId { get; set; }
+
     }
 }

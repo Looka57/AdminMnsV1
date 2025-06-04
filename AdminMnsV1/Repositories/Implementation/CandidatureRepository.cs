@@ -4,6 +4,7 @@ using AdminMnsV1.Models.CandidaturesModels;
 using AdminMnsV1.Repositories.Implementation;
 using AdminMnsV1.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace AdminMnsV1.Data.Repositories
 {
@@ -24,15 +25,15 @@ namespace AdminMnsV1.Data.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Candidature> GetCandidatureByIdWithDetailsAsync(int id)
+
+        public async Task<Candidature?> GetCandidatureByIdWithDetailsAsync(int id)
         {
-            return await _dbSet
-                .Include(c => c.User)
-                .Include(c => c.Class)
-                .Include(c => c.CandidatureStatuses)
-                .Include(c => c.Documents)
-                .ThenInclude(d => d.DocumentType)
-                .FirstOrDefaultAsync(c => c.CandidatureId == id);
+            return await _context.Candidatures
+                                 .Include(c => c.User)
+                                 .Include(c => c.Class)
+                                 .Include(c => c.DocumentTypes)
+                                     .ThenInclude(d => d.DocumentType)
+                                 .FirstOrDefaultAsync(c => c.CandidatureId == id);
         }
 
         // L'implémentation de la méthode GetCandidatureStatusIdByName

@@ -13,6 +13,7 @@ namespace AdminMnsV1.Controllers
     public class CandidaturesStudentsController : Controller
     {
         private readonly ICandidatureService _candidatureService;
+        private string documentTypeName;
 
         public CandidaturesStudentsController(ICandidatureService candidatureService)
         {
@@ -58,7 +59,7 @@ namespace AdminMnsV1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken] // Bonnes pratiques de sécurité
-        public async Task<IActionResult> UploadDocument(int candidatureId, IFormFile document)
+        public async Task<IActionResult> UploadDocument(int candidatureId, IFormFile document, string DocumentTypeName)
         {
             if (document == null || document.Length == 0)
             {
@@ -66,7 +67,8 @@ namespace AdminMnsV1.Controllers
                 return RedirectToAction("CandidatureStudent", new { id = candidatureId });
             }
 
-            var success = await _candidatureService.UploadDocumentAsync(candidatureId, document);
+            // L'action C# doit recevoir le documentTypeName
+            var success = await _candidatureService.UploadDocumentAsync(candidatureId, document, documentTypeName);
 
             if (!success)
             {
