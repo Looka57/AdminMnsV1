@@ -21,7 +21,7 @@ namespace AdminMnsV1.Data.Repositories
             return await _dbSet
                 .Include(c => c.User)
                 .Include(c => c.Class)
-                .Include(c => c.CandidatureStatuses)
+                .Include(c => c.CandidatureStatus)
                 .ToListAsync();
         }
 

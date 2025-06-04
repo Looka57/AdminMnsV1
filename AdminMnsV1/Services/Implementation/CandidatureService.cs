@@ -256,7 +256,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
         public async Task<Candidature> GetCandidatureByUserIdAsync(string userId)
         {
             return await _context.Candidatures
-                                 .Include(c => c.CandidatureStatuses)
+                                 .Include(c => c.CandidatureStatus)
                                  .FirstOrDefaultAsync(c => c.UserId == userId);
         }
 
@@ -323,7 +323,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             var viewModel = new CandidatureStudentViewModel
             {
                 CandidatureId = candidature.CandidatureId,
-                CandidatureStatus = candidature.CandidatureStatuses.Label, // Votre CandidatureStatus est un string directement
+                CandidatureStatus = candidature.CandidatureStatus?.Label ?? "Statut inconnu",
                 FirstName = candidature.User?.FirstName ?? "N/A", // Ajout de "N/A" si la valeur est null
                 LastName = candidature.User?.LastName ?? "N/A",
                 Email = candidature.User?.Email ?? "N/A",
@@ -348,13 +348,14 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
 
                         return new DocumentViewModel
                         {
-                            DocumentId = submittedDocument?.DocumentId ?? 0, // ID du document soumis, ou 0 si non soumis
-                                                                             // Si le document est soumis, on prend son nom de fichier, sinon on prend le nom du type de document
-                            DocumentName = submittedDocument?.DocumentName ?? documentType.NameDocumentType,
-                            DocumentTypeName = documentType.NameDocumentType, // Toujours le nom du type de document (ex: "Lettre de motivation")
-                            UploadDate = submittedDocument?.DocumentDepositDate ?? DateTime.MinValue, // Date de dépôt si soumis, sinon valeur minimale
-                            DocumentPath = submittedDocument?.DocumentPath, // Chemin du fichier si soumis
-                            IsVerified = submittedDocument?.IsVerified ?? false // Statut de validation (true si soumis ET validé, false sinon)
+                            DocumentId = submittedDocument?.DocumentId ?? 0,
+                            DocumentName = submittedDocument?.DocumentName ?? documentType.NameDocumentType ?? "Nom Document Non Défini", // Ajout d'un ?? ici aussi si documentType.NameDocumentType peut être null
+                            DocumentTypeName = documentType.NameDocumentType ?? "Type de Document Inconnu", //
+                            UploadDate = submittedDocument?.DocumentDepositDate ?? DateTime.MinValue,
+                            DocumentPath = (submittedDocument?.DocumentPath != null && !string.Equals(submittedDocument.DocumentPath, "/uploads/documents/N/A", StringComparison.OrdinalIgnoreCase))
+                                   ? $"/uploads/documents/{submittedDocument.DocumentPath}"
+                                   : null,
+                            IsVerified = submittedDocument?.IsVerified ?? false
                         };
                     }).ToList() // Convertit le résultat en une liste
             };
@@ -398,9 +399,9 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                         ClassName = c.Class?.NameClass,
 
                         // --- IMPORTANT : Décommentez ces lignes pour utiliser les données réelles ---
-                        //CandidatureStatus = c.CandidatureStatus?.Label, // Assurez-vous que CandidatureStatus est inclus dans GetAllCandidaturesWithDetailsAsync()
-                        //StudentImage = c.User?.StudentImage ?? "/images/default_student.png", // Utilisez la valeur par défaut du ViewModel si l'image de l'utilisateur est null/vide
-                                                                                              // -----------------------------------------------------------------------
+                        CandidatureStatuses = c.CandidatureStatus?.Label, // Assurez-vous que CandidatureStatus est inclus dans GetAllCandidaturesWithDetailsAsync()
+                                                                        //StudentImage = c.User?.StudentImage ?? "/images/default_student.png", // Utilisez la valeur par défaut du ViewModel si l'image de l'utilisateur est null/vide
+                                                                        // -----------------------------------------------------------------------
 
                         // Initialisation des progressions à 0 avant le calcul détaillé
                         // C'est correct, car elles seront mises à jour juste après.
@@ -648,36 +649,46 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             var candidature = await _context.Candidatures
                 .Include(c => c.User)
                 .Include(c => c.Class)
-                .Include(c => c.CandidatureStatuses)
-                .Include(c => c.DocumentTypes)
-                .ThenInclude(d => d.DocumentType)
+                .Include(c => c.CandidatureStatus) // Inclure le statut de la candidature
+                .Include(c => c.DocumentTypes)       // Inclure les documents liés à la candidature
+                    .ThenInclude(d => d.DocumentType) // Et inclure le type de document pour chaque document
                 .FirstOrDefaultAsync(c => c.UserId == userId);
-
 
             if (candidature == null)
             {
                 return null;
             }
 
+            // --- Étape 1 : Récupérer le nombre total de types de documents requis pour la progression ---
+            // Cette partie est CRUCIALE. C'est le dénominateur de votre calcul de pourcentage.
+            // Assurez-vous que _documentTypeRepository.GetAllAsync() renvoie bien TOUS les types de documents
+            // qu'un étudiant DOIT potentiellement fournir pour une candidature complète.
+            var allRequiredDocumentTypes = await _documentTypeRepository.GetAllAsync(); // Assurez-vous que ce repository est injecté.
+            var totalRequiredDocumentTypesCount = allRequiredDocumentTypes.Count();
+
+            // --- Étape 2 : Mapper l'entité Candidature vers le ViewModel ---
             var viewModel = new CandidatureStudentViewModel
             {
                 CandidatureId = candidature.CandidatureId,
-                CandidatureStatus = candidature.CandidatureStatuses.Label, // Ou CandidatureStutus, unifier les noms
-
+                // Assurez-vous que 'CandidatureStatuses.Label' est le bon nom et que 'CandidatureStatuses' est bien chargé.
+                CandidatureStatus = candidature.CandidatureStatus?.Label,
                 FirstName = candidature.User?.FirstName ?? "N/A",
                 LastName = candidature.User?.LastName ?? "N/A",
                 Email = candidature.User?.Email ?? "N/A",
                 Phone = candidature.User?.PhoneNumber ?? "N/A",
                 Address = candidature.User?.Address ?? "N/A",
                 BirthDate = candidature.User?.BirthDate,
+                // Correction pour StudentImage pour correspondre à votre logique de chemin
                 StudentImage = string.IsNullOrEmpty(candidature.User?.Photo)
-                               ? "/images/profiles/default_student.png"
-                               : "/images/profiles/" + candidature.User.Photo,
+                                     ? "/images/profiles/default_student.png"
+                                     : "/images/profiles/" + candidature.User.Photo,
 
                 ClassName = candidature.Class?.NameClass ?? "N/A",
 
-                StudentValidationProgress = 50, // Calcul à implémenter
-                MnsValidationProgress = 30,     // Calcul à implémenter
+                // --- Étape 3 : Calculer les pourcentages de progression ICI ---
+                // Ne mettez PAS de valeurs en dur. Calculez-les dynamiquement.
+                StudentValidationProgress = 0, // Initialiser à 0, puis calculer
+                MnsValidationProgress = 0,     // Initialiser à 0, puis calculer
 
                 RequiredDocuments = candidature.DocumentTypes?.Select(d => new DocumentViewModel
                 {
@@ -685,10 +696,30 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                     DocumentName = d.DocumentName,
                     DocumentTypeName = d.DocumentType?.NameDocumentType ?? "Non défini",
                     UploadDate = d.DocumentDepositDate,
-                    DocumentPath = d.DocumentPath != null ? $"/uploads/documents/{d.DocumentPath}" : null, // **AJUSTEZ CE CHEMIN**
+                    // Ajustement du chemin du document : utilisez l'interpolation de chaîne si DocumentPath est juste le nom du fichier.
+                    DocumentPath = !string.IsNullOrEmpty(d.DocumentPath) ? $"/uploads/documents/{d.DocumentPath}" : null,
                     IsVerified = d.IsVerified
                 }).ToList() ?? new List<DocumentViewModel>()
             };
+
+            // --- Étape 4 : Appliquer la logique de calcul de la progression ---
+            // Cette partie est exécutée APRÈS que le ViewModel est créé et que sa liste RequiredDocuments est remplie.
+            if (totalRequiredDocumentTypesCount > 0)
+            {
+                // Comptez les documents uploadés par cet étudiant pour CETTE candidature
+                var uploadedDocsCount = viewModel.RequiredDocuments.Count(d => !string.IsNullOrEmpty(d.DocumentPath));
+                viewModel.StudentValidationProgress = (int)(((double)uploadedDocsCount / totalRequiredDocumentTypesCount) * 100);
+
+                // Comptez les documents vérifiés par le MNS pour CETTE candidature
+                var verifiedDocsCount = viewModel.RequiredDocuments.Count(d => d.IsVerified);
+                viewModel.MnsValidationProgress = (int)(((double)verifiedDocsCount / totalRequiredDocumentTypesCount) * 100);
+            }
+            else
+            {
+                // Si aucun document n'est requis du tout (totalRequiredDocumentTypesCount est 0), les barres sont à 0.
+                viewModel.StudentValidationProgress = 0;
+                viewModel.MnsValidationProgress = 0;
+            }
 
             return viewModel;
         }

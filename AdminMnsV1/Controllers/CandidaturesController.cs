@@ -55,18 +55,18 @@ namespace AdminMnsV1.Web.Controllers
             // 3. Filtre les candidatures par statut pour les listes d'accordéons
             // CORRECTION ICI : Utiliser c.CandidatureStatus?.Label
             var candidaturesEnCours = allCandidatures
-                .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatuses?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
+                .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
 
             var candidaturesValidees = allCandidatures
-                .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatuses?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true)
+                .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
 
             var candidaturesRefusees = allCandidatures
                .Where(c => c.User != null && c.User.IsDeleted == false &&
-                           (c.CandidatureStatuses?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true ||
-                            c.CandidatureStatuses?.Label?.Equals("Supprimé", StringComparison.OrdinalIgnoreCase) == true ||
-                            c.CandidatureStatuses?.Label?.Equals("Invalidé", StringComparison.OrdinalIgnoreCase) == true)) // Correction pour inclure tous les statuts "terminés"
+                           (c.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true ||
+                            c.CandidatureStatus?.Label?.Equals("Supprimé", StringComparison.OrdinalIgnoreCase) == true ||
+                            c.CandidatureStatus?.Label?.Equals("Invalidé", StringComparison.OrdinalIgnoreCase) == true)) // Correction pour inclure tous les statuts "terminés"
                 .ToList();
 
             // ---Calcul des statistiques par classe pour le graphique ---
@@ -76,7 +76,7 @@ namespace AdminMnsV1.Web.Controllers
                 var enCoursCount = allCandidatures
                     .Count(c => c.ClassId == classItem.ClasseId &&
                                  c.User != null && c.User.IsDeleted == false &&
-                                 c.CandidatureStatuses?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true);
+                                 c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true);
 
                 // IMPORTANT : Si "Validé" seul ne capture pas tous vos "dossiers clôturés",
                 // vous devrez ajouter d'autres libellés ici (ex: "Refusé", "Supprimé", "Invalidé").
@@ -85,7 +85,7 @@ namespace AdminMnsV1.Web.Controllers
                 var valideesCount = allCandidatures
                     .Count(c => c.ClassId == classItem.ClasseId &&
                                  c.User != null && c.User.IsDeleted == false &&
-                                 c.CandidatureStatuses?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true);
+                                 c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true);
 
                 classStats.Add(new ClassCandidatureStats
                 {
@@ -138,16 +138,16 @@ namespace AdminMnsV1.Web.Controllers
             // Ces parties sont déjà correctement corrigées dans votre code actuel
             var allCandidatures = await _candidatureService.GetAllCandidaturesWithDetailsAsync();
             model.CandidaturesEnCours = allCandidatures
-            .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatuses?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
+            .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
             .ToList();
             model.CandidaturesValidees = allCandidatures
-                .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatuses?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true)
+                .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
             model.CandidaturesRefusees = allCandidatures
                 .Where(c => c.User != null && c.User.IsDeleted == false &&
-                            (c.CandidatureStatuses?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true ||
-                             c.CandidatureStatuses?.Label?.Equals("Supprimé", StringComparison.OrdinalIgnoreCase) == true ||
-                             c.CandidatureStatuses?.Label?.Equals("Invalidé", StringComparison.OrdinalIgnoreCase) == true))
+                            (c.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true ||
+                             c.CandidatureStatus?.Label?.Equals("Supprimé", StringComparison.OrdinalIgnoreCase) == true ||
+                             c.CandidatureStatus?.Label?.Equals("Invalidé", StringComparison.OrdinalIgnoreCase) == true))
                 .ToList();
 
             // Recalculer les statistiques par classe pour le graphique en cas d'erreur de validation POST
@@ -157,12 +157,12 @@ namespace AdminMnsV1.Web.Controllers
                 var enCoursCount = allCandidatures
                     .Count(c => c.ClassId == classItem.ClasseId &&
                                  c.User != null && c.User.IsDeleted == false &&
-                                 c.CandidatureStatuses?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true);
+                                 c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true);
 
                 var valideesCount = allCandidatures
                     .Count(c => c.ClassId == classItem.ClasseId &&
                                  c.User != null && c.User.IsDeleted == false &&
-                                 c.CandidatureStatuses?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true);
+                                 c.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true);
 
                 classStats.Add(new ClassCandidatureStats
                 {

@@ -6,7 +6,7 @@ namespace AdminMnsV1.Models.CandidaturesModels
     {
         // Propriétés de la candidature elle-même
         public int CandidatureId { get; set; }
-        public string CandidatureStutus { get; set; }
+        public string CandidatureStatus { get; set; }
 
 
         // Propriétés de l'étudiant (utilisateur lié à la candidature)
@@ -32,7 +32,7 @@ namespace AdminMnsV1.Models.CandidaturesModels
 
         // Liste des documents requis et leur statut
         public List<DocumentViewModel> RequiredDocuments { get; set; } = new List<DocumentViewModel>();
-        public string CandidatureStatus { get; internal set; }
+        public string CandidatureStatuses { get; internal set; }
 
 
         //// ViewModel pour les notifications individuelles
