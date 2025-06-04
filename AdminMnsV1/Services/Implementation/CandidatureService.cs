@@ -363,74 +363,90 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
         }
         public async Task<IEnumerable<CandidatureStudentViewModel>> GetAllCandidaturesForOverviewAsync()
         {
-            var allCandidatures = await _candidatureRepository.GetAllCandidaturesWithDetailsAsync(); // Supposons que cette méthode ramène Candidature avec User, Class, CandidatureStatus, Documents inclus
+            // 1. Récupérer toutes les candidatures avec leurs détails.
+            // C'est une bonne base, assurez-vous que GetAllCandidaturesWithDetailsAsync() inclut bien :
+            // - User (pour FirstName, LastName, Email, Phone, Address, BirthDate, StudentImage)
+            // - Class (pour NameClass)
+            // - CandidatureStatus (pour Label)
+            // - Documents (pour DocumentId, DocumentName, DocumentPath, IsVerified, et leur DocumentType lié pour NameDocumentType)
+            var allCandidatures = await _candidatureRepository.GetAllCandidaturesWithDetailsAsync();
 
-            // Mapper les entités Candidature vers une liste de CandidatureStudentViewModel
+            // 2. Récupérer le nombre total de types de documents requis, de manière asynchrone.
+            // C'est crucial pour le calcul des pourcentages.
+            // ASSUREZ-VOUS que GetAllAsync() de _documentTypeRepository retourne BIEN tous les types de documents
+            // qu'un étudiant DOIT potentiellement fournir pour une candidature complète.
+            // Par exemple, si vous avez 5 types de documents (CV, Lettre de motivation, Diplôme, Carte ID, Relevé de notes)
+            // cette liste devrait contenir 5 éléments.
+            var allDocumentTypes = await _documentTypeRepository.GetAllAsync();
+            var totalRequiredDocumentTypesCount = allDocumentTypes.Count();
+
+            // 3. Mapper les entités Candidature vers une liste de CandidatureStudentViewModel
             var viewModels = allCandidatures
-                .Where(c => c.User != null && !c.User.IsDeleted) // Filtrez les utilisateurs non supprimés
-                .Select(c => new CandidatureStudentViewModel
+                .Where(c => c.User != null && !c.User.IsDeleted) // Filtre correct
+                .Select(c =>
                 {
-                    CandidatureId = c.CandidatureId,
-                    FirstName = c.User?.FirstName,
-                    LastName = c.User?.LastName,
-                    Email = c.User?.Email,
-                    Phone = c.User?.PhoneNumber,
-                    Address = c.User?.Address,
-                    BirthDate = c.User?.BirthDate,
-                    ClassName = c.Class?.NameClass,
-                    //CandidatureStatus = c.CandidatureStatus?.Label,
-                    //StudentImage = c.User?.StudentImage, // Si vous avez cette propriété
-
-                    // Le calcul des progressions peut être complexe ici,
-                    // Si _documentTypeRepository.GetAllDocumentTypesAsync() est nécessaire,
-                    // il faudrait le charger une seule fois avant la boucle ou le passer en paramètre.
-                    // Pour simplifier temporairement:
-                    StudentValidationProgress = 0, // À implémenter correctement
-                    MnsValidationProgress = 0,     // À implémenter correctement
-
-                    RequiredDocuments = c.DocumentTypes?.Select(d => new DocumentViewModel
+                    // Initialisation du ViewModel
+                    var vm = new CandidatureStudentViewModel
                     {
-                        DocumentId = d.DocumentId,
-                        DocumentName = d.DocumentName,
-                        DocumentTypeName = d.DocumentType?.NameDocumentType,
-                        DocumentPath = d.DocumentPath,
-                        IsVerified = d.IsVerified // Assurez-vous toujours que cette propriété existe
-                    }).ToList() ?? new List<DocumentViewModel>()
+                        CandidatureId = c.CandidatureId,
+                        FirstName = c.User?.FirstName,
+                        LastName = c.User?.LastName,
+                        Email = c.User?.Email,
+                        Phone = c.User?.PhoneNumber,
+                        Address = c.User?.Address,
+                        BirthDate = c.User?.BirthDate,
+                        ClassName = c.Class?.NameClass,
 
-                }).ToList();
+                        // --- IMPORTANT : Décommentez ces lignes pour utiliser les données réelles ---
+                        //CandidatureStatus = c.CandidatureStatus?.Label, // Assurez-vous que CandidatureStatus est inclus dans GetAllCandidaturesWithDetailsAsync()
+                        //StudentImage = c.User?.StudentImage ?? "/images/default_student.png", // Utilisez la valeur par défaut du ViewModel si l'image de l'utilisateur est null/vide
+                                                                                              // -----------------------------------------------------------------------
 
-            // Note sur la progression: Pour calculer correctement StudentValidationProgress et MnsValidationProgress
-            // ici, vous devrez peut-être récupérer le nombre total de types de documents requis
-            // une seule fois avant la boucle .Select(), car appeler .Result.Count() à l'intérieur
-            // d'un Select() peut être inefficace ou poser des problèmes.
+                        // Initialisation des progressions à 0 avant le calcul détaillé
+                        // C'est correct, car elles seront mises à jour juste après.
+                        StudentValidationProgress = 0,
+                        MnsValidationProgress = 0,
 
-            var totalRequiredDocumentTypesCount = _documentTypeRepository.GetAllAsync().Result.Count(); // Ou mieux, gérez-le de manière async.
-            foreach (var vm in viewModels)
-            {
-                if (totalRequiredDocumentTypesCount > 0)
-                {
-                    vm.StudentValidationProgress = (int)(((double)vm.RequiredDocuments.Count(d => !string.IsNullOrEmpty(d.DocumentPath)) / totalRequiredDocumentTypesCount) * 100);
-                    vm.MnsValidationProgress = (int)(((double)vm.RequiredDocuments.Count(d => d.IsVerified) / totalRequiredDocumentTypesCount) * 100);
-                }
-                else
-                {
-                    vm.StudentValidationProgress = 0;
-                    vm.MnsValidationProgress = 0;
-                }
-            }
+                        // Mapper les documents liés à cette candidature
+                        RequiredDocuments = c.DocumentTypes?.Select(d => new DocumentViewModel
+                        {
+                            DocumentId = d.DocumentId,
+                            DocumentName = d.DocumentName, // Nom du document uploadé (ex: "mon_cv.pdf")
+                            DocumentTypeName = d.DocumentType?.NameDocumentType, // Nom du type de document requis (ex: "Curriculum Vitae")
+                            DocumentPath = d.DocumentPath,
+                            IsVerified = d.IsVerified
+                        }).ToList() ?? new List<DocumentViewModel>()
+                    };
 
+                    // 4. Calcul des progressions pour CHAQUE ViewModel (candidature)
+                    // Ce bloc est exécuté pour chaque `vm` après son initialisation.
+                    if (totalRequiredDocumentTypesCount > 0)
+                    {
+                        // Progression étudiant : basées sur les documents uploadés
+                        // `vm.RequiredDocuments` contient uniquement les documents que cette candidature a.
+                        // Il faut s'assurer que `c.DocumentTypes` ramène les documents *liés* à cette candidature
+                        // et non pas tous les types de documents.
+                        var uploadedDocumentsCount = vm.RequiredDocuments.Count(d => !string.IsNullOrEmpty(d.DocumentPath));
+                        vm.StudentValidationProgress = (int)(((double)uploadedDocumentsCount / totalRequiredDocumentTypesCount) * 100);
+
+                        // Progression MNS : basées sur les documents vérifiés
+                        var verifiedDocumentsCount = vm.RequiredDocuments.Count(d => d.IsVerified);
+                        vm.MnsValidationProgress = (int)(((double)verifiedDocumentsCount / totalRequiredDocumentTypesCount) * 100);
+                    }
+                    else
+                    {
+                        // Si aucun type de document n'est défini comme requis, la progression est 0.
+                        // (Ou 100 si vous considérez qu'il n'y a rien à faire) - 0 est plus sûr ici.
+                        vm.StudentValidationProgress = 0;
+                        vm.MnsValidationProgress = 0;
+                    }
+
+                    return vm; // Retourne le ViewModel complété pour cette candidature
+                })
+                .ToList(); // Convertit le résultat du Select en List<CandidatureStudentViewModel>
 
             return viewModels;
         }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -512,18 +528,6 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                 return false;
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

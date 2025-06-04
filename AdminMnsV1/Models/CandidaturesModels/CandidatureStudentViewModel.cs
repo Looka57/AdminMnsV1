@@ -26,13 +26,13 @@ namespace AdminMnsV1.Models.CandidaturesModels
         // Propriétés pour la progression du dossier
         public int StudentValidationProgress { get; set; } // Pour la barre de progression côté étudiant
         public int MnsValidationProgress { get; set; } // Pour la barre de progression côté MNS (Admin)
-        public string CandidatureStatus { get; set; }
 
         // Liste des notifications (si vous en avez)
         //public List<NotificationViewModel> Notifications { get; set; } = new List<NotificationViewModel>();
 
         // Liste des documents requis et leur statut
         public List<DocumentViewModel> RequiredDocuments { get; set; } = new List<DocumentViewModel>();
+        public string CandidatureStatus { get; internal set; }
 
 
         //// ViewModel pour les notifications individuelles
