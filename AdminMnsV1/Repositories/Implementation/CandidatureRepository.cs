@@ -31,7 +31,7 @@ namespace AdminMnsV1.Data.Repositories
             return await _context.Candidatures
                                  .Include(c => c.User)
                                  .Include(c => c.Class)
-                                 .Include(c => c.DocumentTypes)
+                                 .Include(c => c.Documents)
                                      .ThenInclude(d => d.DocumentType)
                                  .FirstOrDefaultAsync(c => c.CandidatureId == id);
         }

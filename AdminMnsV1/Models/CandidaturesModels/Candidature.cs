@@ -11,11 +11,7 @@ namespace AdminMnsV1.Models.CandidaturesModels
     {
         [Key]
         public int CandidatureId { get; set; } // Clé primaire
-
-        
-        public DateTime? CandidatureCreationDate { get; set; }
-
-        
+        public DateTime? CandidatureCreationDate { get; set; }      
         public DateTime? CandidatureValidationDate { get; set; }
 
 
@@ -38,7 +34,8 @@ namespace AdminMnsV1.Models.CandidaturesModels
 
 
         // Relation de navigation pour les documents liés à cette candidature
-        public virtual ICollection<Documents.Documents>? DocumentTypes { get; set; }
+        //public virtual ICollection<Documents.Documents>? DocumentTypes { get; set; }
+        public virtual ICollection<Documents.Documents>? Documents { get; set; }
 
         // Propriété de progression
         public int Progress { get; set; }

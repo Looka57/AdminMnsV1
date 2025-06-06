@@ -1,9 +1,12 @@
 ﻿// AdminMnsV1.Application.Services/Interfaces/ICandidatureService.cs
 using AdminMnsV1.Models;
+using AdminMnsV1.Models.Documents;
+
 using AdminMnsV1.Models.CandidaturesModels;
 using AdminMnsV1.Models.ViewModels; // Pour CreateCandidatureViewModel (si dans ViewModels)
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 
 namespace AdminMnsV1.Application.Services.Interfaces // <-- TRÈS IMPORTANT : CORRESPONDE AU USING DANS LE CONTRÔLEUR
 {

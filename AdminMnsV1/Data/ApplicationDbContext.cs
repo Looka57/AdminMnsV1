@@ -39,8 +39,6 @@ namespace AdminMnsV1.Data
         {
             base.OnModelCreating(modelBuilder);
 
-
-
             // Désactiver la cascade par défaut pour toutes les relations non définies explicitement
             // Cela réduit le risque de cycles cachés.
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
@@ -88,7 +86,7 @@ namespace AdminMnsV1.Data
                 .HasOne(c => c.User) // Une candidature a un utilisateur
                 .WithMany(u => u.Candidatures)// Un utilisateur peut avoir plusieurs candidatures
                 .HasForeignKey(c => c.UserId) // La clé étrangère est UserId
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Configuration de la relation Candidature - SchoolClass
             modelBuilder.Entity<Candidature>()
@@ -133,7 +131,7 @@ namespace AdminMnsV1.Data
                 .WithMany() // L'entité User n'a pas forcément une collection "ValidatedDocuments" si tu ne l'as pas ajoutée. C'est OK.
                 .HasForeignKey(d => d.AdminId)
                 .IsRequired(false) // Permet à AdministratorId d'être NULL
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Configuration Relation Candidature - User (UserId)
             modelBuilder.Entity<Candidature>()
@@ -145,13 +143,23 @@ namespace AdminMnsV1.Data
             // Configuration Relation Documents - Candidature (CandidatureId) - La nouvelle FK
             modelBuilder.Entity<Documents>()
                 .HasOne(d => d.Candidature)
-                .WithMany(c => c.DocumentTypes) // Assure-toi que Candidature a bien une ICollection<Documents>
+                .WithMany(c => c.Documents) // Assure-toi que Candidature a bien une ICollection<Documents>
                 .HasForeignKey(d => d.CandidatureId)
                 .IsRequired(false) // Si un document peut exister sans candidature 
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<Candidature>()
+                .HasMany(c => c.Documents)
+                .WithOne(d => d.Candidature)
+                .HasForeignKey(d => d.CandidatureId)
                 .OnDelete(DeleteBehavior.Restrict); 
 
-
-
+            modelBuilder.Entity<Candidature>()
+                .HasMany(c => c.Documents)
+                .WithOne(d => d.Candidature)
+                .HasForeignKey(d => d.CandidatureId)
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
     }

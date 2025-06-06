@@ -216,7 +216,7 @@ namespace AdminMnsV1.Application.Services.Implementation
                                 DocumentTypeId = docTypeId,
                                 StudentId = user.Id,
                                 DocumentStatusId = (int)demandedDocumentStatusId,
-                                DocumentPath = "N/A",
+                                DocumentPath = " ",
                                 DocumentName = $"Document pour {documentType.NameDocumentType}",
                                 DocumentDepositDate = DateTime.Now
                             };
@@ -314,8 +314,8 @@ namespace AdminMnsV1.Application.Services.Implementation
 
             // submittedDocs et verifiedDocs utilisent la collection de DOCUMENTS SOUMIS par la candidature.
             // C'EST ICI LA CORRECTION PRINCIPALE : Utilisation de 'candidature.Documents' qui est la bonne propriété.
-            int submittedDocs = candidature.DocumentTypes?.Count(d => !string.IsNullOrEmpty(d.DocumentPath)) ?? 0;
-            int verifiedDocs = candidature.DocumentTypes?.Count(d => d.IsVerified) ?? 0;
+            int submittedDocs = candidature.Documents?.Count(d => !string.IsNullOrEmpty(d.DocumentPath)) ?? 0;
+            int verifiedDocs = candidature.Documents?.Count(d => d.IsVerified) ?? 0;
 
             int studentProgress = totalRequiredDocs > 0 ? (int)((double)submittedDocs / totalRequiredDocs * 100) : 0;
             int mnsProgress = totalRequiredDocs > 0 ? (int)((double)verifiedDocs / totalRequiredDocs * 100) : 0;
@@ -345,7 +345,7 @@ namespace AdminMnsV1.Application.Services.Implementation
                     .Select(documentType =>
                     { // 'documentType' ici est un objet DocumentType (ex: "CV", "RIB")
                       // On cherche si un document SOUMIS par CETTE candidature correspond à CE type de document.
-                        var submittedDocument = candidature.DocumentTypes?.FirstOrDefault(d => d.DocumentTypeId == documentType.DocumentTypeId);
+                        var submittedDocument = candidature.Documents?.FirstOrDefault(d => d.DocumentTypeId == documentType.DocumentTypeId);
 
                         return new DocumentViewModel
                         {
@@ -398,7 +398,7 @@ namespace AdminMnsV1.Application.Services.Implementation
                         MnsValidationProgress = 0,
 
                         // Mapper les documents liés à cette candidature
-                        RequiredDocuments = c.DocumentTypes?.Select(d => new DocumentViewModel
+                        RequiredDocuments = c.Documents?.Select(d => new DocumentViewModel
                         {
                             DocumentId = d.DocumentId,
                             DocumentName = d.DocumentName, // Nom du document uploadé (ex: "mon_cv.pdf")
@@ -513,7 +513,7 @@ namespace AdminMnsV1.Application.Services.Implementation
                 await _context.SaveChangesAsync();
 
                 // Calculer et mettre à jour la progression de l'étudiant
-                await UpdateStudentValidationProgress(candidatureId); 
+                await UpdateStudentValidationProgress(candidatureId);
 
 
                 return true;
@@ -534,35 +534,40 @@ namespace AdminMnsV1.Application.Services.Implementation
         private async Task UpdateStudentValidationProgress(int candidatureId)
         {
             var candidature = await _context.Candidatures
-.Include(c => c.DocumentTypes)
-.FirstOrDefaultAsync(c => c.CandidatureId == candidatureId);
+                .Include(c => c.Documents)
+                .FirstOrDefaultAsync(c => c.CandidatureId == candidatureId);
 
             if (candidature == null)
             {
+                Console.WriteLine($"DEBUG: Candidature {candidatureId} non trouvée. Impossible de calculer la progression.");
                 return;
             }
             // Exemple simple: 100% si tous les documents requis sont téléchargés
             // Vous devrez définir quels documents sont "requis".
             // Pour cet exemple, je vais compter tous les documents uploadés.
             var totalRequiredDocumentsCount = await _context.DocumentTypes.CountAsync(); // Nombre total de types de documents attendus
-            int uploadedDocumentsCount = candidature.DocumentTypes.Count(d => !string.IsNullOrEmpty(d.DocumentPath));
+            int uploadedDocumentsCount = candidature.Documents.Count(d => !string.IsNullOrEmpty(d.DocumentPath));
 
             candidature.StudentValidationProgress = (int)Math.Round((double)uploadedDocumentsCount / totalRequiredDocumentsCount * 100);
 
             await _context.SaveChangesAsync();
         }
 
+
+
+
+
         // Cette méthode sera appelée après Validation/Rejet par l'admin
         private async Task UpdateMnsValidationProgress(int candidatureId)
         {
             var candidature = await _context.Candidatures
-                                            .Include(c => c.DocumentTypes)
+                                            .Include(c => c.Documents)
                                             .FirstOrDefaultAsync(c => c.CandidatureId == candidatureId);
 
             if (candidature == null) return;
 
             var totalRequiredDocumentsCount = await _context.DocumentTypes.CountAsync();
-            var validatedDocumentsCount = candidature.DocumentTypes.Count(d => d.IsVerified);
+            var validatedDocumentsCount = candidature.Documents.Count(d => d.IsVerified);
 
             candidature.MnsValidationProgress = (int)Math.Round((double)validatedDocumentsCount / totalRequiredDocumentsCount * 100);
 
@@ -607,9 +612,9 @@ namespace AdminMnsV1.Application.Services.Implementation
             if (candidature == null) return false;
 
             // Optionnel : supprimer les fichiers physiques associés aux documents de la candidature
-            if (candidature.DocumentTypes != null)
+            if (candidature.Documents != null)
             {
-                foreach (var doc in candidature.DocumentTypes.Where(d => !string.IsNullOrEmpty(d.DocumentPath)))
+                foreach (var doc in candidature.Documents.Where(d => !string.IsNullOrEmpty(d.DocumentPath)))
                 {
                     var filePath = Path.Combine(_webHostEnvironment.WebRootPath, doc.DocumentPath.TrimStart('/'));
                     if (System.IO.File.Exists(filePath))
@@ -646,7 +651,7 @@ namespace AdminMnsV1.Application.Services.Implementation
                 .Include(c => c.User)
                 .Include(c => c.Class)
                 .Include(c => c.CandidatureStatus) // Inclure le statut de la candidature
-                .Include(c => c.DocumentTypes)       // Inclure les documents liés à la candidature
+                .Include(c => c.Documents)       // Inclure les documents liés à la candidature
                     .ThenInclude(d => d.DocumentType) // Et inclure le type de document pour chaque document
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
@@ -659,8 +664,8 @@ namespace AdminMnsV1.Application.Services.Implementation
             // Cette partie est CRUCIALE. C'est le dénominateur de votre calcul de pourcentage.
             // Assurez-vous que _documentTypeRepository.GetAllAsync() renvoie bien TOUS les types de documents
             // qu'un étudiant DOIT potentiellement fournir pour une candidature complète.
-            var allRequiredDocumentTypes = await _documentTypeRepository.GetAllAsync(); // Assurez-vous que ce repository est injecté.
-            var totalRequiredDocumentTypesCount = allRequiredDocumentTypes.Count();
+            //var allRequiredDocumentTypes = await _documentTypeRepository.GetAllAsync(); // Assurez-vous que ce repository est injecté.
+            //var totalRequiredDocumentTypesCount = allRequiredDocumentTypes.Count();
 
             // --- Étape 2 : Mapper l'entité Candidature vers le ViewModel ---
             var viewModel = new CandidatureStudentViewModel
@@ -686,7 +691,7 @@ namespace AdminMnsV1.Application.Services.Implementation
                 StudentValidationProgress = 0, // Initialiser à 0, puis calculer
                 MnsValidationProgress = 0,     // Initialiser à 0, puis calculer
 
-                RequiredDocuments = candidature.DocumentTypes?.Select(d => new DocumentViewModel
+                RequiredDocuments = candidature.Documents?.Select(d => new DocumentViewModel
                 {
                     DocumentId = d.DocumentId,
                     DocumentName = d.DocumentName,
@@ -698,21 +703,26 @@ namespace AdminMnsV1.Application.Services.Implementation
                 }).ToList() ?? new List<DocumentViewModel>()
             };
 
+            // Le total des documents attendus est le nombre de documents dans la candidature elle-même.
+            // Chaque document dans 'candidature.Documents' représente un slot pour un document.
+            var totalExpectedDocumentsCount = viewModel.RequiredDocuments.Count;
+
+
             // --- Étape 4 : Appliquer la logique de calcul de la progression ---
             // Cette partie est exécutée APRÈS que le ViewModel est créé et que sa liste RequiredDocuments est remplie.
-            if (totalRequiredDocumentTypesCount > 0)
+            if (totalExpectedDocumentsCount > 0)
             {
-                // Comptez les documents uploadés par cet étudiant pour CETTE candidature
+                // Progression de l'étudiant : documents téléchargés
                 var uploadedDocsCount = viewModel.RequiredDocuments.Count(d => !string.IsNullOrEmpty(d.DocumentPath));
-                viewModel.StudentValidationProgress = (int)(((double)uploadedDocsCount / totalRequiredDocumentTypesCount) * 100);
+                viewModel.StudentValidationProgress = (int)Math.Round(((double)uploadedDocsCount / totalExpectedDocumentsCount) * 100);
 
-                // Comptez les documents vérifiés par le MNS pour CETTE candidature
+                // Progression MNS : documents vérifiés
                 var verifiedDocsCount = viewModel.RequiredDocuments.Count(d => d.IsVerified);
-                viewModel.MnsValidationProgress = (int)(((double)verifiedDocsCount / totalRequiredDocumentTypesCount) * 100);
+                viewModel.MnsValidationProgress = (int)Math.Round(((double)verifiedDocsCount / totalExpectedDocumentsCount) * 100);
             }
             else
             {
-                // Si aucun document n'est requis du tout (totalRequiredDocumentTypesCount est 0), les barres sont à 0.
+                // Si la candidature n'a pas de documents associés du tout, la progression est 0.
                 viewModel.StudentValidationProgress = 0;
                 viewModel.MnsValidationProgress = 0;
             }

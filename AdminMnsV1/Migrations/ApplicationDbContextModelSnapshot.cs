@@ -34,7 +34,7 @@ namespace AdminMnsV1.Migrations
 
                     b.HasIndex("ClasseId");
 
-                    b.ToTable("Attends");
+                    b.ToTable("Attends", (string)null);
                 });
 
             modelBuilder.Entity("AdminMnsV1.Models.CandidatureStatus", b =>
@@ -52,7 +52,7 @@ namespace AdminMnsV1.Migrations
 
                     b.HasKey("CandidatureStatusId");
 
-                    b.ToTable("CandidatureStatuses");
+                    b.ToTable("CandidatureStatuses", (string)null);
                 });
 
             modelBuilder.Entity("AdminMnsV1.Models.CandidaturesModels.Candidature", b =>
@@ -96,7 +96,7 @@ namespace AdminMnsV1.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Candidatures");
+                    b.ToTable("Candidatures", (string)null);
                 });
 
             modelBuilder.Entity("AdminMnsV1.Models.Classes.SchoolClass", b =>
@@ -126,7 +126,7 @@ namespace AdminMnsV1.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("SchoolClass");
+                    b.ToTable("SchoolClass", (string)null);
                 });
 
             modelBuilder.Entity("AdminMnsV1.Models.DocumentTypes.DocumentType", b =>
@@ -143,7 +143,7 @@ namespace AdminMnsV1.Migrations
 
                     b.HasKey("DocumentTypeId");
 
-                    b.ToTable("DocumentTypes");
+                    b.ToTable("DocumentTypes", (string)null);
                 });
 
             modelBuilder.Entity("AdminMnsV1.Models.Documents.DocumentStatus", b =>
@@ -161,7 +161,7 @@ namespace AdminMnsV1.Migrations
 
                     b.HasKey("DocumentStatusId");
 
-                    b.ToTable("DocumentStatuses");
+                    b.ToTable("DocumentStatuses", (string)null);
                 });
 
             modelBuilder.Entity("AdminMnsV1.Models.Documents.Documents", b =>
@@ -218,7 +218,7 @@ namespace AdminMnsV1.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("Documents");
+                    b.ToTable("Documents", (string)null);
                 });
 
             modelBuilder.Entity("AdminMnsV1.Models.User", b =>

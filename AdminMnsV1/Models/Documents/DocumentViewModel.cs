@@ -14,6 +14,7 @@ namespace AdminMnsV1.Models.ViewModels
         public int DocumentTypeId { get; set; } // ID du type de document
         public DateTime? UploadDate { get; set; } // Renommé de 'object' à 'DateTime?' pour être plus précis
         public bool IsVerified { get; set; }
+        public DateTime DepositDate { get; internal set; }
 
 
         //public class DocumentViewModel

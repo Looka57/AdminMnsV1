@@ -160,8 +160,8 @@
 												<input type="hidden" name="documentTypeName" value="@doc.DocumentTypeName" />
 
 												@* L'attribut 'disabled' est appliqué conditionnellement *@
-												<input type="file" name="document" class="btn btn-warning btn-sm" @(isDocumentUpload ? "disabled" : "") />
-												<button type="submit" class="btn btn-primary btn-sm" @(isDocumentUpload ? "disabled" : "")>Uploader</button>
+												<input type="file" name="document" class="" @(isDocumentUpload ? "disabled" : "") />
+												<button type="submit" class="btn btn-primary btn-sm" @(isDocumentUpload ? "disabled" : "")>Télécharger</button>
 
 												@if (isDocumentUpload)
 												{
@@ -172,19 +172,19 @@
 										<td>
 											@if (doc.IsVerified)
 											{
-												<span class="badge badge-success">Validé</span>
+												<span class="badge text-bg-success">Validé</span>
 											}
 											else if (isDocumentUpload) // Si le document a été envoyé mais pas encore vérifié
 											{
-												<span class="badge badge-warning">En attente</span>
+												<span class="badge text-bg-warning">En attente</span>
 											}
 											else if (isDocumentUpload) // Si le document a été envoyé mais a été refusé
 											{
-												<span class="badge badge-danger">Refusé</span>
+												<span class="badge text-bg-danger">Refusé</span>
 											}
 											else // Si le document n'a pas encore été envoyé (isDocumentUpload est false)
 											{
-												<span class="badge badge-secondary">Manquant</span>
+												<span class="badge text-bg-secondary">Manquant</span>
 											}
 
 											@* Boutons Valider/Rejeter si l'utilisateur est un administrateur/MNS - Mettre cette logique SEPAREMENT, si c'est pour un admin *@

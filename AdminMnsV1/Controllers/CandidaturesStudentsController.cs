@@ -60,7 +60,7 @@ namespace AdminMnsV1.Controllers
 
 
 
-        // --- Actions pour les opérations de gestion (exemple) ---
+        // --- Actions pour les opérations de gestion ---
 
         [HttpPost]
         [ValidateAntiForgeryToken] // Bonnes pratiques de sécurité

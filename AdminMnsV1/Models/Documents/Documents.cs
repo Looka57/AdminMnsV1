@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using AdminMnsV1.Models.DocumentTypes;
 using AdminMnsV1.Models.CandidaturesModels;
 using AdminMnsV1.Models;
+using System.Reflection.Metadata;
 
 
 namespace AdminMnsV1.Models.Documents
@@ -36,10 +37,14 @@ namespace AdminMnsV1.Models.Documents
         [StringLength(500)] // Adapte la longueur si les chemins sont très longs
         public string DocumentPath { get; set; } // Chemin physique ou URL du fichier
 
+
+
         //---------------Clé etranger vers DocumentType--------------
         public int DocumentTypeId { get; set; } // Clé étrangère vers l'ID de DocumentType (User.Id)
         [ForeignKey("DocumentTypeId")]
         public DocumentType DocumentType { get; set; }
+
+
 
 
         //---------------Clé etranger vers Student--------------
@@ -54,9 +59,16 @@ namespace AdminMnsV1.Models.Documents
         public User? Admin { get; set; } // Navigation property vers l'admin qui a validé
         public DateTime? ValidationDate { get; set; } // Date de validation
 
-        // Ajoute la clé étrangère vers Candidature
-        public int CandidatureId { get; set; } // Ou int? si CandidatureId est int
+        // --------------------Ajoute la clé étrangère vers Candidature-------------------------
+        // Clé étrangère vers la vraie candidature (document déposé)
+        public int CandidatureId { get; set; }
         [ForeignKey("CandidatureId")]
         public virtual Candidature? Candidature { get; set; }
+
+        //// Clé étrangère vers les types de documents attendus pour la candidature
+        //public int DocumentTypeCandidatureId { get; set; }
+        //[ForeignKey("DocumentTypeCandidatureId")]
+        //public virtual Candidature? DocumentTypeCandidature { get; set; }
+
     }
 }
