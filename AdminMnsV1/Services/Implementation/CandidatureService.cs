@@ -8,6 +8,7 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using System.Web;
 using AdminMnsV1.Application.Services.Interfaces; // Pour ICandidatureService, IDocumentService, etc.
+using AdminMnsV1.Application.Services.Interfaces;
 using AdminMnsV1.Data;
 using AdminMnsV1.Data.Repositories.Implementation;
 using AdminMnsV1.Data.Repositories.Interfaces;
@@ -20,16 +21,16 @@ using AdminMnsV1.Models.ViewModels; // Pour CreateCandidatureViewModel
 using AdminMnsV1.Repositories.Implementation;
 using AdminMnsV1.Repositories.Interfaces; // Pour ICandidatureRepository, IUserRepository, IDocumentRepository, IDocumentTypeRepository
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering; // Pour les includes
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
-using AdminMnsV1.Application.Services.Interfaces;
 
 
 // ...
 
 
-namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT : CORRESPOND AU USING DANS PROGRAM.CS
+namespace AdminMnsV1.Application.Services.Implementation
 {
     public class CandidatureService : ICandidatureService
     {
@@ -74,7 +75,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
 
         }
 
-      
+
 
         public async Task<CreateCandidatureViewModel> PrepareCreateCandidatureViewModelAsync()
         {
@@ -364,26 +365,16 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
         }
         public async Task<IEnumerable<CandidatureStudentViewModel>> GetAllCandidaturesForOverviewAsync()
         {
-            // 1. Récupérer toutes les candidatures avec leurs détails.
-            // C'est une bonne base, assurez-vous que GetAllCandidaturesWithDetailsAsync() inclut bien :
-            // - User (pour FirstName, LastName, Email, Phone, Address, BirthDate, StudentImage)
-            // - Class (pour NameClass)
-            // - CandidatureStatus (pour Label)
-            // - Documents (pour DocumentId, DocumentName, DocumentPath, IsVerified, et leur DocumentType lié pour NameDocumentType)
+
             var allCandidatures = await _candidatureRepository.GetAllCandidaturesWithDetailsAsync();
 
-            // 2. Récupérer le nombre total de types de documents requis, de manière asynchrone.
-            // C'est crucial pour le calcul des pourcentages.
-            // ASSUREZ-VOUS que GetAllAsync() de _documentTypeRepository retourne BIEN tous les types de documents
-            // qu'un étudiant DOIT potentiellement fournir pour une candidature complète.
-            // Par exemple, si vous avez 5 types de documents (CV, Lettre de motivation, Diplôme, Carte ID, Relevé de notes)
-            // cette liste devrait contenir 5 éléments.
+
             var allDocumentTypes = await _documentTypeRepository.GetAllAsync();
             var totalRequiredDocumentTypesCount = allDocumentTypes.Count();
 
             // 3. Mapper les entités Candidature vers une liste de CandidatureStudentViewModel
             var viewModels = allCandidatures
-                .Where(c => c.User != null && !c.User.IsDeleted) // Filtre correct
+                .Where(c => c.User != null && !c.User.IsDeleted)
                 .Select(c =>
                 {
                     // Initialisation du ViewModel
@@ -398,10 +389,8 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                         BirthDate = c.User?.BirthDate,
                         ClassName = c.Class?.NameClass,
 
-                        // --- IMPORTANT : Décommentez ces lignes pour utiliser les données réelles ---
-                        CandidatureStatuses = c.CandidatureStatus?.Label, // Assurez-vous que CandidatureStatus est inclus dans GetAllCandidaturesWithDetailsAsync()
-                                                                        //StudentImage = c.User?.StudentImage ?? "/images/default_student.png", // Utilisez la valeur par défaut du ViewModel si l'image de l'utilisateur est null/vide
-                                                                        // -----------------------------------------------------------------------
+
+                        CandidatureStatuses = c.CandidatureStatus?.Label,
 
                         // Initialisation des progressions à 0 avant le calcul détaillé
                         // C'est correct, car elles seront mises à jour juste après.
@@ -453,14 +442,24 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
 
         public async Task<bool> UploadDocumentAsync(int candidatureId, IFormFile document, string documentTypeName)
         {
-            // 1. Récupérer la candidature et le type de document
+
+            if (string.IsNullOrWhiteSpace(documentTypeName))
+            {
+                Console.WriteLine("Erreur : Le nom du type de document est null ou vide.");
+                return false;
+            }
+            // Récupérer la candidature et le type de document
             var candidature = await _candidatureRepository.GetCandidatureByIdWithDetailsAsync(candidatureId);
-            if (candidature == null) return false;
+            if (candidature == null)
+            {
+                return false;
+            }
 
-            // Logique pour identifier le document à uploader.
+            //le document à uploader.
+            var cleanedAndLoweredDocumentTypeName = documentTypeName.Trim().ToLower();
+            var documentType = await _context.DocumentTypes
+                                             .FirstOrDefaultAsync(dt => dt.NameDocumentType.Trim().ToLower() == cleanedAndLoweredDocumentTypeName);
 
-
-            var documentType = await _context.DocumentTypes.FirstOrDefaultAsync(dt => dt.NameDocumentType == documentTypeName);
 
             if (documentType == null)
             {
@@ -468,8 +467,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                 return false;
             }
 
-            // Traiter le fichier (sauvegarde physique)
-
+            // Traiter le fichier 
             var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "documents");
             if (!Directory.Exists(uploadsFolder))
             {
@@ -487,7 +485,6 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                 }
 
                 // Mettre à jour ou créer l'entrée de document dans la DB
-
                 var existingDocument = await _context.Documents.FirstOrDefaultAsync(d => d.CandidatureId == candidatureId && d.DocumentTypeId == documentType.DocumentTypeId);
 
                 if (existingDocument != null)
@@ -510,13 +507,13 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
                     };
                     _context.Documents.Add(newDocument);
                 }
-                // 4. Mettre à jour les barres de progression (voir section suivante)
-                // Ceci sera fait après l'enregistrement des modifications.
+                // Mettre à jour les barres de progression 
+                // Fait après l'enregistrement des modifications.
 
                 await _context.SaveChangesAsync();
 
                 // Calculer et mettre à jour la progression de l'étudiant
-                await UpdateStudentValidationProgress(candidatureId); // Nouvelle méthode à créer
+                await UpdateStudentValidationProgress(candidatureId); 
 
 
                 return true;
@@ -525,7 +522,6 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
             catch (Exception ex)
             {
                 Console.WriteLine($"Erreur lors de l'upload du document : {ex.Message}");
-                // Gérer l'erreur, peut-être logguer ou renvoyer un statut spécifique
                 return false;
             }
         }
@@ -534,7 +530,7 @@ namespace AdminMnsV1.Application.Services.Implementation // <-- TRÈS IMPORTANT 
 
 
 
-        // Dans CandidatureService.cs
+
         private async Task UpdateStudentValidationProgress(int candidatureId)
         {
             var candidature = await _context.Candidatures

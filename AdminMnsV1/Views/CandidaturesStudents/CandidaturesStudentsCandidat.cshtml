@@ -3,6 +3,12 @@
 @{
     ViewData["Title"] = ViewData["Title"] ?? "Mon Dossier de Candidature";
 }
+@if (TempData["DebugRole"] != null)
+{
+    <div style="color:red; font-weight:bold;">
+        @TempData["DebugRole"]
+    </div>
+}
 
 <h1 class="mx-5 mt-5">Dossier: @Model.LastName @Model.FirstName</h1>
 
@@ -133,7 +139,7 @@
                                             @* Formulaire d'upload/remplacement pour chaque document *@
                                             <form asp-action="UploadDocument" asp-controller="CandidaturesStudents" method="post" enctype="multipart/form-data" class="d-inline-block ml-2">
                                                 <input type="hidden" name="candidatureId" value="@Model.CandidatureId" />
-                                                <input type="hidden" name="documentTypeName" value="@doc.DocumentTypeName" /> @* <-- Assurez-vous que ce nom correspond à l'action *@
+                                                <input type="hidden" name="documentTypeName" value="@doc.DocumentTypeName" />
                                                 <input type="file" name="document" class="btn btn-warning btn-sm" />
                                                 <button type="submit" class="btn btn-primary btn-sm">Uploader</button>
                                             </form>

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AdminMnsV1.Application.Services.Interfaces;
 using AdminMnsV1.Models.ViewModels; // Pour le ViewModel
 using AdminMnsV1.Services.Interfaces; // Pour utiliser ICandidatureService
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http; // Pour IFormFile
 using Microsoft.AspNetCore.Mvc;
 
@@ -55,16 +56,21 @@ namespace AdminMnsV1.Controllers
             return View(viewModels); // Vous auriez un autre ViewModel pour cette page
         }
 
+
+
+
+
         // --- Actions pour les opérations de gestion (exemple) ---
 
         [HttpPost]
         [ValidateAntiForgeryToken] // Bonnes pratiques de sécurité
-        public async Task<IActionResult> UploadDocument(int candidatureId, IFormFile document, string DocumentTypeName)
+      
+        public async Task<IActionResult> UploadDocument(int candidatureId, IFormFile document, string documentTypeName)
         {
             if (document == null || document.Length == 0)
             {
                 TempData["ErrorMessage"] = "Veuillez sélectionner un fichier à télécharger.";
-                return RedirectToAction("CandidatureStudent", new { id = candidatureId });
+                return DetermineRedirectAction(candidatureId);
             }
 
             // L'action C# doit recevoir le documentTypeName
@@ -78,8 +84,46 @@ namespace AdminMnsV1.Controllers
             {
                 TempData["SuccessMessage"] = "Document téléchargé avec succès.";
             }
-            return RedirectToAction("CandidatureStudent", new { id = candidatureId });
+            return RedirectToAction("Mydossier", "CandidaturesStudents");
         }
+
+        private IActionResult DetermineRedirectAction(int candidatureId)
+        {
+            // POINT DE DÉBOGAGE CRITIQUE !
+            // Placez un point d'arrêt ici.
+            // Examinez User.IsInRole("Student") et User.IsInRole("Admin")
+            // Tracez le flux d'exécution pas à pas.
+
+            if (User.IsInRole("Student")) // <-- Est-ce que cette condition est VRAIE ici ?
+            {
+                return RedirectToAction("MyDossier");
+            }
+            else if (User.IsInRole("Admin") || User.IsInRole("MNS")) // <-- Si "Student" est faux, est-ce que celle-ci est VRAIE ?
+            {
+                return RedirectToAction("CandidatureStudent", new { id = candidatureId });
+            }
+            // Alternative si "candidat" n'est PAS un rôle mais un claim personnalisé
+            else if (User.HasClaim(c => c.Type == "StatutUtilisateur" && c.Value == "candidat")) // <-- Et celle-ci ?
+            {
+                return RedirectToAction("MyDossier");
+            }
+            else
+            {
+                // Fallback
+                return RedirectToAction("CandidatureStudent", "Home"); // Votre route de fallback
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
