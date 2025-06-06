@@ -125,7 +125,7 @@
 								{
 									// Détermine si le document est déjà uploadé
 									var isDocumentUpload = !string.IsNullOrEmpty(doc.DocumentPath) &&
-									!doc.DocumentPath.Equals("N/A", StringComparison.OrdinalIgnoreCase);
+									!doc.DocumentPath.Equals("/uploads/documents/N/A", StringComparison.OrdinalIgnoreCase);
 									<tr>
 										<td>@doc.DocumentTypeName</td>
 										<td class="d-none d-md-table-cell">@doc.UploadDate</td>
