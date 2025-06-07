@@ -35,7 +35,11 @@
 			</div>
 			<div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
 				<div class="student-info">
-					<h4>Promotion: CDA 2025/2026</h4> @* Vous pouvez dynamiser cette partie si Model.Promotion existe *@
+					<h4>
+						Promotion: @Model.ClassName @Model.ClassStartDate.ToString("dd/MM/yyyy")
+						/ @Model.ClassEndDate.ToString("dd/MM/yyyy")
+
+					</h4> @* Vous pouvez dynamiser cette partie si Model.Promotion existe *@
 					<p class="text-justify">
 						Lorem ipsum dolor, sit adipisicing elit. Adipisci quis epe
 						voluptatem obcaecati, vel, met nesciunt consequatur placecccccccccat reprehenderit.

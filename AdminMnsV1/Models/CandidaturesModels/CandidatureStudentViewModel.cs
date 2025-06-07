@@ -20,7 +20,10 @@ namespace AdminMnsV1.Models.CandidaturesModels
 
 
         // Propriétés liées à la classe
-        public string ClassName { get; set; }
+        public string ClassName { get; set; } // Existant
+        public DateOnly ClassStartDate { get; set; }
+        public DateOnly ClassEndDate { get; set; }
+
 
 
         // Propriétés pour la progression du dossier

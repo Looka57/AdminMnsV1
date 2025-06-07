@@ -86,7 +86,9 @@ namespace AdminMnsV1.Services.Implementation
                     {
                         ClassCard = card,
                         StudentsInClass = studentsInThisClass,
-                        ClassId = classEntity.ClasseId // L'ID de la classe
+                        ClassId = classEntity.ClasseId,
+                        StartDate = classEntity.StartDate, 
+                        EndDate = classEntity.EndDate
                     });
                 }
             }
