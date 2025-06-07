@@ -3,14 +3,29 @@
 @{
 	ViewData["Title"] = ViewData["Title"] ?? "Mon Dossier de Candidature";
 }
-@if (TempData["DebugRole"] != null)
+
+
+<h1 class="mx-5 mt-5">Dossier: @Model.LastName @Model.FirstName</h1>
+@{
+	var successMessage = TempData["SuccessMessage"] as string;
+	var errorMessage = TempData["ErrorMessage"] as string;
+}
+
+@if (!string.IsNullOrEmpty(successMessage))
 {
-	<div style="color:red; font-weight:bold;">
-		@TempData["DebugRole"]
+	<div class="alert alert-success">
+		@successMessage
 	</div>
 }
 
-<h1 class="mx-5 mt-5">Dossier: @Model.LastName @Model.FirstName</h1>
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+	<div class="alert alert-danger">
+		@errorMessage
+	</div>
+}
+
+
 
 <div class="cardStudent">
 	<div class="row g-4 mb-5">

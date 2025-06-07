@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 
-namespace AdminMnsV1.Application.Services.Interfaces // <-- TRÈS IMPORTANT : CORRESPONDE AU USING DANS LE CONTRÔLEUR
+namespace AdminMnsV1.Application.Services.Interfaces 
 {
     public interface ICandidatureService
     {

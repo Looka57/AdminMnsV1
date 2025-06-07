@@ -3,29 +3,46 @@
 @model AdminMnsV1.Models.CandidaturesModels.CandidatureStudentViewModel
 
 @{
-	ViewData["Title"] = "Dossier: " + Model.FirstName + Model.LastName; // Ou un nom plus approprié pour la page
+	ViewData["Title"] = "Dossier: " + Model.FirstName + " " + Model.LastName; // Concaténation correcte
 }
 
-<h1 class="mx-5 mt-5">Dossier: @Model.FirstName  @Model.LastName</h1>
+<h1 class="mx-5 mt-5">Dossier: @Model.FirstName @Model.LastName</h1>
 
 <div class="cardStudent">
 	<div class="row g-4 mb-5">
 		<div class="col-md-4 col-sm-12">
 			<div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
 				<img src="@Model.StudentImage" alt="@Model.FirstName @Model.LastName" class="student-image">
-				<h4>@Model.FirstName @Model.LastName"</h4>
+				<h4>@Model.FirstName @Model.LastName</h4>
 				<span>Classe : @Model.ClassName</span>
 				<span>Adresse: @Model.Address</span>
-				<span>Telephone: @Model.Phone</span>
+				<span>Téléphone: @Model.Phone</span>
 				<span>Mail: @Model.Email</span>
 				<span>Date de naissance : @Model.BirthDate?.ToString("dd/MM/yyyy")</span>
+				@if (Model.ClassStartDate != default && Model.ClassEndDate != default)
+				{
+					<span>Année Scolaire : @Model.ClassStartDate.ToString("yyyy") - @Model.ClassEndDate.ToString("yyyy")</span>
+				}
 			</div>
 			<div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
 				<div class="student-info-enCours">
-					<h4>En cours</h4>
-					<img width="80" height="80" src="https://img.icons8.com/dotty/80/rotate.png" alt="rotate" />
+					<h4>Statut de la Candidature</h4>
+					<span class="badge bg-primary">@Model.CandidatureStatuses</span>
+					@if (Model.CandidatureStatuses == "En cours")
+					{
+						<img width="80" height="80" src="https://img.icons8.com/dotty/80/rotate.png" alt="rotate" />
+					}
+					else if (Model.CandidatureStatuses == "Validé")
+					{
+						<img width="80" height="80" src="https://img.icons8.com/dotty/80/checked--v1.png" alt="checked--v1" />
+					}
+					else if (Model.CandidatureStatuses == "Refusé")
+					{
+						<img width="80" height="80" src="https://img.icons8.com/dotty/80/cancel.png" alt="cancel" />
+					}
 				</div>
 			</div>
+
 			<div class="p-4 mb-4 border rounded-3 bg-light">
 				<h4 class="mb-3 text-center">Dépôt de document</h4>
 				<form method="post" enctype="multipart/form-data" asp-controller="VotreControleur" asp-action="VotreAction">
@@ -36,10 +53,14 @@
 				</form>
 			</div>
 
+
 			<div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
 				<div class="student-info-supp">
 					<h4>Supprimer Dossier</h4>
-					<button type="button" class="btn btn-outline-light">Supprimer</button>
+					<form asp-controller="Admin" asp-action="DeleteCandidature" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce dossier et toutes les données associées ?');">
+						<input type="hidden" name="id" value="@Model.CandidatureId" />
+						<button type="submit" class="btn btn-outline-danger">Supprimer</button>
+					</form>
 				</div>
 			</div>
 		</div>
@@ -51,20 +72,23 @@
 						<div class="col-md-5 col-sm-12 p-3 mx-4 border rounded-3 bg-light">
 							<h4 class="mb-4">Progression du dossier</h4>
 							<div class="progress" style="height: 50px;">
-								<div class="progress-bar" role="progressbar" style="width: 50%"
-									 aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
-									50%
+								<div class="progress-bar" role="progressbar"
+									 style="width: @(Model.StudentValidationProgress)%"
+									 aria-valuenow="@(Model.StudentValidationProgress)"
+									 aria-valuemin="0" aria-valuemax="100">
+									@(Model.StudentValidationProgress)%
 								</div>
 							</div>
-							<p>Validation eleve</p>
+							<p>Validation élève</p>
 							<div class="progress mt-5 " style="height: 50px;">
 								<div class="progress-bar progress-bar-striped bg-warning" role="progressbar"
-									 style="width: 25%" aria-valuemin="0" aria-valuemax="100"
-									 aria-valuenow="25">
-									25%
+									 style="width: @(Model.MnsValidationProgress)%"
+									 aria-valuenow="@(Model.MnsValidationProgress)"
+									 aria-valuemin="0" aria-valuemax="100">
+									@(Model.MnsValidationProgress)%
 								</div>
 							</div>
-							<p>Validation mns</p>
+							<p>Validation MNS</p>
 
 						</div>
 						<div class="col-md-6 mx-auto col-sm-12 p-3 rounded-3 boxNotif">
@@ -98,73 +122,84 @@
 
 
 			<div class="p-3 g-3 border rounded-3 bg-light">
-				<h4>Pièce à fournir</h4>
+				<h4>Pièces à fournir</h4>
 				<div class="table-responsive">
 					<table class="table align-middle table-striped table-hover table-custom bg-secondary">
 						<thead>
 							<tr>
 								<th scope="col">Pièce</th>
-								<th scope="col" class="d-none d-md-table-cell">Date</th>
-								<th scope="col">Vérification</th>
-								<th scope="col">Validation</th>
+								<th scope="col" class="d-none d-md-table-cell">Date de dépôt</th>
+								<th scope="col">Visualiser</th>
+								<th scope="col">Action</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>Lettre de motivation</td>
-								<td class="d-none d-md-table-cell">14.05.2025</td>
-								<td>
-									<button type="button" class="btn btn-warning btn-sm">
-										<i class="bi bi-file-earmark-text"></i> Vérifier
-									</button>
-								</td>
-								<td class="d-flex flex-wrap gap-2">
-									<button type="button" class="btn btn-success btn-sm ">Valider</button>
-									<button type="button" class="btn btn-danger btn-sm">Refuser</button>
-								</td>
-							</tr>
-
-							<tr>
-								<td>Rib</td>
-								<td class="d-none d-md-table-cell">21.08.2024</td>
-								<td>
-									<button type="button" class="btn btn-warning btn-sm">
-										<i class="bi bi-file-earmark-text"></i> Vérifier
-									</button>
-								</td>
-								<td class="d-flex flex-wrap gap-2">
-									<button type="button" class="btn btn-success btn-sm">Valider</button>
-									<button type="button" class="btn btn-danger btn-sm">Refuser</button>
-								</td>
-							</tr>
-
-							<tr>
-								<td>Entretien</td>
-								<td class="d-none d-md-table-cell">18.10.2024</td>
-								<td>
-									<button type="button" class="btn btn-warning btn-sm ">
-										<i class="bi bi-file-earmark-text"></i> Vérifier
-									</button>
-								</td>
-								<td class="d-flex flex-wrap gap-2">
-									<button type="button" class="btn btn-success btn-sm">Valider</button>
-									<button type="button" class="btn btn-danger btn-sm">Refuser</button>
-								</td>
-							</tr>
-
-							<tr>
-								<td>Photo</td>
-								<td class="d-none d-md-table-cell">29.09.2025</td>
-								<td>
-									<button type="button" class="btn btn-warning btn-sm">
-										<i class="bi bi-file-earmark-text"></i> Vérifier
-									</button>
-								</td>
-								<td class="d-flex flex-wrap gap-2">
-									<button type="button" class="btn btn-success btn-sm ">Valider</button>
-									<button type="button" class="btn btn-danger btn-sm">Refuser</button>
-								</td>
-							</tr>
+							@if (Model.RequiredDocuments != null && Model.RequiredDocuments.Any())
+							{
+								@foreach (var doc in Model.RequiredDocuments.Where(d => !string.IsNullOrWhiteSpace(d.DocumentPath) && !string.Equals(d.DocumentPath, "N/A", StringComparison.OrdinalIgnoreCase)))
+								{
+									<tr>
+										<td>@doc.DocumentTypeName</td>
+										<td class="d-none d-md-table-cell">
+											@* C'EST ICI LA MODIFICATION POUR LA DATE DE DÉPÔT *@
+											@if (!string.IsNullOrWhiteSpace(doc.DocumentPath) && !string.Equals(doc.DocumentPath, "N/A", StringComparison.OrdinalIgnoreCase))
+											{
+												@(doc.UploadDate != DateTime.MinValue ? doc.UploadDate.ToString("dd.MM.yyyy") : "N/A")
+											}
+											else
+											{
+												<span>Non déposé</span>
+											}
+										</td>
+										<td>
+											@if (!string.IsNullOrWhiteSpace(doc.DocumentPath))
+											{
+												<a href="@doc.DocumentPath" target="_blank" class="btn btn-warning btn-sm">
+													<i class="bi bi-file-earmark-text"></i> Vérifier
+												</a>
+											}
+											else
+											{
+												<span class="text-muted">Non déposé</span>
+											}
+										</td>
+										<td class="d-flex flex-wrap gap-2">
+											@if (!string.IsNullOrWhiteSpace(doc.DocumentPath)) // Actions possibles seulement si un fichier est déposé
+											{
+												@if (doc.IsVerified)
+												{
+													<span class="badge bg-success py-2 px-3">Validé</span>
+													<form asp-controller="Admin" asp-action="RejectDocument" method="post">
+														<input type="hidden" name="documentId" value="@doc.DocumentId" />
+														<button type="submit" class="btn btn-danger btn-sm">Refuser</button>
+													</form>
+												}
+												else
+												{
+													<form asp-controller="Admin" asp-action="ValidateDocument" method="post">
+														<input type="hidden" name="documentId" value="@doc.DocumentId" />
+														<button type="submit" class="btn btn-success btn-sm">Valider</button>
+													</form>
+													<form asp-controller="Admin" asp-action="RejectDocument" method="post">
+														<input type="hidden" name="documentId" value="@doc.DocumentId" />
+														<button type="submit" class="btn btn-danger btn-sm">Refuser</button>
+													</form>
+												}
+											}
+											else
+											{
+												<span class="badge bg-secondary py-2 px-3">En attente de dépôt</span>
+											}
+										</td>
+									</tr>
+								}
+							}
+							else
+							{
+								<tr>
+									<td colspan="4">Aucun document requis ou trouvé pour cette candidature.</td>
+								</tr>
+							}
 						</tbody>
 					</table>
 				</div>

@@ -17,8 +17,8 @@ namespace AdminMnsV1.Models.ViewModels
         public CardModel ClassCard { get; set; } // Les infos de la carte pour cette classe
         public List<Student> StudentsInClass { get; set; } = new List<Student>(); // La liste des élèves de cette classe
         public int ClassId { get; set; } // L'ID de la classe, utile pour le filtrage
-          public DateOnly EndDate { get;  set; }
-        public DateOnly StartDate { get;  set; }
-      
+        public DateOnly EndDate { get; set; }
+        public DateOnly StartDate { get; set; }
+
     }
 }

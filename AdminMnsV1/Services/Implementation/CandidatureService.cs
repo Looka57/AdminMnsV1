@@ -706,7 +706,10 @@ namespace AdminMnsV1.Application.Services.Implementation
                     DocumentId = d.DocumentId,
                     DocumentName = d.DocumentName,
                     DocumentTypeName = d.DocumentType?.NameDocumentType ?? "Non défini",
-                    UploadDate = d.DocumentDepositDate,
+                    UploadDate = (d.DocumentPath != null && !string.Equals(d.DocumentPath, "N/A", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(d.DocumentPath))
+                 ? (d.DocumentDepositDate != null ? d.DocumentDepositDate : DateTime.MinValue) // Utilisation de .Value pour DateTime? ou directement si DateTime
+                 : DateTime.MinValue, // Si pas de document déposé (chemin invalide), la date est DateTime.MinValue
+
                     // Ajustement du chemin du document : utilisez l'interpolation de chaîne si DocumentPath est juste le nom du fichier.
                     DocumentPath = !string.IsNullOrEmpty(d.DocumentPath) ? $"/uploads/documents/{d.DocumentPath}" : null,
                     IsVerified = d.IsVerified

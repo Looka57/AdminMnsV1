@@ -12,7 +12,7 @@ namespace AdminMnsV1.Models.ViewModels
         public string? DocumentStatut { get; set; } // Ajouté car vous l'avez mentionné
         public string? DocumentPath { get; set; }
         public int DocumentTypeId { get; set; } // ID du type de document
-        public DateTime? UploadDate { get; set; } // Renommé de 'object' à 'DateTime?' pour être plus précis
+        public DateTime UploadDate { get; set; } // Renommé de 'object' à 'DateTime?' pour être plus précis
         public bool IsVerified { get; set; }
         public DateTime DepositDate { get; internal set; }
 
