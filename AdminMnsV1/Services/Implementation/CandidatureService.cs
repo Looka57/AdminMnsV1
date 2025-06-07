@@ -216,7 +216,7 @@ namespace AdminMnsV1.Application.Services.Implementation
                                 DocumentTypeId = docTypeId,
                                 StudentId = user.Id,
                                 DocumentStatusId = (int)demandedDocumentStatusId,
-                                DocumentPath = null,
+                                DocumentPath = "",
                                 DocumentName = $"Document pour {documentType.NameDocumentType}",
                                 DocumentDepositDate = DateTime.Now
                             };

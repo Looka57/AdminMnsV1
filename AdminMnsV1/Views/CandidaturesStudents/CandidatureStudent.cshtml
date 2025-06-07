@@ -141,10 +141,9 @@
 									<tr>
 										<td>@doc.DocumentTypeName</td>
 										<td class="d-none d-md-table-cell">
-											@* C'EST ICI LA MODIFICATION POUR LA DATE DE DÉPÔT *@
-											@if (!string.IsNullOrWhiteSpace(doc.DocumentPath) && !string.Equals(doc.DocumentPath, "N/A", StringComparison.OrdinalIgnoreCase))
+											@if (doc.UploadDate != DateTime.MinValue)
 											{
-												@(doc.UploadDate != DateTime.MinValue ? doc.UploadDate.ToString("dd.MM.yyyy") : "N/A")
+												@(doc.UploadDate.ToString("dd.MM.yyyy"))
 											}
 											else
 											{

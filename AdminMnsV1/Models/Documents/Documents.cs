@@ -35,7 +35,7 @@ namespace AdminMnsV1.Models.Documents
 
         [Required]
         [StringLength(500)] // Adapte la longueur si les chemins sont très longs
-        public string DocumentPath { get; set; } // Chemin physique ou URL du fichier
+        public string? DocumentPath { get; set; } // Chemin physique ou URL du fichier
 
 
 
