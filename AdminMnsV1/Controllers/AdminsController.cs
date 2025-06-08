@@ -1,7 +1,8 @@
 ﻿// Dans votre fichier AdminController.cs (ou le nom de votre contrôleur)
-using Microsoft.AspNetCore.Mvc;
-using AdminMnsV1.Application.Services.Interfaces; // Assurez-vous que le chemin est correct
 using System.Threading.Tasks;
+using AdminMnsV1.Application.Services.Interfaces; // Assurez-vous que le chemin est correct
+using AdminMnsV1.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
 public class AdminController : Controller
 {
@@ -34,12 +35,12 @@ public class AdminController : Controller
         {
             TempData["SuccessMessage"] = "Document validé avec succès.";
             // Redirige vers la page de détails de la candidature pour rafraîchir
-            return RedirectToAction("CandidatureDetails", new { id = candidatureId });
+            return RedirectToAction("CandidatureStudent", "CandidaturesStudents", new { id = candidatureId });
         }
         else
         {
             TempData["ErrorMessage"] = "Erreur: Document non trouvé ou validation impossible.";
-            return RedirectToAction("CandidatureDetails", new { id = TempData["LastCandidatureId"] }); // Tente de revenir à la dernière page connue
+            return RedirectToAction("CandidatureStudent", "CandidaturesStudents", new { id = TempData["LastCandidatureId"] }); // Tente de revenir à la dernière page connue
         }
     }
 
@@ -53,29 +54,31 @@ public class AdminController : Controller
         {
             TempData["SuccessMessage"] = "Document rejeté avec succès.";
             // Redirige vers la page de détails de la candidature pour rafraîchir
-            return RedirectToAction("CandidatureDetails", new { id = candidatureId });
+            return RedirectToAction("CandidatureStudent", "CandidaturesStudents", new { id = candidatureId });
         }
         else
         {
             TempData["ErrorMessage"] = "Erreur: Document non trouvé ou rejet impossible.";
-            return RedirectToAction("CandidatureDetails", new { id = TempData["LastCandidatureId"] });
+            return RedirectToAction("CandidatureStudent", "CandidaturesStudents", new { id = TempData["LastCandidatureId"] });
         }
     }
 
     // Optionnel : Action pour supprimer une candidature (si le bouton est activé)
     [HttpPost]
+    [ValidateAntiForgeryToken]
+
     public async Task<IActionResult> DeleteCandidature(int id)
     {
         var result = await _candidatureService.DeleteCandidatureAsync(id);
         if (result)
         {
             TempData["SuccessMessage"] = "Candidature supprimée avec succès.";
-            return RedirectToAction("AllCandidaturesOverview"); // Rediriger vers la liste des candidatures
+            return RedirectToAction("CandidatureStudent", "CandidaturesStudents", new { id = id });
         }
         else
         {
             TempData["ErrorMessage"] = "Erreur lors de la suppression de la candidature.";
-            return RedirectToAction("CandidatureDetails", new { id = id });
+            return RedirectToAction("CandidatureStudent", "CandidaturesStudents", new { id = id });
         }
     }
 

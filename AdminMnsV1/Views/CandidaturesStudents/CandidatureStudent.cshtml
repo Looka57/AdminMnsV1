@@ -6,6 +6,22 @@
     ViewData["Title"] = "Dossier: " + Model.FirstName + " " + Model.LastName; // Concaténation correcte
 }
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <h1 class="mx-5 mt-5">Dossier: @Model.FirstName @Model.LastName</h1>
 
 <div class="cardStudent">
@@ -28,19 +44,23 @@
                 <div class="student-info-enCours">
                     <h4>Statut de la Candidature</h4>
                     <span class="badge bg-primary">@Model.CandidatureStatuses</span>
-                    @if (Model.CandidatureStatuses == "En cours")
+                    @{
+                        var status = Model.CandidatureStatuses?.Trim().ToLowerInvariant();
+                    }
+                    @if (status == "En cours")
                     {
                         <img width="80" height="80" src="https://img.icons8.com/dotty/80/rotate.png" alt="rotate" />
                     }
-                    else if (Model.CandidatureStatuses == "Validé")
+                    else if (status == "Validé")
                     {
                          <img width="80" height="80" src="https://img.icons8.com/dotty/80/checked--v1.png" alt="checked--v1" />
                     }
-                    else if (Model.CandidatureStatuses == "Refusé")
+                    else if (status == "Refusé")
                     {
                         <img width="80" height="80" src="https://img.icons8.com/dotty/80/cancel.png" alt="cancel" />
                     }
                 </div>
+
             </div>
             
             <div class="p-4 mb-4 border rounded-3 bg-light">

@@ -53,8 +53,11 @@ namespace AdminMnsV1.Controllers
             }
 
 
-            return View("CandidatureStudent", CandidatureStudent);
+            return View(viewModel);
         }
+
+
+
 
         // Action pour la page d'aperçu des candidatures (liste)
         public async Task<IActionResult> Dossiers()
@@ -175,20 +178,27 @@ namespace AdminMnsV1.Controllers
         }
 
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCandidature(int id)
         {
-            var success = await _candidatureService.DeleteCandidatureAsync(id);
-            if (!success)
+            var result = await _candidatureService.DeleteCandidatureAsync(id);
+            if (result) // Si la suppression est un succès
             {
-                TempData["ErrorMessage"] = "Erreur lors de la suppression du dossier.";
-                return RedirectToAction("CandidatureStudent", new { id = id });
+                TempData["SuccessMessage"] = "Candidature supprimée avec succès.";
+                // <<< MODIFIEZ CETTE LIGNE POUR REDIRIGER VERS LA LISTE DES CANDIDATURES >>>
+                return RedirectToAction("Dossiers", "CandidaturesStudents"); // "Dossiers" est l'action qui affiche la liste.
             }
-            TempData["SuccessMessage"] = "Dossier supprimé avec succès.";
-            return RedirectToAction("Dossiers"); // Redirige vers la liste des dossiers après suppression
+            else // Si la suppression échoue
+            {
+                TempData["ErrorMessage"] = "Erreur lors de la suppression de la candidature.";
+                // Si la suppression échoue, la candidature existe toujours, donc revenir à sa page de détails est approprié.
+                return RedirectToAction("CandidatureStudent", "CandidaturesStudents", new { id = id });
+            }
         }
+
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -257,6 +257,7 @@ namespace AdminMnsV1.Application.Services.Implementation
         public async Task<Candidature> GetCandidatureByUserIdAsync(string userId)
         {
             return await _context.Candidatures
+                                 .Include(c => c.Documents)
                                  .Include(c => c.CandidatureStatus)
                                  .FirstOrDefaultAsync(c => c.UserId == userId);
         }
@@ -622,15 +623,17 @@ namespace AdminMnsV1.Application.Services.Implementation
 
 
 
-
+        [HttpPost]
+[ValidateAntiForgeryToken]
         public async Task<bool> DeleteCandidatureAsync(int id)
         {
-            var candidature = await _candidatureRepository.GetByIdAsync(id);
+            var candidature = await _candidatureRepository.GetCandidatureByIdWithDetailsAsync(id); // Utilisez la méthode qui inclut les documents
             if (candidature == null) return false;
 
             // Optionnel : supprimer les fichiers physiques associés aux documents de la candidature
-            if (candidature.Documents != null)
+            if (candidature.Documents != null && candidature.Documents.Any())
             {
+                // Supprimer les fichiers physiques associés aux documents de la candidature
                 foreach (var doc in candidature.Documents.Where(d => !string.IsNullOrEmpty(d.DocumentPath)))
                 {
                     var filePath = Path.Combine(_webHostEnvironment.WebRootPath, doc.DocumentPath.TrimStart('/'));
@@ -640,6 +643,8 @@ namespace AdminMnsV1.Application.Services.Implementation
                     }
                 }
             }
+            _context.Documents.RemoveRange(candidature.Documents);
+
 
             _candidatureRepository.Delete(candidature);
             return await _candidatureRepository.SaveChangesAsync() > 0;
