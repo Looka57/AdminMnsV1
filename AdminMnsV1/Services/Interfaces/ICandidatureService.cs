@@ -30,9 +30,10 @@ namespace AdminMnsV1.Application.Services.Interfaces
 
         Task<bool> UpdateCandidatureStatusAsync(int candidatureId, string newStatus);
         Task<bool> UploadDocumentAsync(int candidatureId, IFormFile document, string documentTypeName);
-        Task<int> ValidateDocumentAsync(int documentId);
-        Task<int> RejectDocumentAsync(int documentId);
+        Task<int> ValidateDocumentAsync(int documentId, string adminUserId);
+        Task<int> RejectDocumentAsync(int documentId, string adminUserId);
         Task<bool> DeleteCandidatureAsync(int id);
         Task<bool> UploadDocumentAsync(int candidatureId, IFormFile document, object documentTypeName);
+       
     }
 }

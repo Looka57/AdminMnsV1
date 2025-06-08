@@ -587,24 +587,33 @@ namespace AdminMnsV1.Application.Services.Implementation
 
 
         // Dans CandidatureService.cs
-        public async Task<int> ValidateDocumentAsync(int documentId)
+        public async Task<int> ValidateDocumentAsync(int documentId, string adminUserId)
         {
             var document = await _context.Documents.FindAsync(documentId);
-            if (document == null) return 0;
+            if (document == null)
+            {
+                return 0;
+            }
 
-            document.IsVerified = true; // Valider le document
+            document.IsVerified = true;
+            document.AdminId = adminUserId; 
+            document.ValidationDate = DateTime.UtcNow;
+
             await _context.SaveChangesAsync();
 
             await CalculateAndSaveCandidatureProgresses(document.CandidatureId); return document.CandidatureId;
+            return document.CandidatureId;
         }
 
-        public async Task<int> RejectDocumentAsync(int documentId)
+        public async Task<int> RejectDocumentAsync(int documentId, string adminUserId)
         {
             var document = await _context.Documents.FindAsync(documentId);
             if (document == null) return 0;
 
             document.IsVerified = false; // Rejeter (ou marquer comme non validé)
-                                         // Vous pourriez ajouter une colonne pour la raison du rejet
+            document.AdminId = adminUserId;
+            document.ValidationDate = DateTime.UtcNow;
+                                         
             await _context.SaveChangesAsync();
 
             await CalculateAndSaveCandidatureProgresses(document.CandidatureId);

@@ -25,10 +25,10 @@ public class AdminController : Controller
     }
 
     [HttpPost] // Cette action sera appelée via un formulaire POST
-    public async Task<IActionResult> ValidateDocument(int documentId)
+    public async Task<IActionResult> ValidateDocument(int documentId, string adminUserId)
     {
         // Appelle le service pour valider le document et obtenir l'ID de la candidature
-        var candidatureId = await _candidatureService.ValidateDocumentAsync(documentId);
+        var candidatureId = await _candidatureService.ValidateDocumentAsync(documentId, adminUserId);
 
         if (candidatureId > 0)
         {
@@ -44,10 +44,10 @@ public class AdminController : Controller
     }
 
     [HttpPost] // Cette action sera appelée via un formulaire POST
-    public async Task<IActionResult> RejectDocument(int documentId)
+    public async Task<IActionResult> RejectDocument(int documentId, string adminUserId)
     {
         // Appelle le service pour rejeter le document et obtenir l'ID de la candidature
-        var candidatureId = await _candidatureService.RejectDocumentAsync(documentId);
+        var candidatureId = await _candidatureService.RejectDocumentAsync(documentId, adminUserId);
 
         if (candidatureId > 0)
         {

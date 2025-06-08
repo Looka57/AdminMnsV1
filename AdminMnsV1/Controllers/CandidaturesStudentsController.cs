@@ -2,10 +2,13 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AdminMnsV1.Application.Services.Interfaces;
+using AdminMnsV1.Models;
+using AdminMnsV1.Models.CandidaturesModels;
 using AdminMnsV1.Models.ViewModels; // Pour le ViewModel
 using AdminMnsV1.Services.Interfaces; // Pour utiliser ICandidatureService
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http; // Pour IFormFile
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -15,10 +18,14 @@ namespace AdminMnsV1.Controllers
     {
         private readonly ICandidatureService _candidatureService;
         private string documentTypeName;
+        private readonly UserManager<User> _userManager;
 
-        public CandidaturesStudentsController(ICandidatureService candidatureService)
+
+        public CandidaturesStudentsController(ICandidatureService candidatureService, UserManager<User> userManager)
         {
             _candidatureService = candidatureService;
+            _userManager = userManager;
+
         }
 
         // Action pour afficher les détails d'une candidature
@@ -46,7 +53,7 @@ namespace AdminMnsV1.Controllers
             }
 
 
-            return View(viewModel);
+            return View("CandidatureStudent", CandidatureStudent);
         }
 
         // Action pour la page d'aperçu des candidatures (liste)
@@ -64,7 +71,7 @@ namespace AdminMnsV1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken] // Bonnes pratiques de sécurité
-      
+
         public async Task<IActionResult> UploadDocument(int candidatureId, IFormFile document, string documentTypeName)
         {
             if (document == null || document.Length == 0)
@@ -129,7 +136,15 @@ namespace AdminMnsV1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ValidateDocument(int documentId)
         {
-            var candidatureId = await _candidatureService.ValidateDocumentAsync(documentId);
+            var adminUserId = _userManager.GetUserId(User);
+
+            if (string.IsNullOrEmpty(adminUserId))
+            {
+                TempData["ErrorMessage"] = "Opération non autorisée. L'utilisateur n'est pas connecté.";
+                return Unauthorized(); // Ou un autre RedirectToAction approprié
+            }
+
+            var candidatureId = await _candidatureService.ValidateDocumentAsync(documentId, adminUserId);
             if (candidatureId == 0)
             {
                 return NotFound(); // Document ou candidature non trouvé
@@ -142,7 +157,15 @@ namespace AdminMnsV1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RejectDocument(int documentId)
         {
-            var candidatureId = await _candidatureService.RejectDocumentAsync(documentId);
+            // 1. Récupérer l'ID de l'utilisateur actuellement connecté (l'admin)
+            var adminUserId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(adminUserId))
+            {
+                TempData["ErrorMessage"] = "Opération non autorisée. L'utilisateur n'est pas connecté.";
+                return Unauthorized(); // Ou un autre RedirectToAction approprié
+            }
+
+            var candidatureId = await _candidatureService.RejectDocumentAsync(documentId, adminUserId);
             if (candidatureId == 0)
             {
                 return NotFound();
@@ -150,6 +173,8 @@ namespace AdminMnsV1.Controllers
             TempData["SuccessMessage"] = "Document rejeté.";
             return RedirectToAction("CandidatureStudent", new { id = candidatureId });
         }
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
