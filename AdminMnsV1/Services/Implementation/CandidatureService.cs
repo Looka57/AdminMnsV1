@@ -332,7 +332,9 @@ namespace AdminMnsV1.Application.Services.Implementation
                 Phone = candidature.User?.Phone ?? "N/A", // Utilise Phone au lieu de PhoneNumber si c'est le nom de la propriété
                 Address = candidature.User?.Address ?? "N/A",
                 BirthDate = candidature.User?.BirthDate,
-                ClassName = candidature.Class?.NameClass ?? "N/A", // Ajout de '?' et "N/A" au cas où Class serait null
+                ClassName = candidature.Class?.NameClass ?? "N/A", // Ajout de '?' et "N/A" 
+                CandidatureStatuses = candidature.CandidatureStatus?.Label, // Utilisez ?. pour gérer le cas où CandidatureStatus serait null
+
                 StudentValidationProgress = studentProgress,
                 MnsValidationProgress = mnsProgress,
                 StudentImage = string.IsNullOrEmpty(candidature.User?.Photo)

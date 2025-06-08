@@ -35,7 +35,7 @@ namespace AdminMnsV1.Models.CandidaturesModels
 
         // Liste des documents requis et leur statut
         public List<DocumentViewModel> RequiredDocuments { get; set; } = new List<DocumentViewModel>();
-        public string CandidatureStatuses { get; set; }
+        public string CandidatureStatuses  { get; set; }
         public string? UserName { get; set; }
         public object Documents { get; set; }
 
