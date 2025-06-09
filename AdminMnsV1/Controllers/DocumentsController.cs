@@ -74,6 +74,12 @@ namespace AdminMnsV1.Controllers
                 return View(document);
             }
         }
-        // TODO: Ajouter des actions pour Details, Edit, Delete
+
+        public IActionResult DocumentNotFound()
+        {
+            return View("DocumentNotFound");
+        }
+
+
     }
 }

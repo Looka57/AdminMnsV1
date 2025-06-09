@@ -144,30 +144,23 @@
 
 
 										<td>
-											@* MODIFICATION ICI POUR LE BOUTON "Vérifier" (visualisation) *@
 											@{
-												// Définir le chemin vers l'image de placeholder
-												// Assurez-vous que cette image existe dans votre dossier wwwroot/images/
-												string placeholderImagePath = "~/uploads/documents/404.png"; // <-- Assurez-vous de ce chemin exact
-
-												 string documentDisplayUrl = string.IsNullOrWhiteSpace(doc.DocumentPath)
-                                                   ? placeholderImagePath // Si doc.DocumentPath est vide/null, utiliser l'image par défaut
-                                                   : doc.DocumentPath;    // Sinon, utiliser le chemin du document réel
+												string finalDocumentUrl = string.IsNullOrWhiteSpace(doc.DocumentPath)
+												? Url.Action("DocumentNotFound", "Documents")
+												: doc.DocumentPath;
 											}
 
-											<a href="@documentDisplayUrl" target="_blank"
+											<a href="@finalDocumentUrl" target="_blank"
 											   class="btn @(string.IsNullOrWhiteSpace(doc.DocumentPath) ? "btn-secondary" : "btn-warning") btn-sm"
 											   title="@(string.IsNullOrWhiteSpace(doc.DocumentPath) ? "Document non transmis" : "Vérifier le document")">
 												@if (!string.IsNullOrWhiteSpace(doc.DocumentPath))
 												{
 													<i class="bi bi-file-earmark-text">Vérifier</i>
-													
-																						}
+												}
 												else
 												{
-													<i class="bi bi-info-circle">	Non transmis</i>
-												
-																				}
+													<i class="bi bi-info-circle">Non transmis</i>
+												}
 											</a>
 										</td>
 
