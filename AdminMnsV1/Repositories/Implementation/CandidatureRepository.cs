@@ -33,6 +33,7 @@ namespace AdminMnsV1.Data.Repositories
                                  .Include(c => c.Class)
                                  .Include(c => c.Documents)
                                      .ThenInclude(d => d.DocumentType)
+                                      .Include(c => c.CandidatureStatus)
                                  .FirstOrDefaultAsync(c => c.CandidatureId == id);
         }
 

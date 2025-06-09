@@ -96,7 +96,7 @@ namespace AdminMnsV1.Application.Services.Implementation
 
         public async Task<bool> CreateCandidatureAsync(CreateCandidatureViewModel model)
         {
-            string resetPasswordUrl = null; 
+            string resetPasswordUrl = null;
             // 1. Vérifier si l'utilisateur existe déjà ou le créer
             var user = (await _userRepository.FindAsync(u => u.Email == model.Email)).FirstOrDefault();
             bool isNewUser = (user == null); // Indicateur pour savoir si un nouvel utilisateur a été créé
@@ -113,7 +113,7 @@ namespace AdminMnsV1.Application.Services.Implementation
                     IsOnboardingCompleted = false, // TRÈS IMPORTANT : Doit être false au début
                     CreationDate = DateTime.UtcNow,
                     Status = model.Statut, // Ceci reste pour votre statut interne "Candidat"
-                    UserName = model.Email 
+                    UserName = model.Email
                 };
 
                 var identityResult = await _userManager.CreateAsync(user);
@@ -318,7 +318,7 @@ namespace AdminMnsV1.Application.Services.Implementation
             int submittedDocs = candidature.Documents?.Count(d => !string.IsNullOrEmpty(d.DocumentPath)) ?? 0;
             int verifiedDocs = candidature.Documents?.Count(d => d.IsVerified) ?? 0;
 
-            int studentProgress = candidature.StudentValidationProgress; 
+            int studentProgress = candidature.StudentValidationProgress;
             int mnsProgress = candidature.MnsValidationProgress;
 
             // 3. Mapper les données de l'entité Candidature vers le ViewModel CandidatureStudentViewModel
@@ -599,13 +599,14 @@ namespace AdminMnsV1.Application.Services.Implementation
             }
 
             document.IsVerified = true;
-            document.AdminId = adminUserId; 
+            document.AdminId = adminUserId;
             document.ValidationDate = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
 
-            await CalculateAndSaveCandidatureProgresses(document.CandidatureId); return document.CandidatureId;
+            await CalculateAndSaveCandidatureProgresses(document.CandidatureId); 
             return document.CandidatureId;
+         
         }
 
         public async Task<int> RejectDocumentAsync(int documentId, string adminUserId)
@@ -616,7 +617,7 @@ namespace AdminMnsV1.Application.Services.Implementation
             document.IsVerified = false; // Rejeter (ou marquer comme non validé)
             document.AdminId = adminUserId;
             document.ValidationDate = DateTime.UtcNow;
-                                         
+
             await _context.SaveChangesAsync();
 
             await CalculateAndSaveCandidatureProgresses(document.CandidatureId);
@@ -626,7 +627,7 @@ namespace AdminMnsV1.Application.Services.Implementation
 
 
         [HttpPost]
-[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<bool> DeleteCandidatureAsync(int id)
         {
             var candidature = await _candidatureRepository.GetCandidatureByIdWithDetailsAsync(id); // Utilisez la méthode qui inclut les documents
@@ -709,7 +710,7 @@ namespace AdminMnsV1.Application.Services.Implementation
                                      : "/images/profiles/" + candidature.User.Photo,
 
                 ClassName = candidature.Class?.NameClass ?? "N/A",
-                ClassStartDate = candidature.Class?.StartDate ?? default, 
+                ClassStartDate = candidature.Class?.StartDate ?? default,
                 ClassEndDate = candidature.Class?.EndDate ?? default,
 
                 // --- Étape 3 : Calculer les pourcentages de progression ICI ---
@@ -758,6 +759,82 @@ namespace AdminMnsV1.Application.Services.Implementation
 
             return viewModel;
         }
+
+
+        public async Task UpdateCandidatureStatusBasedOnDocuments(int candidatureId)
+        {
+            var candidature = await _candidatureRepository.GetCandidatureByIdWithDetailsAsync(candidatureId);
+            if (candidature == null)
+            {
+                return;
+            }
+            // Récupérer le nombre total de types de documents requis
+            int totalRequireDocs = candidature.Documents?.Count() ?? 0; // Comptez les documents associés à cette candidature.
+            // Récupérer le nombre de documents soumis et validés pour cette candidature
+            int verifiedDocs = candidature.Documents?.Count(d => d.IsVerified) ?? 0;
+            // Vérifier si tous les documents requis sont validés
+            if (totalRequireDocs >0 && verifiedDocs == totalRequireDocs)
+            {
+                // Trouver l'ID du statut "Validé"
+                var validatedStatus = await _context.CandidatureStatuses
+                                                             .FirstOrDefaultAsync(s => s.Label == "Validé");
+                if (validatedStatus != null && candidature.CandidatureStatusId != validatedStatus.CandidatureStatusId)
+                {
+                    // Mettre à jour le statut de la candidature
+                    candidature.CandidatureStatusId = validatedStatus.CandidatureStatusId;
+                    _context.Candidatures.Update(candidature);
+                    await _context.SaveChangesAsync();
+
+                    // >>> Appeler la logique pour mettre à jour le rôle de l'utilisateur ici <<<
+                    // Nous allons créer cette méthode séparément pour la clarté.
+                   await UpdateUserRoleToStudent(candidature.UserId);
+                }
+            }
+        }
+
+        private async Task UpdateUserRoleToStudent(string userId)
+        {
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return; // Utilisateur non trouvé
+            }
+
+            // Vérifier si l'utilisateur est actuellement dans le rôle "Candidat"
+            if (await _userManager.IsInRoleAsync(user, "Candidat")) // Assurez-vous que le nom du rôle est exact
+            {
+                // Supprimer l'utilisateur du rôle "Candidat"
+                var removeResult = await _userManager.RemoveFromRoleAsync(user, "Candidat");
+                if (!removeResult.Succeeded)
+                {
+                    // Gérer l'erreur si la suppression du rôle échoue (par exemple, logger)
+                    // Cela ne devrait normalement pas arriver
+                    return;
+                }
+            }
+
+            // Ajouter l'utilisateur au rôle "Student"
+            if (!await _userManager.IsInRoleAsync(user, "Student")) // Vérifier pour éviter d'ajouter plusieurs fois
+            {
+                var addResult = await _userManager.AddToRoleAsync(user, "Student");
+                if (!addResult.Succeeded)
+                {
+                    // Gérer l'erreur si l'ajout au rôle échoue (par exemple, logger)
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
 
         public Task<bool> UploadDocumentAsync(int candidatureId, IFormFile document, object documentTypeName)
         {

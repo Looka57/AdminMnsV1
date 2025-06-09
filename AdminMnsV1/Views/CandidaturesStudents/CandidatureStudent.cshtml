@@ -3,220 +3,197 @@
 @model AdminMnsV1.Models.CandidaturesModels.CandidatureStudentViewModel
 
 @{
-    ViewData["Title"] = "Dossier: " + Model.FirstName + " " + Model.LastName; // Concaténation correcte
+	ViewData["Title"] = "Dossier: " + Model.FirstName + " " + Model.LastName; // Concaténation correcte
 }
 
 @if (TempData["SuccessMessage"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		@TempData["SuccessMessage"]
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
 }
 
 @if (TempData["ErrorMessage"] != null)
 {
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        @TempData["ErrorMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+	<div class="alert alert-danger alert-dismissible fade show" role="alert">
+		@TempData["ErrorMessage"]
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
 }
 
 <h1 class="mx-5 mt-5">Dossier: @Model.FirstName @Model.LastName</h1>
 
 <div class="cardStudent">
-    <div class="row g-4 mb-5">
-        <div class="col-md-4 col-sm-12">
-            <div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
-                <img src="@Model.StudentImage" alt="@Model.FirstName @Model.LastName" class="student-image">
-                <h4>@Model.FirstName @Model.LastName</h4>
-                <span>Classe : @Model.ClassName</span>
-                <span>Adresse: @Model.Address</span>
-                <span>Téléphone: @Model.Phone</span>
-                <span>Mail: @Model.Email</span>
-                <span>Date de naissance : @Model.BirthDate?.ToString("dd/MM/yyyy")</span>
-                @if (Model.ClassStartDate != default && Model.ClassEndDate != default)
-                {
-                    <span>Année Scolaire : @Model.ClassStartDate.ToString("yyyy") - @Model.ClassEndDate.ToString("yyyy")</span>
-                }
-            </div>
-            <div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
-                <div class="student-info-enCours">
-                    <h4>Statut de la Candidature</h4>
-                    <span class="badge bg-primary">@Model.CandidatureStatuses</span>
-                    @{
-                        var status = Model.CandidatureStatuses?.Trim().ToLowerInvariant();
-                    }
-                    @if (status == "En cours")
-                    {
-                        <img width="80" height="80" src="https://img.icons8.com/dotty/80/rotate.png" alt="rotate" />
-                    }
-                    else if (status == "Validé")
-                    {
-                         <img width="80" height="80" src="https://img.icons8.com/dotty/80/checked--v1.png" alt="checked--v1" />
-                    }
-                    else if (status == "Refusé")
-                    {
-                        <img width="80" height="80" src="https://img.icons8.com/dotty/80/cancel.png" alt="cancel" />
-                    }
-                </div>
+	<div class="row g-4 mb-5">
+		<div class="col-md-4 col-sm-12">
+			<div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
+				<img src="@Model.StudentImage" alt="@Model.FirstName @Model.LastName" class="student-image">
+				<h4>@Model.FirstName @Model.LastName</h4>
+				<span>Classe : @Model.ClassName</span>
+				<span>Adresse: @Model.Address</span>
+				<span>Téléphone: @Model.Phone</span>
+				<span>Mail: @Model.Email</span>
+				<span>Date de naissance : @Model.BirthDate?.ToString("dd/MM/yyyy")</span>
+				@if (Model.ClassStartDate != default && Model.ClassEndDate != default)
+				{
+					<span>Année Scolaire : @Model.ClassStartDate.ToString("yyyy") - @Model.ClassEndDate.ToString("yyyy")</span>
+				}
+			</div>
+			<div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
+				<div class="student-info-enCours">
+					<h5>Statut de la Candidature</h5>
+					<span class="badge bg-primary">@Model.CandidatureStatuses</span>
+					@{
 
-            </div>
-            
-            <div class="p-4 mb-4 border rounded-3 bg-light">
-                <h4 class="mb-3 text-center">Dépôt de document</h4>
-                <form method="post" enctype="multipart/form-data" asp-controller="VotreControleur" asp-action="VotreAction">
-                    <div class="input-group">
-                        <input type="file" class="form-control" id="documentUpload" name="document">
-                        <button class="btn btn-primary" type="submit">Ajouter</button>
-                    </div>
-                </form>
-            </div>
-            
+						var safeStatus = Model.CandidatureStatuses;
+					}
+					@if (safeStatus != null && safeStatus.Equals("En cours", StringComparison.OrdinalIgnoreCase))
+					{
+						<img width="80" height="80" src="https://img.icons8.com/dotty/80/rotate.png" alt="rotate" />
+					}
+					else if (safeStatus != null && safeStatus.Equals("Validé", StringComparison.OrdinalIgnoreCase))
+					{
+						<img width="80" height="80" src="https://img.icons8.com/dotty/80/checked--v1.png" alt="checked--v1" />
+					}
+					else if (safeStatus != null && safeStatus.Equals("Refusé", StringComparison.OrdinalIgnoreCase))
+					{
+						<img width="80" height="80" src="https://img.icons8.com/dotty/80/cancel.png" alt="cancel" />
+					}
+				</div>
 
-                    <div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
-                        <div class="student-info-supp">
-                            <h4>Supprimer Dossier</h4>
-                            <form asp-controller="Admin" asp-action="DeleteCandidature" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce dossier et toutes les données associées ?');">
-                                <input type="hidden" name="id" value="@Model.CandidatureId" />
-                                <button type="submit" class="btn btn-outline-danger">Supprimer</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+			</div>
 
-                <div class="col-md-8 col-sm-12">
-                    <div class="row mb-4">
-                        <div class="col-12 ">
-                            <div class="row g-5">
-                                <div class="col-md-5 col-sm-12 p-3 mx-4 border rounded-3 bg-light">
-                                    <h4 class="mb-4">Progression du dossier</h4>
-                                    <div class="progress" style="height: 50px;">
-                                        <div class="progress-bar" role="progressbar"
-                                             style="width: @(Model.StudentValidationProgress)%"
-                                             aria-valuenow="@(Model.StudentValidationProgress)"
-                                             aria-valuemin="0" aria-valuemax="100">
-                                            @(Model.StudentValidationProgress)%
-                                        </div>
-                                    </div>
-                                    <p>Validation élève</p>
-                                    <div class="progress mt-5 " style="height: 50px;">
-                                        <div class="progress-bar progress-bar-striped bg-warning" role="progressbar"
-                                             style="width: @(Model.MnsValidationProgress)%"
-                                             aria-valuenow="@(Model.MnsValidationProgress)"
-                                             aria-valuemin="0" aria-valuemax="100">
-                                            @(Model.MnsValidationProgress)%
-                                        </div>
-                                    </div>
-                                    <p>Validation MNS</p>
-
-                                </div>
-                                <div class="col-md-6 mx-auto col-sm-12 p-3 rounded-3 boxNotif">
-                                    <h4>Notifications</h4>
-                                    <table class="table rounded-3 table-custom">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">#</th>
-                                                <th scope="col">Pieces</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <th scope="row">1</th>
-                                                <td>Ce qui vient la</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">2</th>
-                                                <td>C.C</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">3</th>
-                                                <td colspan="2">Dossier</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+			<div class="p-4 mb-4 border rounded-3 bg-light">
+				<h4 class="mb-3 text-center">Dépôt de document</h4>
+				<form method="post" enctype="multipart/form-data" asp-controller="VotreControleur" asp-action="VotreAction">
+					<div class="input-group">
+						<input type="file" class="form-control" id="documentUpload" name="document">
+						<button class="btn btn-primary" type="submit">Ajouter</button>
+					</div>
+				</form>
+			</div>
 
 
-                    <div class="p-3 g-3 border rounded-3 bg-light">
-                        <h4>Pièces à fournir</h4>
-                        <div class="table-responsive">
-                            <table class="table align-middle table-striped table-hover table-custom bg-secondary">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Pièce</th>
-                                        <th scope="col" class="d-none d-md-table-cell">Date de dépôt</th>
-                                        <th scope="col">Visualiser</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (Model.RequiredDocuments != null && Model.RequiredDocuments.Any())
-                                    {
-                    @foreach (var doc in Model.RequiredDocuments.Where(d => !string.IsNullOrWhiteSpace(d.DocumentPath) && !string.Equals(d.DocumentPath, "N/A", StringComparison.OrdinalIgnoreCase)))
-                                        {
-                                            <tr>
-                                                <td>@doc.DocumentTypeName</td>
-                                                <td class="d-none d-md-table-cell">
-                                                    @* Afficher la date seulement si le document a été déposé *@
-                                                    @(doc.UploadDate != DateTime.MinValue ? doc.UploadDate : "N/A")
-                                                </td>
-                                                <td>
-                                                    @if (!string.IsNullOrWhiteSpace(doc.DocumentPath))
-                                                    {
-                                                        <a href="@doc.DocumentPath" target="_blank" class="btn btn-warning btn-sm">
-                                                            <i class="bi bi-file-earmark-text"></i> Vérifier
-                                                        </a>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="text-muted">Non déposé</span>
-                                                    }
-                                                </td>
-                                                <td class="d-flex flex-wrap gap-2">
-                                                    @if (!string.IsNullOrWhiteSpace(doc.DocumentPath)) // Actions possibles seulement si un fichier est déposé
-                                                    {
-                                                        @if (doc.IsVerified)
-                                                        {
-                                                            <span class="badge bg-success py-2 px-3">Validé</span>
-                                                            <form asp-controller="Admin" asp-action="RejectDocument" method="post">
-                                                                <input type="hidden" name="documentId" value="@doc.DocumentId" />
-                                                                <button type="submit" class="btn btn-danger btn-sm">Refuser</button>
-                                                            </form>
-                                                        }
-                                                        else
-                                                        {
-                                                            <form asp-controller="Admin" asp-action="ValidateDocument" method="post">
-                                                                <input type="hidden" name="documentId" value="@doc.DocumentId" />
-                                                                <button type="submit" class="btn btn-success btn-sm">Valider</button>
-                                                            </form>
-                                                            <form asp-controller="Admin" asp-action="RejectDocument" method="post">
-                                                                <input type="hidden" name="documentId" value="@doc.DocumentId" />
-                                                                <button type="submit" class="btn btn-danger btn-sm">Refuser</button>
-                                                            </form>
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="badge bg-secondary py-2 px-3">En attente de dépôt</span>
-                                                    }
-                                                </td>
-                                            </tr>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <tr>
-                                            <td colspan="4">Aucun document requis ou trouvé pour cette candidature.</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+			<div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
+				<div class="student-info-supp">
+					<h4>Supprimer Dossier</h4>
+					<form asp-controller="Admin" asp-action="DeleteCandidature" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce dossier et toutes les données associées ?');">
+						<input type="hidden" name="id" value="@Model.CandidatureId" />
+						<button type="submit" class="btn btn-outline-danger">Supprimer</button>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-8 col-sm-12">
+			<div class="row mb-4">
+				<div class="col-12 m-0 ">
+					<div class="row g-5">
+						<div class="col-md-11 col-sm-12 p-3 mx-4 border rounded-3 bg-light">
+							<h4 class="mb-4">Progression du dossier</h4>
+							<div class="progress" style="height: 50px;">
+								<div class="progress-bar" role="progressbar"
+									 style="width: @(Model.StudentValidationProgress)%"
+									 aria-valuenow="@(Model.StudentValidationProgress)"
+									 aria-valuemin="0" aria-valuemax="100">
+									@(Model.StudentValidationProgress)%
+								</div>
+							</div>
+							<p>Validation élève</p>
+							<div class="progress mt-5 " style="height: 50px;">
+								<div class="progress-bar progress-bar-striped bg-warning" role="progressbar"
+									 style="width: @(Model.MnsValidationProgress)%"
+									 aria-valuenow="@(Model.MnsValidationProgress)"
+									 aria-valuemin="0" aria-valuemax="100">
+									@(Model.MnsValidationProgress)%
+								</div>
+							</div>
+							<p>Validation MNS</p>
+
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+
+			<div class="p-3 g-3 border rounded-3 bg-light">
+				<h4>Pièces à fournir</h4>
+				<div class="table-responsive">
+					<table class="table align-middle table-striped table-hover table-custom bg-secondary">
+						<thead>
+							<tr>
+								<th scope="col">Pièce</th>
+								<th scope="col" class="d-none d-md-table-cell">Date de dépôt</th>
+								<th scope="col">Visualiser</th>
+								<th scope="col">Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							@if (Model.RequiredDocuments != null && Model.RequiredDocuments.Any())
+							{
+								@foreach (var doc in Model.RequiredDocuments.Where(d => !string.IsNullOrWhiteSpace(d.DocumentPath) && !string.Equals(d.DocumentPath, "N/A", StringComparison.OrdinalIgnoreCase)))
+								{
+									<tr>
+										<td>@doc.DocumentTypeName</td>
+										<td class="d-none d-md-table-cell">
+											@* Afficher la date seulement si le document a été déposé *@
+											@(doc.UploadDate != DateTime.MinValue ? doc.UploadDate : "N/A")
+										</td>
+										<td>
+											@if (!string.IsNullOrWhiteSpace(doc.DocumentPath))
+											{
+												<a href="@doc.DocumentPath" target="_blank" class="btn btn-warning btn-sm">
+													<i class="bi bi-file-earmark-text"></i> Vérifier
+												</a>
+											}
+											else
+											{
+												<span class="text-muted">Non déposé</span>
+											}
+										</td>
+										<td class="d-flex flex-wrap gap-2">
+											@if (!string.IsNullOrWhiteSpace(doc.DocumentPath)) // Actions possibles seulement si un fichier est déposé
+											{
+												@if (doc.IsVerified)
+												{
+													<span class="badge bg-success py-2 px-3">Validé</span>
+													<form asp-controller="CandidaturesStudents" asp-action="RejectDocument" method="post">
+														<input type="hidden" name="documentId" value="@doc.DocumentId" />
+														<button type="submit" class="btn btn-danger btn-sm">Refuser</button>
+													</form>
+												}
+												else
+												{
+													<form asp-controller="CandidaturesStudents" asp-action="ValidateDocument" method="post">
+														<input type="hidden" name="documentId" value="@doc.DocumentId" />
+														<button type="submit" class="btn btn-success btn-sm">Valider</button>
+													</form>
+													<form asp-controller="CandidaturesStudents" asp-action="RejectDocument" method="post">
+														<input type="hidden" name="documentId" name="documentId" value="@doc.DocumentId" />
+														<button type="submit" class="btn btn-danger btn-sm">Refuser</button>
+													</form>
+												}
+											}
+											else
+											{
+												<span class="badge bg-secondary py-2 px-3">En attente de dépôt</span>
+											}
+										</td>
+									</tr>
+								}
+							}
+							else
+							{
+								<tr>
+									<td colspan="4">Aucun document requis ou trouvé pour cette candidature.</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

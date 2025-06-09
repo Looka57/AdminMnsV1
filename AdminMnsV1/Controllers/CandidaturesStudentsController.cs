@@ -139,6 +139,7 @@ namespace AdminMnsV1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ValidateDocument(int documentId)
         {
+
             var adminUserId = _userManager.GetUserId(User);
 
             if (string.IsNullOrEmpty(adminUserId))
@@ -153,8 +154,13 @@ namespace AdminMnsV1.Controllers
                 return NotFound(); // Document ou candidature non trouvé
             }
             TempData["SuccessMessage"] = "Document validé avec succès.";
+            await _candidatureService.UpdateCandidatureStatusBasedOnDocuments(candidatureId);
+
             return RedirectToAction("CandidatureStudent", new { id = candidatureId });
         }
+
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
