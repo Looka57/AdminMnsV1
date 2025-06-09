@@ -344,24 +344,18 @@ namespace AdminMnsV1.Application.Services.Implementation
                 // 4. Mapper les documents requis pour l'affichage dans le ViewModel.
                 // Cette section va afficher TOUS les types de documents attendus,
                 // et pour chacun, indiquer si l'étudiant l'a soumis et si c'est vérifié.
-                RequiredDocuments = (await _context.DocumentTypes.ToListAsync()) // Récupère TOUS les types de documents existants de la DB
-                    .Select(documentType =>
-                    { // 'documentType' ici est un objet DocumentType (ex: "CV", "RIB")
-                      // On cherche si un document SOUMIS par CETTE candidature correspond à CE type de document.
-                        var submittedDocument = candidature.Documents?.FirstOrDefault(d => d.DocumentTypeId == documentType.DocumentTypeId);
-
-                        return new DocumentViewModel
-                        {
-                            DocumentId = submittedDocument?.DocumentId ?? 0,
-                            DocumentName = submittedDocument?.DocumentName ?? documentType.NameDocumentType ?? "Nom Document Non Défini", // Ajout d'un ?? ici aussi si documentType.NameDocumentType peut être null
-                            DocumentTypeName = documentType.NameDocumentType ?? "Type de Document Inconnu", //
-                            UploadDate = submittedDocument?.DocumentDepositDate ?? DateTime.MinValue,
-                            DocumentPath = (submittedDocument?.DocumentPath != null && !string.Equals(submittedDocument.DocumentPath, "/uploads/documents/N/A", StringComparison.OrdinalIgnoreCase))
-                                   ? $"/uploads/documents/{submittedDocument.DocumentPath}"
-                                   : null,
-                            IsVerified = submittedDocument?.IsVerified ?? false
-                        };
-                    }).ToList() // Convertit le résultat en une liste
+                RequiredDocuments = candidature.Documents? // Utilisez les documents réellement liés à cette candidature
+            .Select(d => new DocumentViewModel
+            {
+                DocumentId = d.DocumentId,
+                DocumentName = d.DocumentName ?? d.DocumentType?.NameDocumentType ?? "Nom Document Non Défini",
+                DocumentTypeName = d.DocumentType?.NameDocumentType ?? "Type de Document Inconnu",
+                UploadDate = d.DocumentDepositDate,
+                DocumentPath = (d.DocumentPath != null && !string.Equals(d.DocumentPath, "/uploads/documents/N/A", StringComparison.OrdinalIgnoreCase))
+                               ? $"/uploads/documents/{d.DocumentPath}"
+                               : null,
+                IsVerified = d.IsVerified
+            }).ToList() ?? new List<DocumentViewModel>() // Gérer le cas où candidature.Documents est null
             };
 
             return viewModel;
@@ -787,44 +781,34 @@ namespace AdminMnsV1.Application.Services.Implementation
 
                     // >>> Appeler la logique pour mettre à jour le rôle de l'utilisateur ici <<<
                     // Nous allons créer cette méthode séparément pour la clarté.
-                   await UpdateUserRoleToStudent(candidature.UserId);
+                   await UpdateUserStatusToStudent(candidature.UserId);
                 }
             }
         }
 
-        private async Task UpdateUserRoleToStudent(string userId)
+        // Dans CandidatureService.cs
+        private async Task UpdateUserStatusToStudent(string userId) // Renommé pour plus de clarté
         {
-
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId); // _userManager est toujours utile pour trouver l'utilisateur
             if (user == null)
             {
-                return; // Utilisateur non trouvé
+                return;
             }
 
-            // Vérifier si l'utilisateur est actuellement dans le rôle "Candidat"
-            if (await _userManager.IsInRoleAsync(user, "Candidat")) // Assurez-vous que le nom du rôle est exact
+            // Vérifier si le statut actuel de l'utilisateur est "Candidat"
+            // Adaptez "Status" et "Candidat" au nom exact de votre propriété et de la valeur du statut
+            if (user.Status == "Candidat")
             {
-                // Supprimer l'utilisateur du rôle "Candidat"
-                var removeResult = await _userManager.RemoveFromRoleAsync(user, "Candidat");
-                if (!removeResult.Succeeded)
+                user.Status = "Stagiaire"; // Mettre à jour le statut
+                var updateResult = await _userManager.UpdateAsync(user); // Utiliser UpdateAsync pour sauvegarder les changements sur l'utilisateur
+                if (!updateResult.Succeeded)
                 {
-                    // Gérer l'erreur si la suppression du rôle échoue (par exemple, logger)
-                    // Cela ne devrait normalement pas arriver
-                    return;
+                    // Gérer l'erreur si la mise à jour échoue
+                    // (Ex: logger les erreurs dans updateResult.Errors)
                 }
             }
-
-            // Ajouter l'utilisateur au rôle "Student"
-            if (!await _userManager.IsInRoleAsync(user, "Student")) // Vérifier pour éviter d'ajouter plusieurs fois
-            {
-                var addResult = await _userManager.AddToRoleAsync(user, "Student");
-                if (!addResult.Succeeded)
-                {
-                    // Gérer l'erreur si l'ajout au rôle échoue (par exemple, logger)
-                }
-            }
+          
         }
-
 
 
 

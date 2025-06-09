@@ -207,7 +207,7 @@
                                         <td class="d-none d-md-table-cell">@candidature.CandidatureCreationDate?.ToString("yyyy-MM-dd")</td>
                                         <td>
                                             <button class="btn btn-primary">
-                                                <a href="@Url.Action("Details", "Candidatures", new { id = candidature.CandidatureId })">Voir</a>
+                                                <a href="@Url.Action("CandidatureStudent", "CandidaturesStudents", new { id = candidature.CandidatureId })">Voir</a>
                                             </button>
                                         </td>
                                     </tr>
@@ -259,7 +259,7 @@
                                         <td class="d-none d-md-table-cell">@candidature.CandidatureCreationDate?.ToString("yyyy-MM-dd")</td>
                                         <td>
                                             <button class="btn btn-primary">
-                                                <a href="@Url.Action("Details", "Candidatures", new { id = candidature.CandidatureId })">Voir</a>
+                                                <a href="@Url.Action("CandidatureStudent", "CandidaturesStudents", new { id = candidature.CandidatureId })">Voir</a>
                                             </button>
                                         </td>
                                     </tr>

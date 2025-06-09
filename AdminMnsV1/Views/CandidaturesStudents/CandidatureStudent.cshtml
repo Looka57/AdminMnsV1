@@ -133,45 +133,68 @@
 						<tbody>
 							@if (Model.RequiredDocuments != null && Model.RequiredDocuments.Any())
 							{
-								@foreach (var doc in Model.RequiredDocuments.Where(d => !string.IsNullOrWhiteSpace(d.DocumentPath) && !string.Equals(d.DocumentPath, "N/A", StringComparison.OrdinalIgnoreCase)))
+								@foreach (var doc in Model.RequiredDocuments) // Supprime le .Where() ici pour afficher aussi les non-déposés
 								{
 									<tr>
 										<td>@doc.DocumentTypeName</td>
 										<td class="d-none d-md-table-cell">
-											@* Afficher la date seulement si le document a été déposé *@
-											@(doc.UploadDate != DateTime.MinValue ? doc.UploadDate : "N/A")
+											@* Afficher la date seulement si le document a été déposé et la date est valide *@
+											@(doc.UploadDate != DateTime.MinValue ? doc.UploadDate.ToString("dd/MM/yyyy") : "N/A")
 										</td>
+
+
 										<td>
-											@if (!string.IsNullOrWhiteSpace(doc.DocumentPath))
-											{
-												<a href="@doc.DocumentPath" target="_blank" class="btn btn-warning btn-sm">
-													<i class="bi bi-file-earmark-text"></i> Vérifier
-												</a>
+											@* MODIFICATION ICI POUR LE BOUTON "Vérifier" (visualisation) *@
+											@{
+												// Définir le chemin vers l'image de placeholder
+												// Assurez-vous que cette image existe dans votre dossier wwwroot/images/
+												string placeholderImagePath = "~/uploads/documents/404.png"; // <-- Assurez-vous de ce chemin exact
+
+												 string documentDisplayUrl = string.IsNullOrWhiteSpace(doc.DocumentPath)
+                                                   ? placeholderImagePath // Si doc.DocumentPath est vide/null, utiliser l'image par défaut
+                                                   : doc.DocumentPath;    // Sinon, utiliser le chemin du document réel
 											}
-											else
-											{
-												<span class="text-muted">Non déposé</span>
-											}
+
+											<a href="@documentDisplayUrl" target="_blank"
+											   class="btn @(string.IsNullOrWhiteSpace(doc.DocumentPath) ? "btn-secondary" : "btn-warning") btn-sm"
+											   title="@(string.IsNullOrWhiteSpace(doc.DocumentPath) ? "Document non transmis" : "Vérifier le document")">
+												@if (!string.IsNullOrWhiteSpace(doc.DocumentPath))
+												{
+													<i class="bi bi-file-earmark-text">Vérifier</i>
+													
+																						}
+												else
+												{
+													<i class="bi bi-info-circle">	Non transmis</i>
+												
+																				}
+											</a>
 										</td>
+
+
+
 										<td class="d-flex flex-wrap gap-2">
-											@if (!string.IsNullOrWhiteSpace(doc.DocumentPath)) // Actions possibles seulement si un fichier est déposé
+											@if (!string.IsNullOrWhiteSpace(doc.DocumentPath) && !string.Equals(doc.DocumentPath, "N/A", StringComparison.OrdinalIgnoreCase)) // Actions possibles seulement si un fichier est déposé
 											{
 												@if (doc.IsVerified)
 												{
 													<span class="badge bg-success py-2 px-3">Validé</span>
-													<form asp-controller="CandidaturesStudents" asp-action="RejectDocument" method="post">
+													<form asp-controller="CandidaturesStudents" asp-action="RejectDocument" method="post" class="d-inline">
+														@Html.AntiForgeryToken()
 														<input type="hidden" name="documentId" value="@doc.DocumentId" />
 														<button type="submit" class="btn btn-danger btn-sm">Refuser</button>
 													</form>
 												}
-												else
+												else // Document déposé mais pas encore vérifié
 												{
-													<form asp-controller="CandidaturesStudents" asp-action="ValidateDocument" method="post">
+													<form asp-controller="CandidaturesStudents" asp-action="ValidateDocument" method="post" class="d-inline">
+														@Html.AntiForgeryToken()
 														<input type="hidden" name="documentId" value="@doc.DocumentId" />
 														<button type="submit" class="btn btn-success btn-sm">Valider</button>
 													</form>
-													<form asp-controller="CandidaturesStudents" asp-action="RejectDocument" method="post">
-														<input type="hidden" name="documentId" name="documentId" value="@doc.DocumentId" />
+													<form asp-controller="CandidaturesStudents" asp-action="RejectDocument" method="post" class="d-inline">
+														@Html.AntiForgeryToken()
+														<input type="hidden" name="documentId" value="@doc.DocumentId" />
 														<button type="submit" class="btn btn-danger btn-sm">Refuser</button>
 													</form>
 												}
