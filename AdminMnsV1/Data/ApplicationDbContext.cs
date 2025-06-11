@@ -10,6 +10,9 @@ using AdminMnsV1.Models.DocumentTypes;
 using AdminMnsV1.Models.Documents;
 using Microsoft.CodeAnalysis.Diagnostics;
 using AdminMnsV1.Models.CandidaturesModels;
+using AdminMnsV1.Models.Abscences;
+using AdminMnsV1.Models.Absences;
+using AdminMnsV1.Models.Delays;
 
 
 namespace AdminMnsV1.Data
@@ -30,6 +33,12 @@ namespace AdminMnsV1.Data
         public DbSet<Documents> Documents { get; set; } // Représente la table "Documents"
         public DbSet<DocumentType> DocumentTypes { get; set; } // Représente la table "DocumentType"
         public DbSet<DocumentStatus> DocumentStatuses { get; set; } //  Représente la table "DocumentStatuses"
+
+        public DbSet<Delay> Delays { get; set; }
+        public DbSet<ReasonDelay> ReasonDelays { get; set; } 
+        public DbSet<Absence> Absences { get; set; }
+        public DbSet<ReasonAbsence> ReasonAbsences { get; set; } 
+        public DbSet<DelayAbsStatus> DelayAbsStatuses { get; set; } 
 
 
 
