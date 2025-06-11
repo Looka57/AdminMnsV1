@@ -1,9 +1,9 @@
 ﻿@using AdminMnsV1.Models;
-@using AdminMnsV1.Models.ViewModels;
+@using AdminMnsV1.Models.ViewModels; 
 @model AdminMnsV1.Models.CandidaturesModels.CandidatureStudentViewModel
 
 @{
-	ViewData["Title"] = "Dossier: " + Model.FirstName + " " + Model.LastName; // Concaténation correcte
+	ViewData["Title"] = "Dossier: " + Model.FirstName + " " + Model.LastName; 
 }
 
 @if (TempData["SuccessMessage"] != null)
@@ -145,15 +145,20 @@
 
 										<td>
 											@{
-												string finalDocumentUrl = string.IsNullOrWhiteSpace(doc.DocumentPath)
-												? Url.Action("DocumentNotFound", "Documents")
-												: doc.DocumentPath;
+												// Vérifie si le document est réellement valide (non vide et pas juste le dossier)
+												bool documentValide = !string.IsNullOrWhiteSpace(doc.DocumentPath)
+												&& !doc.DocumentPath.Trim().Equals("/uploads/documents/", StringComparison.OrdinalIgnoreCase);
+
+												// Détermine le lien final à ouvrir selon si un vrai document a été soumis
+												string finalDocumentUrl = documentValide
+												? doc.DocumentPath
+												: Url.Action("DocumentNotFound", "Documents");
 											}
 
 											<a href="@finalDocumentUrl" target="_blank"
-											   class="btn @(string.IsNullOrWhiteSpace(doc.DocumentPath) ? "btn-secondary" : "btn-warning") btn-sm"
-											   title="@(string.IsNullOrWhiteSpace(doc.DocumentPath) ? "Document non transmis" : "Vérifier le document")">
-												@if (!string.IsNullOrWhiteSpace(doc.DocumentPath))
+											   class="btn @(string.IsNullOrWhiteSpace(doc.DocumentPath) || doc.DocumentPath.Trim().Equals("/uploads/documents/", StringComparison.OrdinalIgnoreCase) ? "btn-secondary" : "btn-warning") btn-sm"
+											   title="@(string.IsNullOrWhiteSpace(doc.DocumentPath) || doc.DocumentPath.Trim().Equals("/uploads/documents/", StringComparison.OrdinalIgnoreCase) ? "Document non transmis" : "Vérifier le document")">
+												@if (!string.IsNullOrWhiteSpace(doc.DocumentPath) && !doc.DocumentPath.Trim().Equals("/uploads/documents/", StringComparison.OrdinalIgnoreCase))
 												{
 													<i class="bi bi-file-earmark-text">Vérifier</i>
 												}

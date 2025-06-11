@@ -14,7 +14,7 @@ namespace AdminMnsV1.Controllers
     {
         private readonly IDocumentService _documentService;
         private readonly UserManager<User> _userManager;
-        private readonly ApplicationDbContext _context; // Toujours besoin pour les ViewDatas des SelectList
+        private readonly ApplicationDbContext _context;
 
         public DocumentsController(IDocumentService documentService, UserManager<User> userManager, ApplicationDbContext context)
         {

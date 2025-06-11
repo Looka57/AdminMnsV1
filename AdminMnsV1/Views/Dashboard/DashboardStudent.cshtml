@@ -10,60 +10,148 @@
 
 
 <!-- =====================MAIN TABLEAU=============================== -->
-   
-    <h1 class="mx-4 mt-5">Bienvenue @Model.LoggedInUser.FirstName @Model.LoggedInUser.LastName !</h1>
 
-    <!-- =====================CARDS=============================== -->
+<h1 class="mx-4 mt-5">Bienvenue @Model.LoggedInUser.FirstName @Model.LoggedInUser.LastName !</h1>
 
-    <div class="cardBox ">
-    @foreach (var card in Model.Cards)
-    {
-        <div class="">
-            <a href="@card.Url" class="card-link">
-                <div class="cards border-0">
-                    <div>
-                        <div class="cardNumber">@card.Number</div>
-                        <div class="cardName">@card.Title</div>
-                    </div>
-                    <div class="iconCard">
-                        <img width="60" height="60" src="@card.IconUrl" alt="@card.AltText" />
-                    </div>
-                </div>
-            </a>
-        </div>
-    }
+<!-- =====================CARDS=============================== -->
+
+<div class="cardBox ">
+	@foreach (var card in Model.Cards)
+	{
+		<div class="">
+			<a href="@card.Url" class="card-link">
+				<div class="cards border-0">
+					<div>
+						<div class="cardNumber">@card.Number</div>
+						<div class="cardName">@card.Title</div>
+					</div>
+					<div class="iconCard">
+						<img width="60" height="60" src="@card.IconUrl" alt="@card.AltText" />
+					</div>
+				</div>
+			</a>
+		</div>
+	}
 </div>
-   
-
-    <!-- =======================GRAPHIQUES STAGIAIRE ABS RETARD================ -->
-
-    <div class="graphs">
-        <div class="graphLateAbs border rounded-3 bg-light">
-            <div class="title">
-                <h4>Total de Retards-Absences</h4>
-            </div>
-            <div class="chartContainerAbs w-100">
-                <canvas id="absencesChart" aria-label="chart" role="img"></canvas>
-            </div>
-        </div>
-        <div class="progressFiles p-3 border rounded-3 bg-light">
-            <h4>Progression du dossier</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam earum asperiores vel vitae facere delectus fuga amet atque blanditiis hic, assumenda officia tempora omnis rerum magni ipsam quos eaque molestias!</p>
-
-        </div>
-    </div>
 
 
-    <!-- =======================FOOTER================ -->
-    <hr>
-    <footer class="footer">
-        <div class="linkFooter ">
-            <ul>
-                <li><a href="">Politique de confidentialité</a></li>
-                <li><a href="">Parametre</a></li>
-                <li><a href="">Contacter Nous</a></li>
+<!-- =======================GRAPHIQUES STAGIAIRE ABS RETARD================ -->
 
-            </ul>
-            <p class="text-center">&copy 2025 Metz Numeric School</p>
-        </div>
-    </footer>
+<div class="graphs">
+	<div class="graphLateAbs border rounded-3 bg-light">
+		<div class="title">
+			<h4>Total de Retards-Absences</h4>
+		</div>
+		<div class="chartContainerAbs w-100">
+			<canvas id="absencesChart" aria-label="chart" role="img"></canvas>
+		</div>
+	</div>
+	<div class="table-responsive border">
+
+		<h4 class="p-2 m-2">Details des Retards-Absences</h4>
+
+		<table class="table align-middle table-striped table-hover table-custom bg-secondary">
+			<thead>
+				<tr class="text-center">
+					<th scope="col"></th>
+					<th scope="col">Nom</th>
+					<th scope="col" class="d-none d-md-table-cell">Prénom</th>
+					<!-- Caché sur mobile -->
+					<th scope="col">Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="text-center">
+					<th scope="row">
+						<img width="14" height="14"
+							 src="https://img.icons8.com/material-two-tone/24/collect.png"
+							 alt="collect" />
+					</th>
+					<td>Napolitano</td>
+					<td class="d-none d-md-table-cell">Amandine</td>
+					<td>
+						<button type="button" class="btn btn-sm btn-outline-primary text-nowrap">
+							En
+							cours
+						</button>
+					</td>
+				</tr>
+				<tr class="text-center">
+					<th scope="row">
+						<img width="14" height="14"
+							 src="https://img.icons8.com/material-two-tone/24/collect.png"
+							 alt="collect" />
+					</th>
+					<td>Uzumaki</td>
+					<td class="d-none d-md-table-cell">Naruto</td>
+					<td>
+						<button type="button" class="btn btn-sm btn-outline-primary text-nowrap">
+							En
+							cours
+						</button>
+					</td>
+				</tr>
+				<tr class="text-center">
+					<th scope="row">
+						<img width="14" height="14"
+							 src="https://img.icons8.com/material-two-tone/24/collect.png"
+							 alt="collect" />
+					</th>
+					<td>Hatake</td>
+					<td class="d-none d-md-table-cell">Looka</td>
+					<td>
+						<button type="button"
+								class="btn btn-sm btn-outline-danger text-nowrap">
+							Refusé
+						</button>
+					</td>
+				</tr>
+				<tr class="text-center">
+					<th scope="row">
+						<img width="14" height="14"
+							 src="https://img.icons8.com/material-two-tone/24/collect.png"
+							 alt="collect" />
+					</th>
+					<td>Nara</td>
+					<td class="d-none d-md-table-cell">Shikamaru</td>
+					<td>
+						<button type="button"
+								class="btn btn-sm btn-outline-success text-nowrap">
+							Valider
+						</button>
+					</td>
+				</tr>
+				<tr class="text-center">
+					<th scope="row">
+						<img width="14" height="14"
+							 src="https://img.icons8.com/material-two-tone/24/collect.png"
+							 alt="collect" />
+					</th>
+					<td>Bakugo</td>
+					<td class="d-none d-md-table-cell">Katsuki</td>
+					<td>
+						<button type="button"
+								class="btn btn-sm btn-outline-success text-nowrap">
+							Valider
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+
+<!-- =======================FOOTER================ -->
+<hr>
+<footer class="footer">
+	<div class="linkFooter ">
+		<ul>
+			<li><a href="">Politique de confidentialité</a></li>
+			<li><a href="">Parametre</a></li>
+			<li><a href="">Contacter Nous</a></li>
+
+		</ul>
+		<p class="text-center">&copy 2025 Metz Numeric School</p>
+	</div>
+</footer>

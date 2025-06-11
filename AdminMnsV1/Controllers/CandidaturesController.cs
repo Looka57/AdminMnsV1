@@ -53,7 +53,6 @@ namespace AdminMnsV1.Web.Controllers
             var allCandidatures = await _candidatureService.GetAllCandidaturesWithDetailsAsync();
 
             // 3. Filtre les candidatures par statut pour les listes d'accordéons
-            // CORRECTION ICI : Utiliser c.CandidatureStatus?.Label
             var candidaturesEnCours = allCandidatures
                 .Where(c => c.User != null && c.User.IsDeleted == false && c.CandidatureStatus?.Label?.Equals("En cours", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();

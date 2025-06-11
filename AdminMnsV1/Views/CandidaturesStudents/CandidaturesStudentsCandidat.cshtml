@@ -1,7 +1,9 @@
-﻿@model AdminMnsV1.Models.CandidaturesModels.CandidatureStudentViewModel
+﻿@using AdminMnsV1.Models;
+@using AdminMnsV1.Models.ViewModels;
+@model AdminMnsV1.Models.CandidaturesModels.CandidatureStudentViewModel
 
 @{
-	ViewData["Title"] = ViewData["Title"] ?? "Mon Dossier de Candidature";
+	ViewData["Title"] = "Dossier: " + Model.FirstName + " " + Model.LastName; 
 }
 
 
@@ -42,11 +44,29 @@
 				<span>Mail: @(Model.Email ?? "N/A")</span>
 				<span>Date de naissance : @(Model.BirthDate.HasValue? Model.BirthDate.Value.ToShortDateString() : "Non spécifié")</span>
 			</div>
+
 			<div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
 				<div class="student-info-enCours">
-					<h4>@Model.CandidatureStatuses</h4> @* Affiche le statut réel de la candidature *@
-					<img width="80" height="80" src="https://img.icons8.com/dotty/80/rotate.png" alt="rotate" />
+					<h5>Statut de la Candidaturef</h5>
+					<span class="badge bg-primary">@Model.CandidatureStatuses</span>
+					@{
+
+						var safeStatus = Model.CandidatureStatuses;
+					}
+					@if (safeStatus != null && safeStatus.Equals("En cours", StringComparison.OrdinalIgnoreCase))
+					{
+						<img width="80" height="80" src="https://img.icons8.com/dotty/80/rotate.png" alt="rotate" />
+					}
+					else if (safeStatus != null && safeStatus.Equals("Validé", StringComparison.OrdinalIgnoreCase))
+					{
+						<img width="80" height="80" src="https://img.icons8.com/dotty/80/checked--v1.png" alt="checked--v1" />
+					}
+					else if (safeStatus != null && safeStatus.Equals("Refusé", StringComparison.OrdinalIgnoreCase))
+					{
+						<img width="80" height="80" src="https://img.icons8.com/dotty/80/cancel.png" alt="cancel" />
+					}
 				</div>
+
 			</div>
 			<div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
 				<div class="student-info">
@@ -70,7 +90,7 @@
 			<div class="row g-3 mb-4">
 				<div class="col-12">
 					<div class="row g-5">
-						<div class="col-md-5 col-sm-12 p-3 mx-4 border rounded-3 bg-light">
+						<div class="col-md-11 col-sm-12 p-3 mx-5 border rounded-3 bg-light">
 							<h4 class="mb-4">Progression du dossier</h4>
 							<div class="progress" style="height: 50px;">
 								<div class="progress-bar" role="progressbar" style="width: @(Model.StudentValidationProgress)%"
@@ -87,38 +107,6 @@
 								</div>
 							</div>
 							<p>Validation MNS</p>
-						</div>
-						<div class="col-md-6 col-sm-12 p-3 border rounded-3 boxNotif"
-							 style="background-color: var(--orange);">
-							<h4>Notifications</h4>
-							<table class="table rounded-3">
-								<thead>
-									<tr>
-										<th scope="col">#</th>
-										<th scope="col">Pièces</th>
-									</tr>
-								</thead>
-								<tbody>
-									@* Ici, vous pourriez itérer sur une liste de notifications si vous en avez dans votre ViewModel *@
-									@* Pour l'instant, je laisse les exemples statiques, à adapter si nécessaire *@
-									<tr>
-										<th scope="row">1</th>
-										<td>Ce qui vient là</td>
-									</tr>
-									<tr>
-										<th scope="row">2</th>
-										<td>C.C</td>
-									</tr>
-									<tr>
-										<th scope="row">3</th>
-										<td colspan="2">Dossier</td>
-									</tr>
-									<tr>
-										<th scope="row">4</th>
-										<td colspan="2">Autre</td>
-									</tr>
-								</tbody>
-							</table>
 						</div>
 					</div>
 				</div>
