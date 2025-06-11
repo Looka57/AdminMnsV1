@@ -43,10 +43,10 @@
 			<div class="p-3 mb-3 border rounded-3 bg-light studentInfos">
 				<div class="student-info-enCours">
 					<h5>Statut de la Candidature</h5>
-					<span class="badge bg-primary">@Model.CandidatureStatuses</span>
+					<span class="badge bg-primary">@Model.CandidatureStatus</span>
 					@{
 
-						var safeStatus = Model.CandidatureStatuses;
+						var safeStatus = Model.CandidatureStatus;
 					}
 					@if (safeStatus != null && safeStatus.Equals("En cours", StringComparison.OrdinalIgnoreCase))
 					{
