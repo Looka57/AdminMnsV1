@@ -31,7 +31,7 @@ namespace AdminMnsV1.Application.Services.Implementation
 
         public async Task<IEnumerable<Documents>> GetAllDocumentsAsync()
         {
-            return await _documentRepository.GetAllAsync();
+            return await _documentRepository.GetAllAbsenceAsync();
         }
 
         public async Task<Documents?> GetDocumentByIdAsync(int id)

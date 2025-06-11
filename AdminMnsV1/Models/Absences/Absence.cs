@@ -26,6 +26,7 @@ namespace AdminMnsV1.Models.Abscences
         // Clés étrangères
         public string AdministratorId { get; set; } 
         public string StudentId { get; set; } 
+        public string User { get; set; }
 
         public int ReasonAbsenceId { get; set; } 
         public int StatusId { get; set; } 
@@ -45,5 +46,6 @@ namespace AdminMnsV1.Models.Abscences
 
         [ForeignKey("StatusId")]
         public DelayAbsStatus? Status { get; set; }
+      
     }
 }

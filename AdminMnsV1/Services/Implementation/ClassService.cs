@@ -126,7 +126,7 @@ namespace AdminMnsV1.Services.Implementation
 
         public async Task<IEnumerable<SchoolClass>> GetAllClassesAsync() // Ajout de 'async'
         {
-            return await _classRepository.GetAllAsync();
+            return await _classRepository.GetAllAbsenceAsync();
         }
         public Task<SchoolClass?> GetClassByIdAsync(int id)
         {

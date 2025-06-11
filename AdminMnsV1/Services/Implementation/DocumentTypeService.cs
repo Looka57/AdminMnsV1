@@ -20,7 +20,7 @@ namespace AdminMnsV1.Application.Services.Implementation // Ou AdminMnsV1.Servic
 
         public async Task<IEnumerable<DocumentType>> GetAllDocumentTypesAsync()
         {
-            return await _documentTypeRepository.GetAllAsync();
+            return await _documentTypeRepository.GetAllAbsenceAsync();
         }
 
         public async Task<DocumentType?> GetDocumentTypeByIdAsync(int id)

@@ -19,9 +19,10 @@ public class Delay
 
     // Clés étrangères
     public string AdministratorId { get; set; } 
-    public int ReasonDelayId { get; set; } 
     public string StudentId { get; set; } 
+    public string User { get; set; }
     public int StatusId { get; set; }
+    public int ReasonDelayId { get; set; } 
 
 
 

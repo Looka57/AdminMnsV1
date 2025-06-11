@@ -79,23 +79,24 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 // Enregistrement des Repositories spécifiques
-// Assure-toi que TOUS les repositories spécifiques que tu as créés sont enregistrés ici
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IClassRepository, ClassRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICandidatureRepository, CandidatureRepository>();
 builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
 builder.Services.AddScoped<IDocumentTypeRepository, DocumentTypeRepository>();
+builder.Services.AddScoped<IDelayRepository, DelayRepository>();
+builder.Services.AddScoped<IReasonDelayRepository, ReasonDelayRepository>();
+builder.Services.AddScoped<IAbsenceRepository, AbsenceRepository>();
+builder.Services.AddScoped<IReasonAbsenceRepository, ReasonAbsenceRepository>();
 
 
-// Si tu as d'autres repositories spécifiques (ex: ICandidatureStatusRepository), ajoute-les ici.
-// Sinon, IGenericRepository<CandidatureStatus> sera résolu par la ligne AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
 
 // Enregistrement des Services
-// Assure-toi que TOUS les services que tu as créés sont enregistrés ici
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IClassService, ClassService>();
-builder.Services.AddScoped<IDashboardService, DashboardService>(); // Si ce service existe
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IDocumentTypeService, DocumentTypeService>();
 builder.Services.AddScoped<IOnboardingService, OnboardingService>();

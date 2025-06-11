@@ -79,8 +79,8 @@ namespace AdminMnsV1.Application.Services.Implementation
 
         public async Task<CreateCandidatureViewModel> PrepareCreateCandidatureViewModelAsync()
         {
-            var classes = await _classRepository.GetAllAsync(); // Récupère toutes les classes
-            var documentsTypes = await _documentTypeRepository.GetAllAsync(); // Récupère tous les types de documents
+            var classes = await _classRepository.GetAllAbsenceAsync(); // Récupère toutes les classes
+            var documentsTypes = await _documentTypeRepository.GetAllAbsenceAsync(); // Récupère tous les types de documents
 
             var viewModel = new CreateCandidatureViewModel
             {
