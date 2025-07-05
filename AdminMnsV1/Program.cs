@@ -91,8 +91,6 @@ builder.Services.AddScoped<IAbsenceRepository, AbsenceRepository>();
 builder.Services.AddScoped<IReasonAbsenceRepository, ReasonAbsenceRepository>();
 
 
-
-
 // Enregistrement des Services
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IClassService, ClassService>();
