@@ -66,5 +66,10 @@ namespace AdminMnsV1.Repositories.Implementation
         {
             return await _context.SaveChangesAsync();
         }
+
+        public Task<IEnumerable<T>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

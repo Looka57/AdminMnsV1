@@ -21,10 +21,6 @@ namespace AdminMnsV1.Services
             return await _repository.GetByIdAsync(id);
         }
 
-        public async Task<T?> GetByIdAsync(string id)
-        {
-            return await _repository.GetByIdAsync(id);
-        }
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
@@ -65,6 +61,11 @@ namespace AdminMnsV1.Services
         {
             _repository.RemoveRange(entities);
             await _repository.SaveChangesAsync();
+        }
+
+        public Task<T?> GetByIdAsync(string id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

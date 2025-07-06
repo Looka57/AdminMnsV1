@@ -84,81 +84,48 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr class="text-center">
-							<th scope="row">
-								<img width="14" height="14"
-									 src="https://img.icons8.com/material-two-tone/24/collect.png"
-									 alt="collect" />
-							</th>
-							<td>Napolitano</td>
-							<td class="d-none d-md-table-cell">Amandine</td>
-							<td>
-								<button type="button" class="btn btn-sm btn-outline-primary text-nowrap">
-									En
-									cours
-								</button>
-							</td>
-						</tr>
-						<tr class="text-center">
-							<th scope="row">
-								<img width="14" height="14"
-									 src="https://img.icons8.com/material-two-tone/24/collect.png"
-									 alt="collect" />
-							</th>
-							<td>Uzumaki</td>
-							<td class="d-none d-md-table-cell">Naruto</td>
-							<td>
-								<button type="button" class="btn btn-sm btn-outline-primary text-nowrap">
-									En
-									cours
-								</button>
-							</td>
-						</tr>
-						<tr class="text-center">
-							<th scope="row">
-								<img width="14" height="14"
-									 src="https://img.icons8.com/material-two-tone/24/collect.png"
-									 alt="collect" />
-							</th>
-							<td>Hatake</td>
-							<td class="d-none d-md-table-cell">Looka</td>
-							<td>
-								<button type="button"
-										class="btn btn-sm btn-outline-danger text-nowrap">
-									Refusé
-								</button>
-							</td>
-						</tr>
-						<tr class="text-center">
-							<th scope="row">
-								<img width="14" height="14"
-									 src="https://img.icons8.com/material-two-tone/24/collect.png"
-									 alt="collect" />
-							</th>
-							<td>Nara</td>
-							<td class="d-none d-md-table-cell">Shikamaru</td>
-							<td>
-								<button type="button"
-										class="btn btn-sm btn-outline-success text-nowrap">
-									Valider
-								</button>
-							</td>
-						</tr>
-						<tr class="text-center">
-							<th scope="row">
-								<img width="14" height="14"
-									 src="https://img.icons8.com/material-two-tone/24/collect.png"
-									 alt="collect" />
-							</th>
-							<td>Bakugo</td>
-							<td class="d-none d-md-table-cell">Katsuki</td>
-							<td>
-								<button type="button"
-										class="btn btn-sm btn-outline-success text-nowrap">
-									Valider
-								</button>
-							</td>
-						</tr>
+						@if (Model.LatestViewedCandidatures != null && Model.LatestViewedCandidatures.Any())
+						{
+							@foreach (var candidature in Model.LatestViewedCandidatures)
+							{
+								<tr class="text-center">
+									<th scope="row">
+										<img width="14" height="14"
+											 src="https://img.icons8.com/material-two-tone/24/collect.png"
+											 alt="collect" />
+									</th>
+									<td>@candidature.User.LastName</td>
+									<td class="d-none d-md-table-cell">@candidature.User.FirstName</td>
+									<td>
+										@{
+											string buttonClass = "btn-outline-primary"; // Par défaut pour "En cours"
+											if (candidature.CandidatureStatus?.Label?.Equals("Validé", StringComparison.OrdinalIgnoreCase) == true)
+											{
+												buttonClass = "btn-outline-success";
+											}
+											else if (candidature.CandidatureStatus?.Label?.Equals("Refusé", StringComparison.OrdinalIgnoreCase) == true ||
+											candidature.CandidatureStatus?.Label?.Equals("Supprimé", StringComparison.OrdinalIgnoreCase) == true ||
+											candidature.CandidatureStatus?.Label?.Equals("Invalidé", StringComparison.OrdinalIgnoreCase) == true)
+											{
+												buttonClass = "btn-outline-danger";
+											}
+										}
+										<a asp-action="CandidatureStudent"
+										   asp-controller="CandidaturesStudents"
+										   asp-route-id="@candidature.CandidatureId"
+										   class="btn btn-sm @buttonClass text-nowrap">
+											@candidature.CandidatureStatus?.Label
+										</a>
+									</td>
+								</tr>
+							}
+						}
+						else
+						{
+							<tr class="text-center">
+								<td colspan="4">Aucun dossier consulté récemment.</td>
+							</tr>
+						}
 					</tbody>
 				</table>
 			</div>

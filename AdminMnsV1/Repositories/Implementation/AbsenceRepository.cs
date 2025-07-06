@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AdminMnsV1.Repositories.Implementation
 {
     public class AbsenceRepository : IAbsenceRepository
+
     {
         private readonly ApplicationDbContext _context;
 
@@ -117,6 +118,11 @@ namespace AdminMnsV1.Repositories.Implementation
         }
 
         public void Update(Absence entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IAbsenceRepository.UpdateAbsenceAsync(Absence absence)
         {
             throw new NotImplementedException();
         }

@@ -31,7 +31,7 @@ namespace AdminMnsV1.Models.ViewModels
 
         // --- CORRECTION ICI : LA PROPRIÉTÉ ClassStats EST MAINTENANT AU BON ENDROIT ---
         public List<ClassCandidatureStats> ClassStats { get; set; } = new List<ClassCandidatureStats>();
-
+        public List<CandidatureModel> LatestViewedCandidatures { get; internal set; }
 
         public CandidaturesOverviewViewModel()
         {

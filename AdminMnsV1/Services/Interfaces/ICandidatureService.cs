@@ -36,6 +36,8 @@ namespace AdminMnsV1.Application.Services.Interfaces
         Task<bool> UploadDocumentAsync(int candidatureId, IFormFile document, object documentTypeName);
 
         Task UpdateCandidatureStatusBasedOnDocuments(int candidatureId);
+        Task<IEnumerable<Candidature>> GetLatestCandidaturesByCreationDateAsync(int count); // Nouvelle méthode
+
 
 
     }

@@ -19,5 +19,6 @@ namespace AdminMnsV1.Repositories.Interfaces
         void RemoveRange(IEnumerable<T> entities);
 
         Task<int> SaveChangesAsync();
+        Task<IEnumerable<T>> GetAllAsync();
     }
 }

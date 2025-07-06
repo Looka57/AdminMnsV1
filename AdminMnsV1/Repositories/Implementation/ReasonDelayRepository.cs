@@ -86,5 +86,10 @@ namespace AdminMnsV1.Repositories.Implementation
         {
             throw new NotImplementedException();
         }
+
+        public Task<IEnumerable<ReasonDelay>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

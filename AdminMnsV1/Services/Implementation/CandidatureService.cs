@@ -810,19 +810,21 @@ namespace AdminMnsV1.Application.Services.Implementation
           
         }
 
-
-
-
-
-
-
-
-
-
-
         public Task<bool> UploadDocumentAsync(int candidatureId, IFormFile document, object documentTypeName)
         {
             throw new NotImplementedException();
+        }
+
+
+        public async Task<IEnumerable<Candidature>> GetLatestCandidaturesByCreationDateAsync(int count)
+        {
+            return await _context.Candidatures
+                 .Include(c => c.User) // Inclure l'utilisateur pour le nom et prénom
+                                 .Include(c => c.CandidatureStatus) // Inclure le statut pour l'affichage
+                                 .Where(c => c.User != null && c.User.IsDeleted == false) // Exclure les utilisateurs supprimés
+                                 .OrderByDescending(c => c.CandidatureCreationDate) // Trie par date de création la plus récente
+                                 .Take(count) // Prend les 'count' premiers
+                                 .ToListAsync();
         }
     }
 }

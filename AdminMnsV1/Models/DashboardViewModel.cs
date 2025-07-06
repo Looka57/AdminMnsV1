@@ -34,6 +34,9 @@ namespace AdminMnsV1.ViewModels
             CandidaturesEnCours = new List<Candidature>();
             CandidaturesValidees = new List<Candidature>();
             CandidaturesRefusees = new List<Candidature>();
-        } 
+        }
+
+        public List<Candidature> LatestViewedCandidatures { get; set; }
+
     }
 }

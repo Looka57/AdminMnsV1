@@ -38,13 +38,20 @@ namespace AdminMnsV1.Controllers
         {
             ViewData["Title"] = "Tableau de Bord Admin";
 
-            try // Bloque try-catch pour gérer les erreurs
+            try
             {
-                // Délègue entièrement la récupération des données au service  Le contrôleur appelle simplement une méthode du service et attend le ViewModel.
+                // Délègue la récupération des données au service pour les données principales du tableau de bord
                 var viewModel = await _dashboardService.GetAdminDashboardDataAsync(User);
-                return View(viewModel); // Passe le ViewModel à la vue pour affichage
-            
+
+                // NOUVEAU : Récupérer les 5 dernières candidatures par date de création
+                var latestCandidatures = await _candidatureService.GetLatestCandidaturesByCreationDateAsync(5);
+
+                // Assigner la liste des dernières candidatures au ViewModel
+                viewModel.LatestViewedCandidatures = latestCandidatures.ToList();
+
+                return View(viewModel);
             }
+
             catch (UnauthorizedAccessException) // Si le service lève cette exception (utilisateur non trouvé/autorisé)
             {
                 return RedirectToAction("Login", "Home"); // Le contrôleur décide de rediriger vers la page de connexion
@@ -129,6 +136,8 @@ namespace AdminMnsV1.Controllers
                 // Console.WriteLine(ex.Message); // Bon pour le débogage, moins pour la production.
                 return StatusCode(500, "Une erreur interne est survenue lors du chargement du tableau de bord du stagiaire.");
             }
+
+
         }
     }
 

@@ -93,6 +93,6 @@ namespace AdminMnsV1.Services.Implementation
             delay.JustificationStatus = reason;
             _delayRepository.Update(delay);
             return _delayRepository.SaveChangesAsync();
-$        }
+        }
     }
 }
