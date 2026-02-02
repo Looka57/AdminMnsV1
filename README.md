@@ -14,25 +14,25 @@ L’objectif principal est de fournir une interface intuitive pour l’administr
 
 ## 🚀 Fonctionnalités
 
-- Gestion des **stagiaires** (CRUD)
+- Gestion des stagiaires (CRUD)
 - Gestion et creation de dossiers
-- Gestion des **rôles** et permissions
-- Gestion des **utilisateurs** avec authentification
-- Association des stagiaires à des **classes**
-- **Dashboard de pilotage** pour visualiser l’activité
-- **Architecture modulaire** facilitant l’ajout de fonctionnalités
-- **Persistance des données** via Entity Framework et base SQL
+- Gestion des rôles et permissions
+- Gestion des utilisateurs avec authentification
+- Association des stagiaires à des classes
+- Dashboard de pilotage pour visualiser l’activité
+- Architecture modulaire facilitant l’ajout de fonctionnalités
+- Persistance des données via Entity Framework et base SQL
 
 ---
 
 ## 🛠️ Technologies & Outils
 
-- **Langage** : C#
-- **Framework** : .NET 5+ / ASP.NET MVC
-- **Base de données** : SQL Server (ou autre via chaîne de connexion)
-- **Interface** : Razor Views, Bootstrap, CSS, JS
-- **IDE** : Visual Studio 2022
-- **Versioning** : Git / GitHub
+- Langage : C#
+- Framework : .NET 5+ / ASP.NET MVC
+- Base de données : SQL Server (ou autre via chaîne de connexion)
+- Interface : Razor Views, Bootstrap, CSS, JS
+- IDE : Visual Studio 2022
+- Versioning : Git / GitHub
 
 ---
 
@@ -79,13 +79,14 @@ Update-Database
 
 ## ▶️ Utilisation & Workflow
 
-1. **Administration** : Connectez-vous avec un compte admin pour piloter la plateforme.
-2. **Inscription & Mail** : Lors de la création d'un futur élève, le système déclenche automatiquement un **envoi de mail** de bienvenue/notification.
-3. **Gestion des Dossiers** : 
+1. Administration : Connectez-vous avec un compte admin pour piloter la plateforme.
+2. Inscription & Mail : Lors de la création d'un futur élève, le système déclenche automatiquement un envoi de mail de bienvenue/notification.
+3. Gestion des Dossiers : 
    - Accédez à l'espace documentaire de l'élève.
    - Consultez les pièces justificatives envoyées.
    - Utilisez les boutons **Accepter** ou **Refuser** pour valider les documents.
-4. **Suivi** : Naviguez dans les menus pour suivre l'état d'avancement des dossiers et gérer les classes.
+4. Suivi : Naviguez dans les menus pour suivre l'état d'avancement des dossiers et gérer les classes.
+5. L'élève peut aussi voir l'avancement de son dossier et les pieces refusées ou acceptées
 
 ---
 
@@ -102,7 +103,7 @@ dotnet test
 ## 🚧 État du projet & Travaux en cours
 Le cœur du système (Authentification, Rôles, CRUD Stagiaires) est opérationnel. Le module suivant est actuellement en phase de développement :
 
-- [ ] **Module Absences & Retards** : 
+- [ ] Module Absences & Retards : 
     - Saisie des absences par classe.
     - Justification des retards.
     - Calcul automatique du volume horaire manquant.
@@ -111,7 +112,7 @@ Le cœur du système (Authentification, Rôles, CRUD Stagiaires) est opérationn
 ## 👩‍💻 Contribution
 
 Ce projet est développé par **Amandine** (@Looka57).
-Les contributions sont les bienvenues via **Issues** ou **Pull Requests**.
+Les contributions sont les bienvenues via Issues ou Pull Requests.
 
 ---
 
