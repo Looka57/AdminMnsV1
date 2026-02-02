@@ -1,5 +1,5 @@
 ````markdown
-# AdminMnsV1
+ADMIN MNS
 
 [![.NET](https://img.shields.io/badge/.NET-5.0%2B-blue.svg)](https://dotnet.microsoft.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
