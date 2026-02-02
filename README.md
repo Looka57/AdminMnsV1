@@ -6,7 +6,8 @@
 
 ## 📝 Description
 **AdminMnsV1** est une application de gestion administrative développée en **C# / ASP.NET MVC**.  
-Ce projet implémente un tableau de bord structuré pour centraliser la gestion de données et de dossiers, créé dans le cadre de mon examen pour le diplôme **Concepteur Développeur d'Application 2024/2025**.
+Ce projet implémente un tableau de bord structuré pour centraliser la gestion de données et de dossiers,
+créé dans le cadre de mon examen pour le diplôme **Concepteur Développeur d'Application 2024/2025**.
 
 L’objectif principal est de fournir une interface intuitive pour l’administration et le suivi de processus métiers au sein du MNS.
 
